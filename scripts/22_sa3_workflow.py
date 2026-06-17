@@ -131,6 +131,17 @@ def cmd_extend(args):
     print(f"Extended {src_len:.1f}s -> {args.duration}s -> {args.out}")
 
 
+def cmd_song(args):
+    """Full instrumental song, 2-4 min (SA3 Medium handles up to ~380 s)."""
+    if args.duration > 380:
+        print("Note: SA3 Medium caps near 380 s; clamping.")
+        args.duration = 380
+    model = get_model(args)
+    audio = model.generate(prompt=args.prompt, duration=args.duration)
+    save(audio, args.out)
+    print(f"Song ({args.duration}s) -> {args.out}")
+
+
 def main():
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -169,6 +180,12 @@ def main():
     p.add_argument("--prompt", required=True)
     p.add_argument("--duration", type=float, required=True, help="New total length (s)")
     p.set_defaults(fn=cmd_extend)
+
+    p = sub.add_parser("song")
+    add_common(p)
+    p.add_argument("--prompt", required=True, help="Full-song description incl. structure/BPM/key")
+    p.add_argument("--duration", type=float, default=180, help="Seconds (default 180 = 3 min; max ~380)")
+    p.set_defaults(fn=cmd_song)
 
     args = ap.parse_args()
     args.fn(args)

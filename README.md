@@ -8,6 +8,10 @@ End-to-end pipeline: your WAV library → fine-tuned audio model → finished, s
 
 **Why this model:** open weights, designed for exactly this use case (samples and sound design, not full songs), officially supports fine-tuning on custom data, and the Stability Community License permits commercial use free of charge while your annual revenue is under $1M (above that you need an [enterprise license](https://stability.ai/license)).
 
+## Full songs (2-4 min)
+
+Beyond samples/loops, the toolkit can make complete 2-4 minute tracks - see **FULL_SONGS.md**: instrumental songs via Stable Audio 3 (`22_sa3_workflow.py song`, works with your beat LoRA), or full songs **with vocals from your lyrics** via HeartMuLa (`25_song_generate.py`, Apache-2.0, no revenue cap).
+
 ## SOTA status (audited June 2026)
 
 | Stage | Current best | In toolkit |
