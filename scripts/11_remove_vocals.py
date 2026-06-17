@@ -52,13 +52,23 @@ def gpu_status():
     return (torch_cuda or ort_cuda), " | ".join(bits)
 
 
-def collect(in_path, out_root, ext, overwrite):
+def dest_for(f, in_path, out_root, ext, mirror):
+    """Return (instrumental_dest, vocals_dest), mirroring subfolders if requested."""
+    if mirror and in_path.is_dir():
+        rel = f.relative_to(in_path).parent
+        d = out_root / rel
+    else:
+        d = out_root
+    return (d / f"{f.stem}_instrumental{ext}", d / f"{f.stem}_vocals{ext}")
+
+
+def collect(in_path, out_root, ext, overwrite, mirror):
     files = ([in_path] if in_path.is_file()
              else sorted(p for p in in_path.rglob("*") if p.suffix.lower() in AUDIO_EXTS))
     if not files:
         sys.exit("No audio files found.")
     todo = [f for f in files
-            if overwrite or not (out_root / f"{f.stem}_instrumental{ext}").exists()]
+            if overwrite or not dest_for(f, in_path, out_root, ext, mirror)[0].exists()]
     print(f"{len(files)} file(s) found, {len(todo)} to process.")
     return todo
 
@@ -83,6 +93,8 @@ def run_roformer(args, todo, out_root, ext):
                 print(f"  FAILED: {e}")
                 failed.append(str(f))
                 continue
+            inst_dest, vox_dest = dest_for(f, Path(args.input), out_root, ext, args.mirror)
+            inst_dest.parent.mkdir(parents=True, exist_ok=True)
             got = False
             for o in outputs:
                 op = Path(tmp) / Path(o).name
@@ -90,10 +102,10 @@ def run_roformer(args, todo, out_root, ext):
                     op = Path(o)
                 low = op.name.lower()
                 if "instrumental" in low:
-                    shutil.move(str(op), str(out_root / f"{f.stem}_instrumental{ext}"))
+                    shutil.move(str(op), str(inst_dest))
                     got = True
                 elif "vocal" in low and args.keep_vocals:
-                    shutil.move(str(op), str(out_root / f"{f.stem}_vocals{ext}"))
+                    shutil.move(str(op), str(vox_dest))
             if not got:
                 failed.append(str(f))
     return failed
@@ -121,13 +133,15 @@ def run_demucs(args, todo, out_root, ext):
             stem_dir = Path(tmp) / model_name / f.stem
             no_vox = stem_dir / f"no_vocals{ext}"
             vox = stem_dir / f"vocals{ext}"
+            inst_dest, vox_dest = dest_for(f, Path(args.input), out_root, ext, args.mirror)
+            inst_dest.parent.mkdir(parents=True, exist_ok=True)
             if no_vox.exists():
-                shutil.move(str(no_vox), str(out_root / f"{f.stem}_instrumental{ext}"))
+                shutil.move(str(no_vox), str(inst_dest))
             else:
                 failed.append(str(f))
                 continue
             if args.keep_vocals and vox.exists():
-                shutil.move(str(vox), str(out_root / f"{f.stem}_vocals{ext}"))
+                shutil.move(str(vox), str(vox_dest))
             shutil.rmtree(stem_dir, ignore_errors=True)
     return failed
 
@@ -146,6 +160,9 @@ def main():
     ap.add_argument("--overwrite", action="store_true")
     ap.add_argument("--require-gpu", action="store_true",
                     help="Abort instead of running on CPU (avoids accidental multi-day CPU runs)")
+    ap.add_argument("--mirror", action="store_true",
+                    help="Recreate input subfolder structure in output (prevents same-named "
+                         "files in different folders from colliding; recommended for sorted libraries)")
     args = ap.parse_args()
 
     in_path, out_root = Path(args.input), Path(args.output)
@@ -157,7 +174,7 @@ def main():
         sys.exit("No GPU detected and --require-gpu set. Install GPU build:\n"
                  "  pip install \"audio-separator[gpu]\"\n"
                  "  (and a CUDA-enabled torch: pytorch.org/get-started)")
-    todo = collect(in_path, out_root, ext, args.overwrite)
+    todo = collect(in_path, out_root, ext, args.overwrite, args.mirror)
     if not todo:
         return
     failed = (run_roformer if args.engine == "roformer" else run_demucs)(args, todo, out_root, ext)
