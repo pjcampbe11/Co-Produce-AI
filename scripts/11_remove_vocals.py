@@ -28,6 +28,30 @@ AUDIO_EXTS = {".mp3", ".wav", ".flac", ".m4a", ".ogg", ".aif", ".aiff"}
 ROFORMER_MODEL = "model_bs_roformer_ep_317_sdr_12.9755.ckpt"
 
 
+def gpu_status():
+    """Return (on_gpu: bool, human_readable: str)."""
+    bits = []
+    torch_cuda = False
+    try:
+        import torch
+        torch_cuda = torch.cuda.is_available()
+        if torch_cuda:
+            bits.append(f"torch CUDA: {torch.cuda.get_device_name(0)}")
+        else:
+            bits.append("torch CUDA: NOT available")
+    except Exception as e:
+        bits.append(f"torch: {e}")
+    ort_cuda = False
+    try:
+        import onnxruntime as ort
+        provs = ort.get_available_providers()
+        ort_cuda = "CUDAExecutionProvider" in provs
+        bits.append("onnxruntime: " + ("CUDA" if ort_cuda else "CPU-only " + str(provs)))
+    except Exception:
+        bits.append("onnxruntime: not installed (roformer uses torch)")
+    return (torch_cuda or ort_cuda), " | ".join(bits)
+
+
 def collect(in_path, out_root, ext, overwrite):
     files = ([in_path] if in_path.is_file()
              else sorted(p for p in in_path.rglob("*") if p.suffix.lower() in AUDIO_EXTS))
@@ -120,11 +144,19 @@ def main():
     ap.add_argument("--mp3", action="store_true", help="Output MP3 320k instead of WAV")
     ap.add_argument("--jobs", type=int, default=1, help="demucs CPU parallel jobs")
     ap.add_argument("--overwrite", action="store_true")
+    ap.add_argument("--require-gpu", action="store_true",
+                    help="Abort instead of running on CPU (avoids accidental multi-day CPU runs)")
     args = ap.parse_args()
 
     in_path, out_root = Path(args.input), Path(args.output)
     out_root.mkdir(parents=True, exist_ok=True)
     ext = ".mp3" if args.mp3 else ".wav"
+    on_gpu, status = gpu_status()
+    print(f"Acceleration: {'GPU' if on_gpu else 'CPU (SLOW)'}  [{status}]")
+    if args.require_gpu and not on_gpu:
+        sys.exit("No GPU detected and --require-gpu set. Install GPU build:\n"
+                 "  pip install \"audio-separator[gpu]\"\n"
+                 "  (and a CUDA-enabled torch: pytorch.org/get-started)")
     todo = collect(in_path, out_root, ext, args.overwrite)
     if not todo:
         return
