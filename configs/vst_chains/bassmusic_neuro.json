@@ -1,0 +1,10 @@
+{
+    "_name": "Bass Music Mangle - dubstep/dnb character (great into 16 destroy-heal)",
+    "_use": "python scripts/09_vst_chain.py --input processed --output processed_vst --chain configs/vst_chains/bassmusic_neuro.json",
+    "chain": [
+        {"vst3": "C:/Program Files/Common Files/VST3/Thermal.vst3", "_role": "multiband distortion - the neuro/wobble grit"},
+        {"vst3": "C:/Program Files/Common Files/VST3/Portal.vst3", "_role": "granular texture/movement (optional - set mix low)"},
+        {"vst3": "C:/Program Files/Common Files/VST3/FabFilter/FabFilter Pro-Q 3.vst3", "_role": "carve resonances after distortion"},
+        {"vst3": "C:/Program Files/Common Files/VST3/FabFilter/FabFilter Pro-L 2.vst3", "_role": "ceiling"}
+    ]
+}

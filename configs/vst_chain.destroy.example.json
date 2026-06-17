@@ -1,0 +1,11 @@
+{
+    "chain": [
+        {"builtin": "MP3Compressor", "params": {"vbr_quality": 9}},
+        {"builtin": "Bitcrush", "params": {"bit_depth": 6}},
+        {"builtin": "Distortion", "params": {"drive_db": 14}},
+        {"builtin": "Chorus", "params": {"rate_hz": 0.4, "depth": 0.6, "mix": 0.4}},
+        {"builtin": "LowpassFilter", "params": {"cutoff_frequency_hz": 6500}},
+        {"builtin": "Limiter", "params": {"threshold_db": -1.0}}
+    ],
+    "_comment": "Deliberately extreme. Swap in your own destructive VST3s (broken tape, vinyl stop, codec abuse) - then 16_destroy_heal.py pulls it back toward music."
+}

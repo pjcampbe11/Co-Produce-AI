@@ -1,0 +1,9 @@
+{
+    "chain": [
+        {"builtin": "Distortion", "params": {"drive_db": 6}},
+        {"builtin": "LowpassFilter", "params": {"cutoff_frequency_hz": 12000}},
+        {"builtin": "Compressor", "params": {"threshold_db": -18, "ratio": 3, "attack_ms": 5, "release_ms": 120}},
+        {"builtin": "Limiter", "params": {"threshold_db": -1.0}}
+    ],
+    "_comment": "Replace builtins with your real plugins: {\"vst3\": \"C:/Program Files/Common Files/VST3/YourPlugin.vst3\", \"params\": {...}} - use --list-params to discover parameter names, --edit N to dial in via the plugin GUI."
+}

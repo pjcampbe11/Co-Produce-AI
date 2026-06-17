@@ -1,0 +1,14 @@
+{
+    "dataset_type": "audio_dir",
+    "datasets": [
+        {
+            "id": "hiphop_library",
+            "path": "/workspace/dataset/",
+            "custom_metadata_module": "/workspace/toolkit/scripts/custom_metadata.py"
+        }
+    ],
+    "random_crop": true,
+    "volume_norm": true,
+    "volume_norm_param": [-16, 2],
+    "strip_silence": true
+}
