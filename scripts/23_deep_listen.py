@@ -349,7 +349,8 @@ def analyze(path, args, out_dir, rel=None):
     if rel is not None and rel.parent != Path("."):
         out_dir = out_dir / rel.parent
     json_path = out_dir / f"{path.stem}.analysis.json"
-    if args.resume and json_path.exists():
+    resume_target = (out_dir / f"{path.stem}.caption.json") if getattr(args, "for_captions", False) else json_path
+    if args.resume and resume_target.exists():
         return "skipped"
     try:
         info = sf.info(str(path))
@@ -382,6 +383,20 @@ def analyze(path, args, out_dir, rel=None):
             rep["layers"]["vibe"] = f"FAILED: {e}"
     rep["summary"] = summarize(rep)
     out_dir.mkdir(parents=True, exist_ok=True)
+    if getattr(args, "for_captions", False):
+        # slim report: only the fields 26_build_captions.py needs (no bulky
+        # technical/spectral/timeline). Much smaller; faster to write.
+        slim = {
+            "file": rep["file"],
+            "bpm": rep.get("musical", {}).get("bpm"),
+            "key": rep.get("musical", {}).get("key"),
+            "kind": rep.get("musical", {}).get("kind") or rep.get("kind"),
+            "sound_events": {"clip_level": (rep.get("sound_events", {}) or {}).get("clip_level", [])},
+            "vibe": rep.get("vibe", {}),
+        }
+        (out_dir / f"{path.stem}.caption.json").write_text(json.dumps(slim, indent=2), encoding="utf-8")
+        print(f"{path.name}: {rep['summary']}")
+        return "ok"
     json_path.write_text(json.dumps(rep, indent=2), encoding="utf-8")
     json_path.with_suffix("").with_suffix(".analysis.md").write_text(to_markdown(rep), encoding="utf-8")
     print(f"{path.name}: {rep['summary']}")
@@ -396,6 +411,10 @@ def main():
     ap.add_argument("--no-vibe", action="store_true", help="Skip CLAP mood/genre layer")
     ap.add_argument("--resume", action="store_true",
                     help="Skip tracks that already have a report (safe re-run)")
+    ap.add_argument("--for-captions", action="store_true",
+                    help="Output a slim <stem>.caption.json with ONLY the fields "
+                         "26_build_captions.py needs (bpm/key/kind/sound events/vibe). "
+                         "Skips the heavy technical/spectral/timeline + .md.")
     args = ap.parse_args()
     p = Path(args.input)
     files = [p] if p.is_file() else sorted(x for x in p.rglob("*") if x.suffix.lower() in AUDIO_EXTS)

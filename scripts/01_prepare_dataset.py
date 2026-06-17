@@ -120,14 +120,20 @@ def process_file(wav_path, input_root, output_root, max_seconds, bpm_min=60, bpm
     kind = "oneshot" if dur <= ONESHOT_MAX_SECONDS else "loop"
     bpm = estimate_bpm(mono, TARGET_SR, bpm_min, bpm_max) if kind == "loop" else None
     key, mode = estimate_key(mono, TARGET_SR) if kind == "loop" else (None, None)
-    tags, extra = folder_tags(wav_path, input_root)
-    ai_sidecar = wav_path.with_suffix(wav_path.suffix + ".tags.json")
-    if ai_sidecar.exists():
-        try:
-            extra = extra + json.loads(ai_sidecar.read_text(encoding="utf-8")).get("tags", [])
-        except Exception:
-            pass
-    prompt = build_prompt(tags, extra, kind, bpm, key, mode)
+    # 26_build_captions.py writes a canonical caption next to the source audio;
+    # if present, use it verbatim (it already fused the full Deep Listen analysis).
+    caption_file = wav_path.with_suffix(wav_path.suffix + ".caption.txt")
+    if caption_file.exists():
+        prompt = caption_file.read_text(encoding="utf-8").strip()
+    else:
+        tags, extra = folder_tags(wav_path, input_root)
+        ai_sidecar = wav_path.with_suffix(wav_path.suffix + ".tags.json")
+        if ai_sidecar.exists():
+            try:
+                extra = extra + json.loads(ai_sidecar.read_text(encoding="utf-8")).get("tags", [])
+            except Exception:
+                pass
+        prompt = build_prompt(tags, extra, kind, bpm, key, mode)
 
     rel = wav_path.relative_to(input_root)
     out_dir = output_root / rel.parent
