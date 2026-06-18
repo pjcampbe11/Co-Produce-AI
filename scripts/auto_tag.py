@@ -36,6 +36,10 @@ filenames - recommended layout):
     python auto_tag.py --full-root F:/STEMS/full --vocals-root F:/STEMS/vocals \
         --beat-root F:/STEMS/beat --resume
 """
+import os as _os
+_os.environ.setdefault("USE_TF", "0")          # keep transformers off TensorFlow
+_os.environ.setdefault("USE_TORCH", "1")
+_os.environ.setdefault("TRANSFORMERS_NO_ADVISORY_WARNINGS", "1")
 import argparse
 import json
 import random

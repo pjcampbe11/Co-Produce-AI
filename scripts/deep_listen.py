@@ -27,6 +27,10 @@ Usage:
 Optional: --no-events / --no-vibe to skip model layers; --segment-stems
 (requires audio-separator) analyzes vocals/drums/bass/other separately.
 """
+import os as _os
+_os.environ.setdefault("USE_TF", "0")          # keep transformers off TensorFlow
+_os.environ.setdefault("USE_TORCH", "1")
+_os.environ.setdefault("TRANSFORMERS_NO_ADVISORY_WARNINGS", "1")
 import argparse
 import json
 import os

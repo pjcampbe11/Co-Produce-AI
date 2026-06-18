@@ -3,6 +3,10 @@ sat_common.py
 Shared model-inference helpers for the creative-technique scripts (12-19).
 Requires stable-audio-tools + a GPU for anything that generates audio.
 """
+import os as _os
+_os.environ.setdefault("USE_TF", "0")          # keep transformers off TensorFlow
+_os.environ.setdefault("USE_TORCH", "1")
+_os.environ.setdefault("TRANSFORMERS_NO_ADVISORY_WARNINGS", "1")
 import json
 from pathlib import Path
 
