@@ -331,34 +331,64 @@ def build_ui():
                 return "\u2705 Saved."
             save.click(_save, [py, sd], saved)
 
-        for label, script, fields in TOOLS:
-            with gr.Tab(label):
-                gr.Markdown(f"#### {label}\n<span style='color:#9FB3C8'>Runs <code>{script}</code>. "
-                            "Fill what you need, then Run \u2014 the log streams on the right.</span>")
-                with gr.Row():
-                    with gr.Column(scale=1):
-                        comps = []
-                        for f in fields:
-                            k = f["kind"]
-                            if k == "bool":
-                                comps.append(gr.Checkbox(value=bool(f["default"]), label=f["label"]))
-                            elif k in ("choice", "positional") and f["choices"]:
-                                comps.append(gr.Dropdown(choices=f["choices"], value=f["default"],
-                                                         label=f["label"], allow_custom_value=(k == "positional")))
-                            elif k == "num":
-                                comps.append(gr.Number(value=f["default"], label=f["label"]))
-                            else:
-                                comps.append(gr.Textbox(value=f["default"] or "", label=f["label"], info=f["info"]))
-                        run = gr.Button(f"\u25B6  Run {label}", variant="primary")
-                    with gr.Column(scale=1):
-                        out = gr.Textbox(label="Live log", lines=24, max_lines=24,
-                                         autoscroll=True, elem_classes=["logbox"])
-                run.click(lambda *vals, _f=fields, _s=script: (yield from run_tool(_f, _s, *vals)),
-                          inputs=comps, outputs=out)
+        def render_tool(label, script, fields):
+            gr.Markdown(f"#### {label}\n<span style='color:#9FB3C8'>Runs <code>{script}</code>. "
+                        "Fill what you need, then Run \u2014 the log streams on the right.</span>")
+            with gr.Row():
+                with gr.Column(scale=1):
+                    comps = []
+                    for f in fields:
+                        k = f["kind"]
+                        if k == "bool":
+                            comps.append(gr.Checkbox(value=bool(f["default"]), label=f["label"]))
+                        elif k in ("choice", "positional") and f["choices"]:
+                            comps.append(gr.Dropdown(choices=f["choices"], value=f["default"],
+                                                     label=f["label"], allow_custom_value=(k == "positional")))
+                        elif k == "num":
+                            comps.append(gr.Number(value=f["default"], label=f["label"]))
+                        else:
+                            comps.append(gr.Textbox(value=f["default"] or "", label=f["label"], info=f["info"]))
+                    run = gr.Button(f"\u25B6  Run {label}", variant="primary")
+                with gr.Column(scale=1):
+                    out = gr.Textbox(label="Live log", lines=24, max_lines=24,
+                                     autoscroll=True, elem_classes=["logbox"])
+            run.click(lambda *vals, _f=fields, _s=script: (yield from run_tool(_f, _s, *vals)),
+                      inputs=comps, outputs=out)
+
+        # group tools into sections (by script name); leftovers -> "More"
+        SECTIONS = [
+            ("\U0001F4E5 Prep & Analyze", ["organize_soundbank.py", "remove_vocals.py", "deep_listen.py",
+                                           "auto_tag.py", "genius_lookup.py", "build_captions.py",
+                                           "prepare_dataset.py", "validate_dataset.py"]),
+            ("\U0001F9E0 Train & Generate", ["sa3_workflow.py", "generate.py", "audio2audio.py", "song_generate.py"]),
+            ("\U0001F941 Beats & Sound", ["beat_builder.py", "vst_instrument.py", "vst_chain.py"]),
+            ("\U0001F501 Remix", ["remix.py"]),
+            ("\u270D\uFE0F Lyrics", ["lyric_analyze.py", "lyric_generate.py", "lyric_to_beat.py", "vocal_guide.py"]),
+            ("\U0001F4E6 Finish", ["postprocess.py", "build_pack.py", "provenance.py"]),
+            ("\U0001F50C Plugins", ["plugin_scan.py"]),
+        ]
+        by_script = {s: (l, s, f) for (l, s, f) in TOOLS}
+        placed = set()
+        for sec_label, scripts in SECTIONS:
+            with gr.Tab(sec_label):
+                with gr.Tabs():
+                    for sc in scripts:
+                        if sc in by_script:
+                            l, s, f = by_script[sc]
+                            placed.add(sc)
+                            with gr.Tab(l):
+                                render_tool(l, s, f)
+        leftover = [t for t in TOOLS if t[1] not in placed]
+        if leftover:
+            with gr.Tab("\u2795 More"):
+                with gr.Tabs():
+                    for l, s, f in leftover:
+                        with gr.Tab(l):
+                            render_tool(l, s, f)
 
 
-        with gr.Tab("\U0001F50C Plugins"):
-            gr.Markdown("#### Plugin browser\nRun **Scan plugins** first, then pick one to copy its path into vst_chain / vst_instrument.")
+        with gr.Tab("\U0001F50C Plugin browser"):
+            gr.Markdown("#### Plugin browser\nRun **Plugins → Scan plugins** first, then pick one to copy its path into vst_chain / vst_instrument.")
             import json as _json
             cat_path = ROOT / "plugins_catalog.json"
             def _load_cat():
@@ -396,34 +426,4 @@ def build_ui():
                 rgenre = gr.Dropdown(["hiphop", "rockmetal", "dubstep", "dnb"], value="dnb", label="Genre")
                 rmode = gr.Dropdown(["full", "mashup"], value="full", label="Mode")
                 rmodel = gr.Textbox("stabilityai/stable-audio-open-1.0", label="Model (HF id or ckpt path)")
-            rout = gr.Textbox(str(ROOT / "remixes"), label="Output folder")
-            rbtn = gr.Button("\U0001F501  Remix selected", variant="primary")
-            rlog = gr.Textbox(label="Remix log", lines=12, elem_classes=["logbox"])
-            def _remix(src, genre, mode, model, outd):
-                if not src:
-                    yield "Pick a file in the list above first."
-                    return
-                fields = [
-                    {"flag": "--input", "kind": "text"}, {"flag": "--genre", "kind": "text"},
-                    {"flag": "--mode", "kind": "text"}, {"flag": "--out", "kind": "text"},
-                ]
-                vals = [src, genre, mode, outd]
-                mid = str(model).strip()
-                if mid.lower().endswith(".ckpt"):
-                    fields += [{"flag": "--ckpt", "kind": "text"}]; vals += [mid]
-                else:
-                    fields += [{"flag": "--pretrained", "kind": "text"}]; vals += [mid]
-                yield from run_tool(fields, "remix.py", *vals)
-            rbtn.click(_remix, [listing, rgenre, rmode, rmodel, rout], rlog)
-    return app
-
-
-if __name__ == "__main__":
-    ui = build_ui().queue(default_concurrency_limit=4)
-    # A VPN/proxy (e.g. AirVPN) can make gradio's localhost check fail. Try a
-    # normal local launch first; if that errors, fall back to a share link.
-    try:
-        ui.launch(server_name="127.0.0.1", server_port=7860, inbrowser=True)
-    except Exception as e:
-        print(f"Local launch failed ({e}); retrying with a public share link...")
-        ui.launch(share=True, inbrowser=True)
+            rout = 
