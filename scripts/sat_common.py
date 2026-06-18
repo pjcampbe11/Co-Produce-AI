@@ -38,10 +38,20 @@ def load_model(model_config=None, ckpt=None, pretrained=None, device=None):
 
 
 def load_audio_file(path, target_sr, device):
-    """Load any audio file -> normalized stereo tensor on device."""
+    """Load any audio file -> normalized stereo tensor on device.
+    Strips stray quotes/whitespace from the path (shell-quoting safety) and
+    falls back to librosa (ffmpeg/audioread) when torchaudio/libsndfile can't
+    decode the format (e.g. some MP3s)."""
     import torch
     import torchaudio
-    audio, sr = torchaudio.load(str(path))
+    p = str(path).strip().strip('"').strip("'").strip()
+    try:
+        audio, sr = torchaudio.load(p)
+    except Exception:
+        import librosa
+        import numpy as np
+        y, sr = librosa.load(p, sr=None, mono=False)
+        audio = torch.from_numpy(np.atleast_2d(y).astype("float32"))
     if sr != target_sr:
         audio = torchaudio.functional.resample(audio, sr, target_sr)
     if audio.shape[0] == 1:
