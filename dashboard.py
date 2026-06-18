@@ -155,6 +155,25 @@ TOOLS = [
         F("--melodic", "Melodic loops folder", "dir"),
         F("--out", "Output", "dir"),
     ]),
+    ("\U0001F4DD Lyric analyze", "lyric_analyze.py", [
+        F("--input", "Lyrics folder (.txt)", "text", info="F:/RAP_ARCHIVES/lyrics"),
+        F("--out", "Output model dir", "text", "lyric_model"),
+    ]),
+    ("\u270D\uFE0F Lyric generate (Ollama)", "lyric_generate.py", [
+        F("--model-dir", "Style model dir", "text", "lyric_model"),
+        F("--mode", "Mode", "choice", "verse", ["verse", "hook"]),
+        F("--mood", "Mood (blank = your dominant)", "text"),
+        F("--theme", "Theme / about", "text"),
+        F("--bars", "Bars", "num", 16),
+        F("--variations", "Variations", "num", 1),
+        F("--model", "Ollama model", "text", "llama3.1:8b"),
+        F("--out", "Output folder", "text", "verses"),
+    ]),
+    ("\U0001F39A\uFE0F Lyric \u2192 beat brief", "lyric_to_beat.py", [
+        F("--lyrics", "Lyric .txt file", "text"),
+        F("--genre", "Genre", "choice", "auto", ["auto", "hiphop", "trap", "dnb", "dubstep"]),
+        F("--out", "Output folder", "text", "beat_brief"),
+    ]),
     ("\U0001F501 Remix (AI)", "remix.py", [
         F("--input", "Song/beat to remix", "text"),
         F("--genre", "Target genre", "choice", "dnb", ["hiphop", "rockmetal", "dubstep", "dnb"]),
