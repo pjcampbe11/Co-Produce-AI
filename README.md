@@ -1,4 +1,4 @@
-# Hip-Hop Sample Pack Toolkit
+# Beat Toolkit
 
 End-to-end pipeline: your WAV library → fine-tuned audio model → finished, sellable sample packs (one-shots, drum loops/breaks, melodic loops, stems).
 
