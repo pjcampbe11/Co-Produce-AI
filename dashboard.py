@@ -213,25 +213,82 @@ def run_tool(spec_fields, script, *values):
     yield log[-12000:] + f"\n\n=== exit code {proc.returncode} ==="
 
 
+THEME = gr.themes.Base(
+    primary_hue=gr.themes.colors.orange,
+    secondary_hue=gr.themes.colors.blue,
+    neutral_hue=gr.themes.colors.slate,
+    font=[gr.themes.GoogleFont("Inter"), "system-ui", "sans-serif"],
+    font_mono=[gr.themes.GoogleFont("JetBrains Mono"), "monospace"],
+).set(
+    body_background_fill="#0B162A",
+    body_background_fill_dark="#0B162A",
+    body_text_color="#EAF0F7",
+    body_text_color_subdued="#9FB3C8",
+    block_background_fill="#0F2038",
+    block_border_color="#1D3357",
+    block_border_width="1px",
+    block_radius="14px",
+    block_label_text_color="#FF8A3D",
+    block_title_text_color="#FF8A3D",
+    input_background_fill="#13243F",
+    input_border_color="#26405F",
+    input_border_color_focus="#C83803",
+    button_primary_background_fill="#C83803",
+    button_primary_background_fill_hover="#E2540F",
+    button_primary_text_color="#FFFFFF",
+    button_secondary_background_fill="#1D3357",
+    button_secondary_text_color="#EAF0F7",
+    slider_color="#C83803",
+)
+
+CSS = """
+.gradio-container {max-width:1280px !important; margin:auto;}
+#hdr {background:linear-gradient(120deg,#0B162A 0%,#13294B 100%);
+      border:1px solid #1D3357; border-radius:16px; padding:20px 26px; margin-bottom:14px;
+      border-left:6px solid #C83803;}
+#hdr h1 {margin:0; font-size:26px; font-weight:800; letter-spacing:.3px; color:#FFFFFF;}
+#hdr .accent {color:#FF8A3D;}
+#hdr p {margin:6px 0 0; color:#9FB3C8; font-size:13px;}
+.tabitem {padding-top:8px;}
+button.primary, .primary {font-weight:700 !important; letter-spacing:.2px;}
+footer {display:none !important;}
+.logbox textarea {background:#06101F !important; color:#7CF2B0 !important;
+      font-family:'JetBrains Mono',monospace !important; font-size:12.5px !important;
+      border-radius:10px !important;}
+label span {font-weight:600 !important;}
+.tab-nav button {font-weight:600 !important;}
+.tab-nav button.selected {color:#FF8A3D !important; border-bottom-color:#C83803 !important;}
+"""
+
+HEADER = """
+<div id="hdr">
+  <h1>\U0001F3B9 Beat Toolkit <span class="accent">/ Studio Dashboard</span></h1>
+  <p>Train your own hip-hop model and run the full pipeline \u2014 organize \u00B7 separate \u00B7 analyze \u00B7 tag \u00B7 caption \u00B7 prepare \u00B7 train \u00B7 generate \u00B7 process \u00B7 pack. Each tab runs a step and streams its log live.</p>
+</div>
+"""
+
+
 def build_ui():
-    with gr.Blocks(title="Hip-Hop Beat Toolkit") as app:
-        gr.Markdown("# 🎛️ Hip-Hop Beat Toolkit — Dashboard\nDrive the full pipeline. "
-                    "Each tab runs a step and streams its log. GPU steps run wherever this app runs.")
-        with gr.Tab("⚙️ Settings"):
+    with gr.Blocks(title="Beat Toolkit \u2014 Dashboard", theme=THEME, css=CSS) as app:
+        gr.HTML(HEADER)
+        with gr.Tab("\u2699\uFE0F  Settings"):
+            gr.Markdown("### Environment\nPoint the dashboard at your Python and scripts folder.")
             py = gr.Textbox(CONFIG["python"], label="Python executable")
             sd = gr.Textbox(CONFIG["scripts_dir"], label="Scripts folder")
-            save = gr.Button("Save settings")
+            save = gr.Button("Save settings", variant="primary")
             saved = gr.Markdown()
             def _save(p, s):
                 CONFIG["python"], CONFIG["scripts_dir"] = p, s
-                return "Saved."
+                return "\u2705 Saved."
             save.click(_save, [py, sd], saved)
 
         for label, script, fields in TOOLS:
             with gr.Tab(label):
-                comps = []
+                gr.Markdown(f"#### {label}\n<span style='color:#9FB3C8'>Runs <code>{script}</code>. "
+                            "Fill what you need, then Run \u2014 the log streams on the right.</span>")
                 with gr.Row():
-                    with gr.Column():
+                    with gr.Column(scale=1):
+                        comps = []
                         for f in fields:
                             k = f["kind"]
                             if k == "bool":
@@ -243,17 +300,19 @@ def build_ui():
                                 comps.append(gr.Number(value=f["default"], label=f["label"]))
                             else:
                                 comps.append(gr.Textbox(value=f["default"] or "", label=f["label"], info=f["info"]))
-                        run = gr.Button(f"Run {label}", variant="primary")
-                    with gr.Column():
-                        out = gr.Textbox(label="Live log", lines=22, max_lines=22, autoscroll=True)
+                        run = gr.Button(f"\u25B6  Run {label}", variant="primary")
+                    with gr.Column(scale=1):
+                        out = gr.Textbox(label="Live log", lines=24, max_lines=24,
+                                         autoscroll=True, elem_classes=["logbox"])
                 run.click(lambda *vals, _f=fields, _s=script: (yield from run_tool(_f, _s, *vals)),
                           inputs=comps, outputs=out)
 
-        with gr.Tab("🎧 Audition"):
-            gr.Markdown("Pick a folder, list audio, then click a file to play it.")
+        with gr.Tab("\U0001F3A7  Audition"):
+            gr.Markdown("#### Audition\nPick a folder, list audio, then choose a file to play it.")
             folder = gr.Textbox(label="Folder", value=str(ROOT))
-            listing = gr.Dropdown(label="Audio files", choices=[], interactive=True)
-            refresh = gr.Button("List audio in folder")
+            with gr.Row():
+                listing = gr.Dropdown(label="Audio files", choices=[], interactive=True, scale=3)
+                refresh = gr.Button("List audio", variant="primary", scale=1)
             player = gr.Audio(label="Preview")
             def _list(folder_path):
                 base = Path(folder_path)
