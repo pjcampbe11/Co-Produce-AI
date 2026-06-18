@@ -426,4 +426,32 @@ def build_ui():
                 rgenre = gr.Dropdown(["hiphop", "rockmetal", "dubstep", "dnb"], value="dnb", label="Genre")
                 rmode = gr.Dropdown(["full", "mashup"], value="full", label="Mode")
                 rmodel = gr.Textbox("stabilityai/stable-audio-open-1.0", label="Model (HF id or ckpt path)")
-            rout = 
+            rout = gr.Textbox(str(ROOT / "remixes"), label="Output folder")
+            rbtn = gr.Button("\U0001F501  Remix selected", variant="primary")
+            rlog = gr.Textbox(label="Remix log", lines=12, elem_classes=["logbox"])
+            def _remix(src, genre, mode, model, outd):
+                if not src:
+                    yield "Pick a file in the list above first."
+                    return
+                fields = [
+                    {"flag": "--input", "kind": "text"}, {"flag": "--genre", "kind": "text"},
+                    {"flag": "--mode", "kind": "text"}, {"flag": "--out", "kind": "text"},
+                ]
+                vals = [src, genre, mode, outd]
+                mid = str(model).strip()
+                if mid.lower().endswith(".ckpt"):
+                    fields += [{"flag": "--ckpt", "kind": "text"}]; vals += [mid]
+                else:
+                    fields += [{"flag": "--pretrained", "kind": "text"}]; vals += [mid]
+                yield from run_tool(fields, "remix.py", *vals)
+            rbtn.click(_remix, [listing, rgenre, rmode, rmodel, rout], rlog)
+    return app
+
+
+if __name__ == "__main__":
+    ui = build_ui().queue(default_concurrency_limit=4)
+    try:
+        ui.launch(server_name="127.0.0.1", server_port=7860, inbrowser=True)
+    except Exception as e:
+        print(f"Local launch failed ({e}); retrying with a public share link...")
+        ui.launch(share=True, inbrowser=True)
