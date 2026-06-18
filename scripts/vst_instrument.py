@@ -57,6 +57,8 @@ def main():
     ap.add_argument("--preset", help="Plugin preset file (.vstpreset) to load")
     ap.add_argument("--params", help='JSON of {param_name: value} to set')
     ap.add_argument("--edit", action="store_true", help="Open the plugin GUI to pick a sound, then render")
+    ap.add_argument("--chain", help="Optional effect-chain JSON (same format as vst_chain configs) "
+                    "to run on the rendered audio in the same step")
     ap.add_argument("--list-params", metavar="VST3", help="Print a plugin's parameter names and exit")
     args = ap.parse_args()
 
@@ -91,6 +93,25 @@ def main():
         sys.exit("No note events found in the MIDI file.")
     print(f"Rendering {len(messages)} MIDI events -> {duration:.1f}s @ {args.sample_rate} Hz")
     audio = inst(messages, duration=duration, sample_rate=args.sample_rate)  # (channels, samples)
+    if args.chain:
+        import json
+        import pedalboard
+        from pedalboard import Pedalboard, load_plugin
+        cfg = json.loads(Path(args.chain).read_text(encoding="utf-8"))
+        fx = []
+        for item in cfg.get("chain", []):
+            if "vst3" in item:
+                fp = load_plugin(item["vst3"])
+                if item.get("preset"):
+                    fp.load_preset(item["preset"])
+                for k, v in item.get("params", {}).items():
+                    setattr(fp, k, v)
+                fx.append(fp)
+            elif "builtin" in item:
+                fx.append(getattr(pedalboard, item["builtin"])(**item.get("params", {})))
+        if fx:
+            print(f"Applying {len(fx)}-stage effect chain from {args.chain}")
+            audio = Pedalboard(fx)(audio, args.sample_rate)
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     sf.write(args.out, audio.T, args.sample_rate, subtype="PCM_24")
     print(f"Wrote {args.out}")

@@ -155,6 +155,21 @@ TOOLS = [
         F("--melodic", "Melodic loops folder", "dir"),
         F("--out", "Output", "dir"),
     ]),
+    ("VST3 instrument (MIDI\u2192audio)", "vst_instrument.py", [
+        F("--vst3", "Instrument .vst3 path", "text", info="C:/Program Files/Common Files/VST3/Battery 4.vst3"),
+        F("--midi", "Input MIDI file", "text"),
+        F("--out", "Output WAV", "text"),
+        F("--chain", "Effect chain JSON (optional)", "text"),
+        F("--duration", "Seconds (blank = auto)", "num", None),
+    ]),
+    ("Vocal guide (ACE Studio)", "vocal_guide.py", [
+        F("--beat", "Beat audio (reads BPM/key)", "text"),
+        F("--bpm", "BPM (blank if --beat given)", "num", None),
+        F("--key", "Key e.g. F minor", "text"),
+        F("--lyrics", "Lyrics .txt", "text"),
+        F("--style", "Style", "choice", "rap", ["rap", "sung"]),
+        F("--out", "Output prefix", "text"),
+    ]),
     ("VST3 chain", "vst_chain.py", [
         F("--input", "Input folder", "dir"),
         F("--output", "Output folder", "dir"),
