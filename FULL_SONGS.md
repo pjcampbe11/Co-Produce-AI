@@ -34,6 +34,14 @@ python scripts/song_generate.py \
 - It shells out to heartlib's run_music_generation.py - if a flag name differs in
   your version, run `python examples/run_music_generation.py --help` and adjust.
 
+## C) Studio-grade vocals you control - ACE Studio (vocal_guide.py)
+You own ACE Studio + ACE Bridge. Highest quality/control for vocals: the toolkit
+prepares a flow/melody MIDI + lyrics in your beat's key/BPM, ACE sings/raps it,
+and ACE Bridge layers it over the beat in Ableton. See **ACE_STUDIO.md**.
+```
+python scripts/vocal_guide.py --beat MyBeat_instrumental.mp3 --lyrics verse.txt --style rap --out guide
+```
+
 ## Which to use
 - Need an instrumental beat/track to rap or sing over -> A (SA3), and you can
   steer it with your own fine-tuned LoRA so it sounds like your catalog.
