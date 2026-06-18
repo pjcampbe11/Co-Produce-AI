@@ -230,16 +230,29 @@ def build_ui():
                           inputs=comps, outputs=out)
 
         with gr.Tab("🎧 Audition"):
-            gr.Markdown("Browse a folder and play results.")
-            root_box = gr.Textbox(label="Folder to browse", value=str(ROOT))
-            explorer = gr.FileExplorer(root_dir=str(ROOT), glob="**/*.{wav,mp3,flac}", label="Files")
+            gr.Markdown("Pick a folder, list audio, then click a file to play it.")
+            folder = gr.Textbox(label="Folder", value=str(ROOT))
+            listing = gr.Dropdown(label="Audio files", choices=[], interactive=True)
+            refresh = gr.Button("List audio in folder")
             player = gr.Audio(label="Preview")
-            def _rebrowse(p):
-                return gr.FileExplorer(root_dir=p, glob="**/*.{wav,mp3,flac}")
-            root_box.submit(_rebrowse, root_box, explorer)
-            explorer.change(lambda f: f[0] if isinstance(f, list) and f else f, explorer, player)
+            def _list(folder_path):
+                base = Path(folder_path)
+                if not base.is_dir():
+                    return gr.Dropdown(choices=[])
+                files = [str(x) for x in sorted(base.rglob("*"))
+                         if x.suffix.lower() in (".wav", ".mp3", ".flac", ".aif", ".aiff", ".ogg", ".m4a")]
+                return gr.Dropdown(choices=files[:2000])
+            refresh.click(_list, folder, listing)
+            listing.change(lambda f: f, listing, player)
     return app
 
 
 if __name__ == "__main__":
-    build_ui().queue(default_concurrency_limit=4).launch()
+    ui = build_ui().queue(default_concurrency_limit=4)
+    # A VPN/proxy (e.g. AirVPN) can make gradio's localhost check fail. Try a
+    # normal local launch first; if that errors, fall back to a share link.
+    try:
+        ui.launch(server_name="127.0.0.1", server_port=7860, inbrowser=True)
+    except Exception as e:
+        print(f"Local launch failed ({e}); retrying with a public share link...")
+        ui.launch(share=True, inbrowser=True)
