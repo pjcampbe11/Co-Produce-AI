@@ -28,7 +28,7 @@ Prefer clicking to typing? `dashboard.py` is a local Gradio app with a tab for e
 | Vocal removal | BS/Mel-RoFormer (~12.9 dB vocals SDR vs ~9 htdemucs) | `remove_vocals.py --engine roformer` (default; demucs fallback) |
 | Beat tracking | beat_this (CPJKU) | `groove_dna.py --engine beat_this` (librosa fallback) |
 | Audio-text embedding | LAION-CLAP (still standard for curation) | `curation_loop.py` |
-| VST hosting | pedalboard (still unchallenged) | `vst_chain.py` |
+| VST hosting | pedalboard (still unchallenged) | `vst_chain.py` (effects), `vst_instrument.py` (render MIDI through your synths/samplers) |
 
 **Which generation path?** Start with SA3 LoRA: hours and ~$5-15 of GPU instead of a $20-60 full fine-tune, stackable per-style adapters (one LoRA per subgenre - swap or even blend at runtime), and inpainting/extension unlock "fix bars 2-3" and "stretch this 4-bar loop to 8". Move to (or add) the SAO full fine-tune when LoRA stops capturing your sound. Both bases are Stability Community License (commercial OK under $1M revenue). SA3 quickstart:
 
