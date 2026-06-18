@@ -141,6 +141,8 @@ def main():
                     help="Min confidence for mood/instrument descriptors")
     ap.add_argument("--max-terms", type=int, default=14)
     ap.add_argument("--resume", action="store_true", help="Skip beats that already have .caption.txt")
+    ap.add_argument("--no-genius", action="store_true",
+                    help="Ignore <file>.genius.json (don't fold producer/era into captions)")
     ap.add_argument("--dry-run", action="store_true", help="Print captions, write nothing")
     args = ap.parse_args()
 
@@ -184,6 +186,23 @@ def main():
                 freeform = json.loads(tj.read_text(encoding="utf-8")).get("tags", [])
             except Exception:
                 pass
+        # Genius enrichment: producer signature + era decade (NOT song/artist names)
+        if not args.no_genius:
+            gj = b.with_suffix(b.suffix + ".genius.json")
+            if gj.exists():
+                try:
+                    g = json.loads(gj.read_text(encoding="utf-8"))
+                    if g.get("matched") and not g.get("low_confidence"):
+                        for prod in (g.get("producers") or [])[:2]:
+                            if prod:
+                                freeform.append(f"prod {prod}")
+                        rd = g.get("release_date") or ""
+                        ym = re.search(r"(19|20)\d{2}", rd)
+                        if ym:
+                            yr = int(ym.group(0))
+                            freeform.append(f"{(yr // 10) * 10}s")
+                except Exception:
+                    pass
         caption = build_caption(report, freeform, args)
         if args.dry_run:
             print(f"{b.name}: {caption}")
