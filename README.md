@@ -2,7 +2,7 @@
 
 End-to-end pipeline: your WAV library → fine-tuned audio model → finished, sellable sample packs (one-shots, drum loops/breaks, melodic loops, stems).
 
-> **Engine note:** despite the repo name, this toolkit's recommended generation engine is **Stable Audio 3** (LoRA fine-tuning) with **Stable Audio Open 1.0** as the full-fine-tune alternative — NOT Meta's MusicGen. Both are open-weight Stability AI models under the Stability AI Community License. The scripts are model-agnostic for everything except the generation/training steps, which target Stable Audio.
+> **Engine note:** the recommended generation engine is **Stable Audio 3** (LoRA fine-tuning), with **Stable Audio Open 1.0** as the full-fine-tune alternative — both open-weight Stability AI models under the Stability AI Community License. Full songs with vocals use HeartMuLa (Apache-2.0). The scripts are model-agnostic except the generation/training steps, which target Stable Audio.
 
 **Architecture:** fine-tune [Stable Audio Open 1.0](https://huggingface.co/stabilityai/stable-audio-open-1.0) (stereo, 44.1 kHz, up to ~47 s per generation) using Stability's [stable-audio-tools](https://github.com/Stability-AI/stable-audio-tools). Dataset prep, post-processing, and pack assembly run on any machine; training runs on a rented cloud GPU; generation runs on any ~8 GB+ NVIDIA GPU or cloud.
 
@@ -97,7 +97,7 @@ Rent one of: **A100 80GB** (fastest), **A6000 48GB** (best value), or **RTX 4090
 ```bash
 # upload from your machine
 scp -r dataset/ root@<pod-ip>:/workspace/dataset/
-scp -r hiphop-samplepack-toolkit/ root@<pod-ip>:/workspace/toolkit/
+scp -r Beat-Toolkit/ root@<pod-ip>:/workspace/toolkit/
 
 # on the pod
 bash /workspace/toolkit/cloud/runpod_setup.sh
