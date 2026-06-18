@@ -12,6 +12,10 @@ End-to-end pipeline: your WAV library → fine-tuned audio model → finished, s
 
 Beyond samples/loops, the toolkit can make complete 2-4 minute tracks - see **FULL_SONGS.md**: instrumental songs via Stable Audio 3 (`sa3_workflow.py song`, works with your beat LoRA), or full songs **with vocals from your lyrics** via HeartMuLa (`song_generate.py`, Apache-2.0, no revenue cap).
 
+## Dashboard (web UI)
+
+Prefer clicking to typing? `dashboard.py` is a local Gradio app with a tab for every pipeline stage (organize, vocal removal, deep listen, auto-tag, captions, prepare, validate, SA3 train/generate, beat builder, VST chains, pack builder, provenance, full songs) plus a live log stream and an audio auditioner. Run `run_dashboard.bat` (or `pip install gradio && python dashboard.py`) and open the printed URL. GPU steps run wherever you launch it — your local GPU, or run the dashboard on a cloud pod to drive its GPU.
+
 ## SOTA status (audited June 2026)
 
 | Stage | Current best | In toolkit |

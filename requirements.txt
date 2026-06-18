@@ -5,6 +5,9 @@
 # Windows note: install ffmpeg for MP3/M4A decode:  winget install ffmpeg
 # ============================================================
 
+# ---- Dashboard UI ----
+gradio>=4.44
+
 # ---- Core (always) ----
 numpy>=1.26
 librosa>=0.10.2
