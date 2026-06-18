@@ -66,3 +66,4 @@ huggingface_hub>=0.23      # model downloads / auth
 #   https://github.com/ideoforms/AbletonOSC
 # ============================================================
 #   heartlib (from source: github.com/HeartMuLa/heartlib) - 25 full songs with vocals (Apache-2.0)
+#   (lyric model) Ollama app from ollama.com + 'ollama pull llama3.1:8b'; requests (already listed)
