@@ -155,6 +155,21 @@ TOOLS = [
         F("--melodic", "Melodic loops folder", "dir"),
         F("--out", "Output", "dir"),
     ]),
+    ("\U0001F501 Remix (AI)", "remix.py", [
+        F("--input", "Song/beat to remix", "text"),
+        F("--genre", "Target genre", "choice", "dnb", ["hiphop", "rockmetal", "dubstep", "dnb"]),
+        F("--mode", "Mode", "choice", "full", ["full", "mashup"]),
+        F("--current", "(mashup) current genre", "text"),
+        F("--strength", "Strength 0-1 (blank=auto)", "num", None),
+        F("--variations", "Variations", "num", 3),
+        F("--pretrained", "HF model id (or use ckpt below)", "text", "stabilityai/stable-audio-open-1.0"),
+        F("--model-config", "model_config.json (your model)", "text"),
+        F("--ckpt", "your ckpt (optional)", "text"),
+        F("--out", "Output folder", "text"),
+    ]),
+    ("Scan plugins", "plugin_scan.py", [
+        F("--dirs", "Extra folder to scan (optional)", "text"),
+    ]),
     ("VST3 instrument (MIDI\u2192audio)", "vst_instrument.py", [
         F("--vst3", "Instrument .vst3 path", "text", info="C:/Program Files/Common Files/VST3/Battery 4.vst3"),
         F("--midi", "Input MIDI file", "text"),
@@ -322,8 +337,27 @@ def build_ui():
                 run.click(lambda *vals, _f=fields, _s=script: (yield from run_tool(_f, _s, *vals)),
                           inputs=comps, outputs=out)
 
+
+        with gr.Tab("\U0001F50C Plugins"):
+            gr.Markdown("#### Plugin browser\nRun **Scan plugins** first, then pick one to copy its path into vst_chain / vst_instrument.")
+            import json as _json
+            cat_path = ROOT / "plugins_catalog.json"
+            def _load_cat():
+                if cat_path.exists():
+                    try:
+                        d = _json.loads(cat_path.read_text(encoding="utf-8"))
+                        return gr.Dropdown(choices=[f"{c['name']}  [{c['format']}/{c['kind']}]  ::  {c['path']}" for c in d])
+                    except Exception:
+                        pass
+                return gr.Dropdown(choices=["(no catalog yet - run Scan plugins)"])
+            pick = gr.Dropdown(label="Installed plugins", choices=[], interactive=True)
+            reload_btn = gr.Button("Load / refresh catalog", variant="primary")
+            chosen_path = gr.Textbox(label="Selected plugin path (copy this)")
+            reload_btn.click(_load_cat, None, pick)
+            pick.change(lambda s: s.split("::")[-1].strip() if s and "::" in s else "", pick, chosen_path)
+
         with gr.Tab("\U0001F3A7  Audition"):
-            gr.Markdown("#### Audition\nPick a folder, list audio, then choose a file to play it.")
+            gr.Markdown("#### Audition + Remix\nList audio, click a file to play \u2014 then remix it into another genre.")
             folder = gr.Textbox(label="Folder", value=str(ROOT))
             with gr.Row():
                 listing = gr.Dropdown(label="Audio files", choices=[], interactive=True, scale=3)
@@ -338,6 +372,30 @@ def build_ui():
                 return gr.Dropdown(choices=files[:2000])
             refresh.click(_list, folder, listing)
             listing.change(lambda f: f, listing, player)
+            gr.Markdown("---\n##### \U0001F501 Remix the selected file")
+            with gr.Row():
+                rgenre = gr.Dropdown(["hiphop", "rockmetal", "dubstep", "dnb"], value="dnb", label="Genre")
+                rmode = gr.Dropdown(["full", "mashup"], value="full", label="Mode")
+                rmodel = gr.Textbox("stabilityai/stable-audio-open-1.0", label="Model (HF id or ckpt path)")
+            rout = gr.Textbox(str(ROOT / "remixes"), label="Output folder")
+            rbtn = gr.Button("\U0001F501  Remix selected", variant="primary")
+            rlog = gr.Textbox(label="Remix log", lines=12, elem_classes=["logbox"])
+            def _remix(src, genre, mode, model, outd):
+                if not src:
+                    yield "Pick a file in the list above first."
+                    return
+                fields = [
+                    {"flag": "--input", "kind": "text"}, {"flag": "--genre", "kind": "text"},
+                    {"flag": "--mode", "kind": "text"}, {"flag": "--out", "kind": "text"},
+                ]
+                vals = [src, genre, mode, outd]
+                mid = str(model).strip()
+                if mid.lower().endswith(".ckpt"):
+                    fields += [{"flag": "--ckpt", "kind": "text"}]; vals += [mid]
+                else:
+                    fields += [{"flag": "--pretrained", "kind": "text"}]; vals += [mid]
+                yield from run_tool(fields, "remix.py", *vals)
+            rbtn.click(_remix, [listing, rgenre, rmode, rmodel, rout], rlog)
     return app
 
 
