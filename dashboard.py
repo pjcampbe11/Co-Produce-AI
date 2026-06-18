@@ -22,6 +22,26 @@ from pathlib import Path
 
 import gradio as gr
 
+# --- Fix a known gradio_client bug on Python 3.9: schema fields that are bool
+# (e.g. additionalProperties: true) crash get_type with
+# "TypeError: argument of type 'bool' is not iterable". Guard both functions. ---
+try:
+    import gradio_client.utils as _gcu
+    _o1 = _gcu._json_schema_to_python_type
+    def _safe1(schema, defs=None):
+        if isinstance(schema, bool):
+            return "Any"
+        return _o1(schema, defs)
+    _gcu._json_schema_to_python_type = _safe1
+    _o2 = _gcu.get_type
+    def _safe2(schema):
+        if isinstance(schema, bool):
+            return "Any"
+        return _o2(schema)
+    _gcu.get_type = _safe2
+except Exception:
+    pass
+
 ROOT = Path(__file__).resolve().parent
 SCRIPTS = ROOT / "scripts"
 CONFIG = {"python": sys.executable, "scripts_dir": str(SCRIPTS)}
