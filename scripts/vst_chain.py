@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-09_vst_chain.py
+vst_chain.py
 Batch-process audio through YOUR VST3 plugins from Python - no DAW needed.
 Uses Spotify's pedalboard library, which hosts real VST3 (and AU) plugins.
 Typical use: run generated samples/beats through your character chain
@@ -25,8 +25,8 @@ Chain config (JSON), e.g. configs/vst_chain.example.json:
 
 Usage:
     pip install pedalboard
-    python 09_vst_chain.py --input processed --output processed_vst --chain configs/vst_chain.example.json
-    python 09_vst_chain.py --list-params "C:/.../MyPlugin.vst3"
+    python vst_chain.py --input processed --output processed_vst --chain configs/vst_chain.example.json
+    python vst_chain.py --list-params "C:/.../MyPlugin.vst3"
 """
 import argparse
 import json

@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 """
-20_ecosystem_pack.py  -  Ecosystem packs (everything inter-compatible)
+ecosystem_pack.py  -  Ecosystem packs (everything inter-compatible)
 Lock an entire pack series to one key + BPM so every loop in every volume
 combines with every other. Two subcommands:
 
 plan:   rewrite a base pack plan so all prompts carry the same key/BPM
-    python 20_ecosystem_pack.py plan --base prompts/pack_plan.example.json \
+    python ecosystem_pack.py plan --base prompts/pack_plan.example.json \
         --key "F minor" --bpm 90 --name "Crate Ecosystem Vol 2" \
         --out prompts/eco_fmin_90_v2.json
 
-verify: after 04_postprocess.py, check detected key/BPM in the sidecars against
+verify: after postprocess.py, check detected key/BPM in the sidecars against
         the lock and quarantine mismatches before packaging
-    python 20_ecosystem_pack.py verify --dir processed --key "F minor" --bpm 90 \
+    python ecosystem_pack.py verify --dir processed --key "F minor" --bpm 90 \
         --bpm-tolerance 3
 """
 import argparse

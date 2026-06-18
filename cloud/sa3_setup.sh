@@ -23,7 +23,7 @@ uv run hf auth login
 echo "=== LoRA training (from toolkit dataset) ==="
 cat << 'CMD'
 # 1. stage data (toolkit dataset -> SA3 format):
-uv run python /workspace/toolkit/scripts/22_sa3_workflow.py prepare \
+uv run python /workspace/toolkit/scripts/sa3_workflow.py prepare \
     --dataset /workspace/dataset --data-dir /workspace/sa3_data
 # 2. confirm caption format:  uv run python scripts/train_lora.py --help
 # 3. train (default recipe; ~6.5GB VRAM, or add --base_precision bf16 --adapter_type lora-xs for ~5.5GB):
@@ -31,7 +31,7 @@ uv run python scripts/train_lora.py --model medium-base \
     --data_dir /workspace/sa3_data --rank 16 --adapter_type dora-rows \
     --steps 1000 --exclude seconds_total
 # 4. generate with it:
-uv run python /workspace/toolkit/scripts/22_sa3_workflow.py plan \
+uv run python /workspace/toolkit/scripts/sa3_workflow.py plan \
     --model medium-base --lora lora_out/lora_step1000.safetensors \
     --plan /workspace/toolkit/prompts/pack_plan.example.json --out /workspace/generated
 CMD

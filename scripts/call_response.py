@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-19_call_response.py  -  AI session musician (call-and-response)
+call_response.py  -  AI session musician (call-and-response)
 Watches a folder. Every time a new WAV appears (export a clip from Live:
 right-click clip -> Export Audio, or freeze+flatten then drag to the folder),
 the model answers with N variations, written to a response folder you've added
 to Live's browser. Trade bars with a model trained on your own catalog.
 
 Usage:
-    python 19_call_response.py --model-config model_config.json --ckpt hiphop_v1.ckpt \
+    python call_response.py --model-config model_config.json --ckpt hiphop_v1.ckpt \
         --watch "C:/Users/you/Ableton/CallFolder" \
         --respond "C:/Users/you/Ableton/ResponseFolder" \
         --prompt "hip hop, melodic loops, soul keys, dusty response phrase" \

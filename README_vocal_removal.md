@@ -1,4 +1,4 @@
-# Vocal Removal - `scripts/11_remove_vocals.py`
+# Vocal Removal - `scripts/remove_vocals.py`
 
 One command, one job: remove vocals from a large batch of MP3/WAV files.
 
@@ -26,13 +26,13 @@ pip install demucs                   # optional fallback engine
 
 ```bash
 # whole folder (searched recursively), WAV instrumentals out (BS-RoFormer)
-python scripts/11_remove_vocals.py --input songs/ --output instrumentals/
+python scripts/remove_vocals.py --input songs/ --output instrumentals/
 
 # also keep the isolated vocals (acapellas)
-python scripts/11_remove_vocals.py --input songs/ --output out/ --keep-vocals
+python scripts/remove_vocals.py --input songs/ --output out/ --keep-vocals
 
 # demucs engine, MP3 320k out, 4 CPU jobs
-python scripts/11_remove_vocals.py --input songs/ --output out/ \
+python scripts/remove_vocals.py --input songs/ --output out/ \
     --engine demucs --model htdemucs_ft --mp3 --jobs 4
 ```
 

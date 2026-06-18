@@ -18,7 +18,7 @@ On home upstream that's the slow part. Budget for it; the GPU itself is cheap.
 ```bash
 cd /workspace
 pip install "audio-separator[gpu]"
-# grab the script (clone your repo, or just upload 11_remove_vocals.py)
+# grab the script (clone your repo, or just upload remove_vocals.py)
 git clone https://github.com/pjcampbe11/musicgen-sampling-toolkit.git toolkit  # private: use a token URL
 ```
 
@@ -47,7 +47,7 @@ yt-dlp -x --audio-format mp3 --download-archive done.txt \
 ## 4. Run it (GPU auto-used; verify)
 ```bash
 cd /workspace
-python toolkit/scripts/11_remove_vocals.py \
+python toolkit/scripts/remove_vocals.py \
   --input /workspace/mp3 --output /workspace/raw_beats \
   --mp3 --keep-vocals --require-gpu
 ```
@@ -75,5 +75,5 @@ Compare: the 2060 would tie up your machine for days.
 
 ## While you're paying for a 4090...
 Consider doing the GPU-heavy steps in the same session: auto-tagging
-(24_auto_tag.py --engine qwen3-omni) and even a LoRA train (TRAIN_BEATS.md)
+(auto_tag.py --engine qwen3-omni) and even a LoRA train (TRAIN_BEATS.md)
 run far faster here too. Batch them before you terminate.

@@ -15,7 +15,7 @@ So "cost per WAV" isn't really a thing - "cost per training run" is.
 
 ## Two training paths in the toolkit
 
-### A) Stable Audio 3 LoRA  (recommended - 22_sa3_workflow.py)
+### A) Stable Audio 3 LoRA  (recommended - sa3_workflow.py)
 A small adapter (~50-200 MB .safetensors) on top of SA3. Cheap, fast, stackable.
 
 | Spec | Value |
@@ -64,7 +64,7 @@ are accurate - label quality moves output quality more than file count.
 ## Per-run economics that actually matter
 
 - A full product line = a handful of LoRA runs (one per genre, plus curation
-  re-rolls via 12_curation_loop.py). At ~$1-2 each, your whole training spend
+  re-rolls via curation_loop.py). At ~$1-2 each, your whole training spend
   to launch is **under ~$20**, even with experimentation.
 - Generation (after training) is pennies per pack, or free on a local 8 GB+ GPU.
 - The expensive resource is YOUR time curating and QA-ing - not GPU.

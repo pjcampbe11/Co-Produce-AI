@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-11_remove_vocals.py
+remove_vocals.py
 One job: strip vocals from a large set of MP3/WAV files.
 
 Engines (June 2026):
@@ -13,8 +13,8 @@ Engines (June 2026):
 See README_vocal_removal.md for setup and details.
 
 Usage:
-    python 11_remove_vocals.py --input songs/ --output instrumentals/
-    python 11_remove_vocals.py --input songs/ --output out/ --engine demucs --keep-vocals
+    python remove_vocals.py --input songs/ --output instrumentals/
+    python remove_vocals.py --input songs/ --output out/ --engine demucs --keep-vocals
 """
 import argparse
 import shutil

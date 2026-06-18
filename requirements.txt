@@ -53,7 +53,7 @@ huggingface_hub>=0.23      # model downloads / auth
 #   git clone https://github.com/Stability-AI/stable-audio-tools
 #   pip install -e ./stable-audio-tools
 #
-# Stable Audio 3 LoRA path (22_sa3_workflow.py, recommended):
+# Stable Audio 3 LoRA path (sa3_workflow.py, recommended):
 #   git clone https://github.com/Stability-AI/stable-audio-3
 #   cd stable-audio-3 && uv sync --extra lora
 #   (+ flash-attn for Medium - see cloud/sa3_setup.sh)

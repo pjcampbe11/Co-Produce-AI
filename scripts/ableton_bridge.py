@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-10_ableton_bridge.py
-Push beat patterns from 08_beat_builder.py straight into a running Ableton Live
+ableton_bridge.py
+Push beat patterns from beat_builder.py straight into a running Ableton Live
 set over OSC - tempo set, MIDI clips created, ready to play from Live or Push.
 
 One-time setup (Live 11/12, any OS):
@@ -15,8 +15,8 @@ One-time setup (Live 11/12, any OS):
   4. Your Push plays/edits these clips natively once they exist in the set.
 
 Usage:
-    python 10_ableton_bridge.py --beat beats/boom_bap_92bpm_01 --track 0 --scene 0
-    python 10_ableton_bridge.py --beat beats/... --track 0 --scene 0 --fire
+    python ableton_bridge.py --beat beats/boom_bap_92bpm_01 --track 0 --scene 0
+    python ableton_bridge.py --beat beats/... --track 0 --scene 0 --fire
 """
 import argparse
 import json
@@ -26,7 +26,7 @@ from pathlib import Path
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--beat", required=True, help="Beat folder from 08_beat_builder.py")
+    ap.add_argument("--beat", required=True, help="Beat folder from beat_builder.py")
     ap.add_argument("--track", type=int, default=0, help="Live track index (0-based)")
     ap.add_argument("--scene", type=int, default=0, help="Live scene/clip-slot index (0-based)")
     ap.add_argument("--host", default="127.0.0.1")

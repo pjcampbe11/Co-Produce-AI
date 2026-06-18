@@ -7,7 +7,7 @@ two new lines. Everything in the main README applies; only differences are here.
 ## Model strategy: one LoRA per genre
 
 Do NOT mix genres into one fine-tune - sounds bleed and prompts get mushy.
-With Stable Audio 3 (see `22_sa3_workflow.py`), train a separate LoRA per line:
+With Stable Audio 3 (see `sa3_workflow.py`), train a separate LoRA per line:
 
 | LoRA | Trained on | Typical use |
 |---|---|---|
@@ -16,7 +16,7 @@ With Stable Audio 3 (see `22_sa3_workflow.py`), train a separate LoRA per line:
 | `bassmusic_v1.safetensors` | dubstep/dnb library | breaks, reese/wobble, risers |
 
 LoRAs are stackable at runtime - `metal LoRA 1.0 + bassmusic LoRA 0.4` for
-hybrid trap-metal/drumstep flavors is a product nobody else ships (17_ab_models
+hybrid trap-metal/drumstep flavors is a product nobody else ships (ab_models
 also works across LoRAs for "two-producer" packs).
 
 ## Library layout + label vocabulary (folder names ARE the prompts)
@@ -57,8 +57,8 @@ two-step, rolling, halftime, 140, 174, riser, impact, drop, foghorn, stab.
 | DnB | 170-176 (never folded to 87!) | `--bpm-min 100 --bpm-max 200` |
 | Dubstep | written 140, FEELS halftime 70 | `--bpm-min 100 --bpm-max 200`; label 140 |
 
-Use those flags on `01_prepare_dataset.py` and `04_postprocess.py` per library.
-`20_ecosystem_pack.py verify` already accepts half/double-time matches.
+Use those flags on `prepare_dataset.py` and `postprocess.py` per library.
+`ecosystem_pack.py verify` already accepts half/double-time matches.
 
 ## Beat builder styles (08) - new grids
 

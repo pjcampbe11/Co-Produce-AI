@@ -1,6 +1,6 @@
 {
     "_name": "Metal Tight Master - rock/metal character",
-    "_use": "python scripts/09_vst_chain.py --input processed --output processed_vst --chain configs/vst_chains/metal_master.json",
+    "_use": "python scripts/vst_chain.py --input processed --output processed_vst --chain configs/vst_chains/metal_master.json",
     "chain": [
         {"vst3": "C:/Program Files/Common Files/VST3/FabFilter/FabFilter Pro-Q 3.vst3", "_role": "tighten lows, presence boost"},
         {"vst3": "C:/Program Files/Common Files/VST3/iZotope/Trash.vst3", "_role": "controlled distortion/aggression"},

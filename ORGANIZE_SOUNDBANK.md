@@ -16,7 +16,7 @@ pip install laion-clap        :: only needed for --ai-tags
 ## Phase 1 - Dry run (30-60 min, touches nothing)
 
 ```bat
-python scripts\07_organize_soundbank.py --input "F:\Sound Bank" --output "F:\Sound Bank Organized" --dry-run
+python scripts\organize_soundbank.py --input "F:\Sound Bank" --output "F:\Sound Bank Organized" --dry-run
 ```
 Open `F:\Sound Bank Organized\review.csv` in Excel - sanity-check ~50 rows
 across categories. Low-confidence files are headed to `_review\`.
@@ -24,7 +24,7 @@ across categories. Low-confidence files are headed to `_review\`.
 ## Phase 2 - The real run
 
 ```bat
-python scripts\07_organize_soundbank.py --input "F:\Sound Bank" --output "F:\Sound Bank Organized" --resume
+python scripts\organize_soundbank.py --input "F:\Sound Bank" --output "F:\Sound Bank Organized" --resume
 ```
 - COPIES files (originals untouched). Needs free space roughly equal to the
   audio portion of the bank. Add `--move` only if disk is tight and you trust
@@ -38,11 +38,11 @@ python scripts\07_organize_soundbank.py --input "F:\Sound Bank" --output "F:\Sou
 ## Phase 3 - AI tagging (optional but recommended)
 
 ```bat
-python scripts\07_organize_soundbank.py --input "F:\Sound Bank" --output "F:\Sound Bank Organized" --resume --ai-tags
+python scripts\organize_soundbank.py --input "F:\Sound Bank" --output "F:\Sound Bank Organized" --resume --ai-tags
 ```
 CLAP zero-shot scores every organized file against a 36-term producer
 vocabulary (dusty vinyl, 1990s boom bap, reese bass, metal chugs, riser...)
-and writes `<file>.tags.json`. `01_prepare_dataset.py` automatically merges
+and writes `<file>.tags.json`. `prepare_dataset.py` automatically merges
 these into training prompts. GPU: ~1-3 h for 33k files; CPU: overnight.
 
 ## Phase 4 - Human pass
@@ -56,5 +56,5 @@ these into training prompts. GPU: ~1-3 h for 33k files; CPU: overnight.
 This bank is mostly commercial packs (808 Mafia, Big Fish, Beat Butcha...).
 Organizing/using them in your own beats: per their licenses, generally fine.
 TRAINING a model you sell from: most pack licenses don't grant ML rights -
-check per pack before including it in `01_prepare_dataset.py` input. Your
+check per pack before including it in `prepare_dataset.py` input. Your
 provenance system (21) is only as good as this step.

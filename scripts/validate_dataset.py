@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-02_validate_dataset.py
+validate_dataset.py
 Pre-flight checks before paying for GPU time. Verifies every WAV in the prepared
 dataset is readable, 44.1 kHz stereo, non-clipping, within duration bounds, and
 has a JSON sidecar with a non-empty prompt. Prints a summary report.
 
 Usage:
-    python 02_validate_dataset.py --dataset dataset
+    python validate_dataset.py --dataset dataset
 """
 import argparse
 import json

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-05_build_pack.py
+build_pack.py
 Assemble QA'd samples into a distributable sample pack:
   - standard folder structure (One Shots / Loops / Stems)
   - producer-style file naming: PackName_Kick_01.wav, PackName_DrumLoop_03_92BPM.wav,
@@ -11,7 +11,7 @@ Assemble QA'd samples into a distributable sample pack:
 Run AFTER you've manually deleted the duds from the processed folder.
 
 Usage:
-    python 05_build_pack.py --input processed --pack-name "Dusty Crates Vol 1" \
+    python build_pack.py --input processed --pack-name "Dusty Crates Vol 1" \
         --out packs --license-file my_license.txt
 """
 import argparse
@@ -82,7 +82,7 @@ def main():
             manifest.append(f"{section}/{category}/{new_name}")
 
     if not manifest:
-        raise SystemExit("No WAVs found - did you run 04_postprocess.py and QA?")
+        raise SystemExit("No WAVs found - did you run postprocess.py and QA?")
 
     license_text = (Path(args.license_file).read_text(encoding="utf-8")
                     if args.license_file else DEFAULT_LICENSE)

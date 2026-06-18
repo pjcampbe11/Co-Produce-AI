@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-06_audio2audio.py
+audio2audio.py
 Audio-to-audio: feed an existing sound file to your fine-tuned model and get a
 NEW sound derived from it, steered by a text prompt. Your file is used as the
 diffusion init; `--strength` controls how far the output strays from it.
@@ -10,7 +10,7 @@ diffusion init; `--strength` controls how far the output strays from it.
   --strength 0.8  -> loose inspiration; mostly the prompt's sound
 
 Usage:
-    python 06_audio2audio.py --model-config model_config.json --ckpt hiphop_v1.ckpt \
+    python audio2audio.py --model-config model_config.json --ckpt hiphop_v1.ckpt \
         --input my_break.wav \
         --prompt "hip hop, drums loops, boom bap, 90 BPM, dusty drum break, vinyl texture" \
         --strength 0.5 --variations 4 --out flipped/
@@ -116,7 +116,7 @@ def main():
         torchaudio.save(str(out_dir / name), audio, sample_rate)
         print(f"{v+1}/{args.variations} -> {name}")
 
-    print(f"\nDone. Variations in {out_dir}/ - run 04_postprocess.py on them before release.")
+    print(f"\nDone. Variations in {out_dir}/ - run postprocess.py on them before release.")
 
 
 if __name__ == "__main__":

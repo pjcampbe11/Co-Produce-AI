@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-17_ab_models.py  -  Two-producer packs (same idea, two sonic personalities)
+ab_models.py  -  Two-producer packs (same idea, two sonic personalities)
 Run the SAME pack plan with the SAME seeds through two different fine-tuned
 checkpoints (e.g. a 70s-soul model vs a Memphis-90s model). Outputs paired
 A/ and B/ folders where item N in each was generated from an identical seed
 and prompt - only the model differs.
 
 Usage:
-    python 17_ab_models.py --plan prompts/pack_plan.example.json \
+    python ab_models.py --plan prompts/pack_plan.example.json \
         --model-a-config cfgA.json --model-a-ckpt soulA.ckpt \
         --model-b-config cfgB.json --model-b-ckpt memphisB.ckpt \
         --out ab_packs/ --base-seed 1234

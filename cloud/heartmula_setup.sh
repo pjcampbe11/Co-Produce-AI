@@ -16,7 +16,7 @@ hf download --local-dir ./ckpt/HeartCodec-oss  HeartMuLa/HeartCodec-oss-20260123
 
 echo "Ready. Generate a song with vocals:"
 cat << 'CMD'
-python /workspace/toolkit/scripts/25_song_generate.py \
+python /workspace/toolkit/scripts/song_generate.py \
   --heartlib /workspace/heartlib --ckpt /workspace/heartlib/ckpt \
   --lyrics-file my_song.txt --tags "boom bap,hip hop,male vocals,dusty,90 bpm" \
   --duration 3 --out song.mp3 --lazy-load

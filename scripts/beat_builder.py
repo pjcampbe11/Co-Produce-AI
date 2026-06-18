@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-08_beat_builder.py
+beat_builder.py
 Build hip-hop beats from YOUR samples (the organized library from
-07_organize_soundbank.py). For each beat it:
+organize_soundbank.py). For each beat it:
   - randomly picks a kick/snare/hat/perc (and optional 808) from your folders
   - sequences them on a 16-step grid using style pattern templates with
     probability variation, swing, and velocity humanization
@@ -11,18 +11,18 @@ Build hip-hop beats from YOUR samples (the organized library from
     Ableton Drum Rack (GM mapping: kick=36 snare=38 closed hat=42 perc=47 808=35)
   - writes a manifest.json recording exactly which of your samples were used
 
-Layer melodic loops from 03_generate.py on top in your DAW, or point --melodic
+Layer melodic loops from generate.py on top in your DAW, or point --melodic
 at a folder of melodic loops to mix one in automatically.
 
 Usage:
-    python 08_beat_builder.py --library organized --style boom_bap --bpm 92 \
+    python beat_builder.py --library organized --style boom_bap --bpm 92 \
         --bars 4 --count 8 --out beats/
 Styles: boom_bap, trap, drill, lofi
 
 Creative options:
   --rotate            every hit picks a different sample from the folder pool
-                      (pair with 13_microvariants.py: no two hits the same)
-  --groove FILE.json  apply a groove template from 14_groove_dna.py - replaces
+                      (pair with microvariants.py: no two hits the same)
+  --groove FILE.json  apply a groove template from groove_dna.py - replaces
                       the style's swing with the reference break's micro-timing
                       and accent profile (groove transplant)
 """
@@ -234,7 +234,7 @@ def build_beat(library, style_name, bpm, bars, out_dir, rng, melodic_dir=None,
             midi_events[inst] = mevents
 
     if "kick" not in stems or "snare" not in stems:
-        sys.exit("Library must contain at least kicks and snares (run 07_organize_soundbank.py first).")
+        sys.exit("Library must contain at least kicks and snares (run organize_soundbank.py first).")
 
     # mix levels
     levels = {"kick": 0.95, "snare": 0.9, "hat": 0.5, "perc": 0.45, "e808": 0.85, "melodic": 0.55}
@@ -280,8 +280,8 @@ def main():
     ap.add_argument("--count", type=int, default=4, help="How many beats to build")
     ap.add_argument("--melodic", help="Optional folder of melodic loops to layer in")
     ap.add_argument("--rotate", action="store_true",
-                    help="Different sample per hit (use with 13_microvariants.py output)")
-    ap.add_argument("--groove", help="Groove template from 14_groove_dna.py")
+                    help="Different sample per hit (use with microvariants.py output)")
+    ap.add_argument("--groove", help="Groove template from groove_dna.py")
     ap.add_argument("--seed", type=int, default=-1)
     ap.add_argument("--out", default="beats")
     args = ap.parse_args()

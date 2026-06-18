@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-12_curation_loop.py  -  Taste distillation (closed-loop curation)
+curation_loop.py  -  Taste distillation (closed-loop curation)
 Score generated candidates against a reference folder of YOUR best sounds using
 CLAP audio embeddings, keep the closest matches, and stage them as the training
 set for the next fine-tune round. Each cycle converges the model on your ear.
@@ -8,12 +8,12 @@ set for the next fine-tune round. Each cycle converges the model on your ear.
     pip install laion-clap
 
 score:   rank candidates by similarity to your reference sounds
-    python 12_curation_loop.py score --candidates generated/ --reference my_best/ \
+    python curation_loop.py score --candidates generated/ --reference my_best/ \
         --keep-top 0.1 --keep-dir round2_keepers/
 promote: stage keepers (plus prompt sidecars) as a training dataset for the next round
-    python 12_curation_loop.py promote --keep-dir round2_keepers/ --dataset-dir dataset_round2/ \
+    python curation_loop.py promote --keep-dir round2_keepers/ --dataset-dir dataset_round2/ \
         --base-prompt "hip hop, drums oneshots"
-Then: 02_validate_dataset.py on dataset_round2 and fine-tune FROM YOUR LAST
+Then: validate_dataset.py on dataset_round2 and fine-tune FROM YOUR LAST
 checkpoint (train.py --pretrained_ckpt_path your_last_unwrapped.ckpt).
 """
 import argparse
@@ -101,7 +101,7 @@ def cmd_promote(args):
             meta = {"prompt": ", ".join(b for b in bits if b)}
         dest.with_suffix(".json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
     print(f"Staged {len(wavs)} keepers in {dataset}/ with prompt sidecars.")
-    print("Next: 02_validate_dataset.py, then fine-tune FROM your last checkpoint.")
+    print("Next: validate_dataset.py, then fine-tune FROM your last checkpoint.")
 
 
 def main():

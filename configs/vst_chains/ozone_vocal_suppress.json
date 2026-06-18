@@ -1,7 +1,7 @@
 {
-    "_name": "Vocal suppression via Ozone Master Rebalance (LAST RESORT - BS-RoFormer in 11_remove_vocals.py is better)",
-    "_use": "python scripts/09_vst_chain.py --input songs --output instrumentals --chain configs/vst_chains/ozone_vocal_suppress.json",
-    "_warning": "Master Rebalance is ML rebalancing, not clean separation. After loading, run with --edit 0 and pull the VOCALS slider to minimum. Expect more artifacts than 11_remove_vocals.py.",
+    "_name": "Vocal suppression via Ozone Master Rebalance (LAST RESORT - BS-RoFormer in remove_vocals.py is better)",
+    "_use": "python scripts/vst_chain.py --input songs --output instrumentals --chain configs/vst_chains/ozone_vocal_suppress.json",
+    "_warning": "Master Rebalance is ML rebalancing, not clean separation. After loading, run with --edit 0 and pull the VOCALS slider to minimum. Expect more artifacts than remove_vocals.py.",
     "chain": [
         {"vst3": "C:/Program Files/Common Files/VST3/iZotope/Ozone 11 Master Rebalance.vst3", "_role": "set Vocals to -inf in the GUI via --edit 0"}
     ]

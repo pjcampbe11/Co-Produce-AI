@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-03_generate.py
+generate.py
 Batch-generate raw audio from your fine-tuned model according to a pack plan
 (prompts/pack_plan.example.json). Requires stable-audio-tools installed and a
 GPU (~8 GB VRAM is enough for inference).
@@ -11,7 +11,7 @@ Two ways to load a model:
   B) Base model sanity check:  --pretrained stabilityai/stable-audio-open-1.0
 
 Usage:
-    python 03_generate.py --model-config model_config.json --ckpt unwrapped.ckpt \
+    python generate.py --model-config model_config.json --ckpt unwrapped.ckpt \
         --plan prompts/pack_plan.example.json --out generated/ --steps 100 --cfg 7
 """
 import argparse
@@ -94,7 +94,7 @@ def main():
             name = f"{category['name']}_{i+1:03d}_seed{seed}.wav"
             torchaudio.save(str(cat_dir / name), audio, sample_rate)
             print(f"[{category['name']}] {i+1}/{category['count']} -> {name}")
-    print(f"\nDone. Raw generations in {out_root}/ - run 04_postprocess.py next.")
+    print(f"\nDone. Raw generations in {out_root}/ - run postprocess.py next.")
 
 
 if __name__ == "__main__":

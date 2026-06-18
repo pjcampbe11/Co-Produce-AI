@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-14_groove_dna.py  -  Groove transplants ("quantize to Dilla")
+groove_dna.py  -  Groove transplants ("quantize to Dilla")
 Extract the micro-timing + velocity fingerprint of a reference drum break and
-save it as a groove template. 08_beat_builder.py --groove applies it to YOUR
+save it as a groove template. beat_builder.py --groove applies it to YOUR
 samples - groove and sound fully decoupled.
 
 How: detect onsets, fit them to a 16th-note grid derived from beat tracking,
@@ -10,8 +10,8 @@ then record the median timing deviation (as a fraction of a 16th step) and the
 mean onset strength for each of the 16 step positions.
 
 Usage:
-    python 14_groove_dna.py --input classic_break.wav --name dilla_a --out grooves/
-    python 08_beat_builder.py --library organized --groove grooves/dilla_a.groove.json ...
+    python groove_dna.py --input classic_break.wav --name dilla_a --out grooves/
+    python beat_builder.py --library organized --groove grooves/dilla_a.groove.json ...
 Rights note: a groove template stores timing numbers, not audio.
 """
 import argparse

@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """
-04_postprocess.py
+postprocess.py
 Clean up raw generations into release-quality samples:
   - reject silent / near-silent duds
   - trim leading & trailing silence (one-shots: tight head, natural tail)
   - micro fade-in/out to kill clicks
   - loudness-normalize: one-shots peak-normalized to -0.3 dBFS,
     loops/stems normalized to a target LUFS (default -14) with -0.3 dBFS ceiling
-  - re-analyze BPM/key on loops and write a sidecar JSON used by 05_build_pack.py
+  - re-analyze BPM/key on loops and write a sidecar JSON used by build_pack.py
 
 Usage:
-    python 04_postprocess.py --input generated --output processed --lufs -14
+    python postprocess.py --input generated --output processed --lufs -14
 Category folders containing 'kick', 'snare', 'hat', 'perc' or 'oneshot' in their
 name are treated as one-shots; everything else as loops/stems.
 """

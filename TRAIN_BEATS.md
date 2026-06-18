@@ -1,13 +1,13 @@
 # Train a beat model on all ~1,500 instrumentals (full-set, recommended)
 
-Assumes: beats tagged (24_auto_tag.py) -> `.tags.json` next to each
+Assumes: beats tagged (auto_tag.py) -> `.tags.json` next to each
 `*_instrumental` in `F:\RAP_ARCHIVES\raw_beats`, and F:-drive caching set
 (cloud/use_F_drive.ps1). You train on the WHOLE set at once; the dataloader
 shuffles and reuses files across epochs automatically - no manual batching.
 
 ## 1. Prepare the dataset (beats only, tags merged into prompts)
 ```powershell
-python scripts\01_prepare_dataset.py --input "F:\RAP_ARCHIVES\raw_beats" `
+python scripts\prepare_dataset.py --input "F:\RAP_ARCHIVES\raw_beats" `
   --output "F:\dataset_beats" --name-contains _instrumental --max-seconds 40
 ```
 - `--name-contains _instrumental` -> ignores the `_vocals` files.
@@ -16,13 +16,13 @@ python scripts\01_prepare_dataset.py --input "F:\RAP_ARCHIVES\raw_beats" `
 
 ## 2. Validate before spending GPU time
 ```powershell
-python scripts\02_validate_dataset.py --dataset "F:\dataset_beats"
+python scripts\validate_dataset.py --dataset "F:\dataset_beats"
 ```
 Fix any errors it reports (silence, bad prompts). Note total hours it prints.
 
 ## 3. Convert to Stable Audio 3 LoRA format
 ```powershell
-python scripts\22_sa3_workflow.py prepare --dataset "F:\dataset_beats" --data-dir "F:\sa3_beats"
+python scripts\sa3_workflow.py prepare --dataset "F:\dataset_beats" --data-dir "F:\sa3_beats"
 ```
 Writes audio + `.txt` caption pairs SA3's trainer expects.
 
@@ -43,14 +43,14 @@ uv run python scripts/train_lora.py --model medium-base \
 
 ## 5. Generate with your model
 ```powershell
-python scripts\22_sa3_workflow.py plan --model medium-base `
+python scripts\sa3_workflow.py plan --model medium-base `
   --lora F:\lora_beats\lora_step2500.safetensors `
   --plan prompts\pack_plan.example.json --out F:\generated
 ```
-Then 04_postprocess.py -> human QA -> 05_build_pack.py -> 21_provenance.py.
+Then postprocess.py -> human QA -> build_pack.py -> provenance.py.
 
 ## 6. Refine (optional)
-Curate the best generations (12_curation_loop.py), then CONTINUE training from
+Curate the best generations (curation_loop.py), then CONTINUE training from
 this checkpoint with `--lora_checkpoint F:\lora_beats\lora_step2500.safetensors`.
 
 ## Cost/time reality

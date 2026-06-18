@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-24_auto_tag.py  -  Open-vocabulary vibe/mood tagging from the AUDIO ITSELF.
+auto_tag.py  -  Open-vocabulary vibe/mood tagging from the AUDIO ITSELF.
 
 Instead of scoring against a fixed list (the CLAP path in 07/23), this asks an
 audio-language model to LISTEN and describe the track in free-form text, then
@@ -16,24 +16,24 @@ Engines (auto-detected, best first):
     pip install laion-clap                              (fallback)
 
 Stem separation (for --source vocals/beat/all) uses audio-separator (BS-RoFormer),
-already used by 11_remove_vocals.py.   pip install "audio-separator[gpu]"
+already used by remove_vocals.py.   pip install "audio-separator[gpu]"
 
-Writes <file>.tags.json next to each audio file, in the shape 01_prepare_dataset.py
+Writes <file>.tags.json next to each audio file, in the shape prepare_dataset.py
 reads ({"tags": [...]}), plus per-source detail and the raw caption.
 
 Usage:
-    python 24_auto_tag.py --input "F:/Sound Bank Organized" --source full --resume
-    python 24_auto_tag.py --input songs/ --source all --engine qwen2-audio --resume
-    python 24_auto_tag.py --input track.mp3 --source beat        # tag the instrumental only
+    python auto_tag.py --input "F:/Sound Bank Organized" --source full --resume
+    python auto_tag.py --input songs/ --source all --engine qwen2-audio --resume
+    python auto_tag.py --input track.mp3 --source beat        # tag the instrumental only
 
 PAIRED MODE (you already stemmed your songs into parallel folders with matching
 filenames - recommended layout):
     F:/STEMS/full/...   F:/STEMS/vocals/...   F:/STEMS/beat/...   (same relative
     path + filename in each). Tags from all available stems of a song are MERGED
     into one set (with per-source attribution) and a copy of that set is written
-    next to every stem, so 01_prepare_dataset.py finds it whichever stem you train on.
+    next to every stem, so prepare_dataset.py finds it whichever stem you train on.
 
-    python 24_auto_tag.py --full-root F:/STEMS/full --vocals-root F:/STEMS/vocals \
+    python auto_tag.py --full-root F:/STEMS/full --vocals-root F:/STEMS/vocals \
         --beat-root F:/STEMS/beat --resume
 """
 import argparse
@@ -154,7 +154,7 @@ def tag_source(audio_path, engine):
 
 
 def run_suffix(args, engine):
-    """One folder of *_vocals / *_instrumental pairs (11_remove_vocals.py output),
+    """One folder of *_vocals / *_instrumental pairs (remove_vocals.py output),
     full songs optionally matched from --full-root by base name."""
     stems = Path(args.stems_dir)
     full_idx = _index_basename(args.full_root) if args.full_root else {}
@@ -264,7 +264,7 @@ def main():
     ap.add_argument("--vocals-root", help="Paired mode: folder of vocal stems")
     ap.add_argument("--beat-root", help="Paired mode: folder of beat/instrumental stems")
     ap.add_argument("--stems-dir", help="Suffix mode: ONE folder of *_vocals/*_instrumental pairs "
-                    "(e.g. the output of 11_remove_vocals.py --keep-vocals)")
+                    "(e.g. the output of remove_vocals.py --keep-vocals)")
     ap.add_argument("--beat-suffix", default="_instrumental")
     ap.add_argument("--vocal-suffix", default="_vocals")
     ap.add_argument("--source", choices=["full", "vocals", "beat", "all"], default="full",

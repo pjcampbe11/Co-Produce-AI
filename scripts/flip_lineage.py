@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-15_flip_lineage.py  -  Flip lineages (telephone-game morphing)
+flip_lineage.py  -  Flip lineages (telephone-game morphing)
 Chain audio-to-audio on its own output: source -> stage 1 -> stage 2 -> ...
 with a different prompt (and optional strength) per stage. Every generation is
 saved, plus lineage.json documenting the full evolution (prompts, strengths,
 seeds, file hashes). The lineage itself is content.
 
 Usage:
-    python 15_flip_lineage.py --model-config model_config.json --ckpt hiphop_v1.ckpt \
+    python flip_lineage.py --model-config model_config.json --ckpt hiphop_v1.ckpt \
         --input source_loop.wav --out lineages/loop1 \
         --stage "0.3:hip hop, melodic loops, soul keys, dusty vinyl" \
         --stage "0.3:hip hop, melodic loops, dark strings, tape warble" \

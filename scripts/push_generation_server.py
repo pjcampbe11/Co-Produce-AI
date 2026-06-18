@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-18_push_generation_server.py  -  Push/Live as a generation instrument
+push_generation_server.py  -  Push/Live as a generation instrument
 An OSC server that holds your fine-tuned model in memory and fires generation
 jobs when it receives messages - map Push pads/knobs in Live to OSC and
 generation becomes performance, not a render queue.
@@ -21,7 +21,7 @@ Presets JSON: {"presets": [{"name": "kick", "prompt": "...", "seconds": 1.5}, ..
 
 Usage:
     pip install python-osc
-    python 18_push_generation_server.py --model-config model_config.json \
+    python push_generation_server.py --model-config model_config.json \
         --ckpt hiphop_v1.ckpt --presets prompts/push_presets.example.json \
         --out "C:/Users/you/Documents/Ableton/GenSamples"
 """

@@ -1,6 +1,6 @@
 {
     "_name": "Dusty Boom-Bap Glue - hip hop character (technique #4/#9)",
-    "_use": "python scripts/09_vst_chain.py --input processed --output processed_vst --chain configs/vst_chains/dusty_boombap.json",
+    "_use": "python scripts/vst_chain.py --input processed --output processed_vst --chain configs/vst_chains/dusty_boombap.json",
     "_tip": "Run --list-params on each .vst3 to see real param names, then --edit N to dial by ear; saved settings apply to the whole batch.",
     "chain": [
         {"vst3": "C:/Program Files/Common Files/VST3/FabFilter/FabFilter Saturn 2.vst3", "_role": "tape/tube saturation for grit"},

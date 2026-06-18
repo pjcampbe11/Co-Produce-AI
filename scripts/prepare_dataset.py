@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-01_prepare_dataset.py
+prepare_dataset.py
 Prepare a hip-hop WAV library for fine-tuning Stable Audio Open.
 
 Input layout (you organize your library into tag folders; folder names become prompt tags):
@@ -18,7 +18,7 @@ Output: 44.1 kHz stereo WAVs (long files sliced to <= MAX_SECONDS) + one JSON
 sidecar per WAV containing the training prompt and analysis metadata.
 
 Usage:
-    python 01_prepare_dataset.py --input raw_library --output dataset --max-seconds 40
+    python prepare_dataset.py --input raw_library --output dataset --max-seconds 40
 """
 import argparse
 import json
@@ -120,7 +120,7 @@ def process_file(wav_path, input_root, output_root, max_seconds, bpm_min=60, bpm
     kind = "oneshot" if dur <= ONESHOT_MAX_SECONDS else "loop"
     bpm = estimate_bpm(mono, TARGET_SR, bpm_min, bpm_max) if kind == "loop" else None
     key, mode = estimate_key(mono, TARGET_SR) if kind == "loop" else (None, None)
-    # 26_build_captions.py writes a canonical caption next to the source audio;
+    # build_captions.py writes a canonical caption next to the source audio;
     # if present, use it verbatim (it already fused the full Deep Listen analysis).
     caption_file = wav_path.with_suffix(wav_path.suffix + ".caption.txt")
     if caption_file.exists():

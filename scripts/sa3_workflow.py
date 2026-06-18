@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-22_sa3_workflow.py  -  Stable Audio 3 workflow (June 2026 generation core)
+sa3_workflow.py  -  Stable Audio 3 workflow (June 2026 generation core)
 SA3 (released 2026-05-20) upgrades the toolkit's generation: open weights
 (Small 433M / Medium 1.4B), trained on licensed data, LoRA fine-tuning
 (~16 GB VRAM, ~1000 steps), variable-length up to 380 s, and two NEW modes:
@@ -9,18 +9,18 @@ inpainting (regenerate a region in place) and continuation (extend a clip).
 Run INSIDE the stable-audio-3 repo environment:
     git clone https://github.com/Stability-AI/stable-audio-3 && cd stable-audio-3
     uv sync --extra lora        # see cloud/sa3_setup.sh
-    uv run python /path/to/22_sa3_workflow.py <subcommand> ...
+    uv run python /path/to/sa3_workflow.py <subcommand> ...
 
 Subcommands:
   prepare  toolkit dataset (.json sidecars) -> SA3 LoRA data_dir (.txt captions)
-  plan     batch text-to-audio from a pack plan (03_generate.py equivalent)
-  flip     audio-to-audio (06_audio2audio.py equivalent)
+  plan     batch text-to-audio from a pack plan (generate.py equivalent)
+  flip     audio-to-audio (audio2audio.py equivalent)
   fill     inpaint a time region ("replace bars 2-3 with a punchy kick fill")
   extend   continuation (stretch a loop past its original end)
 
 All generation subcommands accept --lora my.safetensors --lora-strength 0.8.
 After LoRA training (scripts/train_lora.py in the SA3 repo), point --lora at
-the produced .safetensors. Outputs still flow into 04_postprocess.py -> 05.
+the produced .safetensors. Outputs still flow into postprocess.py -> 05.
 """
 import argparse
 import json
@@ -60,7 +60,7 @@ def add_common(p):
 
 
 def cmd_prepare(args):
-    """Toolkit dataset (01_prepare_dataset.py output) -> SA3 train_lora data_dir."""
+    """Toolkit dataset (prepare_dataset.py output) -> SA3 train_lora data_dir."""
     src, dst = Path(args.dataset), Path(args.data_dir)
     n = 0
     for wav in sorted(src.rglob("*.wav")):
@@ -93,7 +93,7 @@ def cmd_plan(args):
             audio = model.generate(prompt=cat["prompt"], duration=seconds)
             save(audio, out_root / cat["name"] / f"{cat['name']}_{i+1:03d}.wav")
             print(f"[{cat['name']}] {i+1}/{cat['count']}")
-    print(f"Done -> {out_root}. Next: 04_postprocess.py")
+    print(f"Done -> {out_root}. Next: postprocess.py")
 
 
 def cmd_flip(args):

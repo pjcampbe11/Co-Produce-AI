@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """
-16_destroy_heal.py  -  The destruction-and-heal sandwich
+destroy_heal.py  -  The destruction-and-heal sandwich
 1. DESTROY: batch-process audio through a deliberately extreme VST/builtin chain
-   (09_vst_chain.py) - bitcrush, broken tape, GSM codec, whatever.
+   (vst_chain.py) - bitcrush, broken tape, GSM codec, whatever.
 2. HEAL: low-strength audio-to-audio pulls the wreckage back toward musicality
    using your fine-tuned model. The model acts as restoration glue; the scars
    that survive ARE the texture.
 
 Usage:
-    python 16_destroy_heal.py --model-config model_config.json --ckpt hiphop_v1.ckpt \
+    python destroy_heal.py --model-config model_config.json --ckpt hiphop_v1.ckpt \
         --input loops/ --chain configs/vst_chain.destroy.example.json \
         --prompt "hip hop, melodic loops, dusty vinyl, warm analog texture" \
         --heal-strength 0.25 --out healed/
@@ -38,11 +38,11 @@ def main():
     sat_common.validate_model_args(ap, args)
 
     out_dir = Path(args.out)
-    vst_script = Path(__file__).parent / "09_vst_chain.py"
+    vst_script = Path(__file__).parent / "vst_chain.py"
 
     with tempfile.TemporaryDirectory() as tmp:
         destroyed = Path(tmp) / "destroyed"
-        print("=== DESTROY (09_vst_chain.py) ===")
+        print("=== DESTROY (vst_chain.py) ===")
         subprocess.run([sys.executable, str(vst_script), "--input", args.input,
                         "--output", str(destroyed), "--chain", args.chain], check=True)
 

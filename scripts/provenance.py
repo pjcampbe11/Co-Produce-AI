@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-21_provenance.py  -  Provenance as product
+provenance.py  -  Provenance as product
 Aggregate the audit trail the toolkit already produces into a single
 PROVENANCE.json + human-readable certificate for a pack:
   - training sources (the 'source' fields from dataset sidecars)
@@ -12,7 +12,7 @@ PROVENANCE.json + human-readable certificate for a pack:
 the claim checkable.
 
 Usage:
-    python 21_provenance.py --pack packs/DustyCratesVol1 --dataset dataset \
+    python provenance.py --pack packs/DustyCratesVol1 --dataset dataset \
         --generated generated --run-name hiphop-finetune-v1 \
         --statement "All training audio owned by Patrick Campbell Productions."
 """
@@ -36,7 +36,7 @@ def sha256(path):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--pack", required=True, help="Built pack folder from 05_build_pack.py")
+    ap.add_argument("--pack", required=True, help="Built pack folder from build_pack.py")
     ap.add_argument("--dataset", help="Training dataset dir (for source inventory)")
     ap.add_argument("--generated", help="Raw generation dir (for seed inventory)")
     ap.add_argument("--run-name", default="", help="Training run identifier")
@@ -98,7 +98,7 @@ def main():
     ]
     (pack / "PROVENANCE_CERTIFICATE.txt").write_text("\n".join(cert), encoding="utf-8")
     print(f"Wrote {out_json} and PROVENANCE_CERTIFICATE.txt")
-    print("Tip: rebuild the zip after adding these (rerun 05_build_pack.py or re-zip).")
+    print("Tip: rebuild the zip after adding these (rerun build_pack.py or re-zip).")
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 {
-    "_name": "Destroy chain for 16_destroy_heal.py - wreck it, then heal with the model",
-    "_use": "python scripts/16_destroy_heal.py --model-config model_config.json --ckpt hiphop_v1.ckpt --input loops --chain configs/vst_chains/destroy_extreme.json --prompt 'hip hop, dusty vinyl, warm analog' --heal-strength 0.25 --out healed",
+    "_name": "Destroy chain for destroy_heal.py - wreck it, then heal with the model",
+    "_use": "python scripts/destroy_heal.py --model-config model_config.json --ckpt hiphop_v1.ckpt --input loops --chain configs/vst_chains/destroy_extreme.json --prompt 'hip hop, dusty vinyl, warm analog' --heal-strength 0.25 --out healed",
     "chain": [
         {"vst3": "C:/Program Files/Common Files/VST3/Dirt.vst3", "_role": "heavy lo-fi destruction"},
         {"vst3": "C:/Program Files/Common Files/VST3/IK Multimedia/TR5 Tape Machine 80.vst3", "_role": "saturated tape abuse"},

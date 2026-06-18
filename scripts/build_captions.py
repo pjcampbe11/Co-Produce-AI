@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-26_build_captions.py  -  Fuse Deep Listen reports into canonical training captions.
+build_captions.py  -  Fuse Deep Listen reports into canonical training captions.
 
 Joins each beat to its Deep Listen report (by filename, ignoring _instrumental/
 _vocals suffixes), distills the full analysis into ONE consistent caption, and
-writes it as `<beat>.caption.txt` next to the audio. 01_prepare_dataset.py uses
+writes it as `<beat>.caption.txt` next to the audio. prepare_dataset.py uses
 that verbatim as the training prompt (so the whole pipeline inherits BPM, key,
 instrumentation, mood, production, etc. - not just freeform tags).
 
@@ -16,14 +16,14 @@ Subgenre/era only lead the caption when the analysis is confident (score >=
 --genre-threshold); otherwise it falls back to plain "hip hop" - never guessed.
 
 Inputs per beat (any that exist): a Deep Listen report (slim `.caption.json`
-from 23_deep_listen --for-captions, or the full `.analysis.json`), and an
-optional `.tags.json` from 24_auto_tag.
+from deep_listen --for-captions, or the full `.analysis.json`), and an
+optional `.tags.json` from auto_tag.
 
 Usage:
     # reports written next to the beats (deep_listen --out = the beats dir):
-    python 26_build_captions.py --beats F:/RAP_ARCHIVES/raw_beats
+    python build_captions.py --beats F:/RAP_ARCHIVES/raw_beats
     # reports in a separate (mirrored) folder:
-    python 26_build_captions.py --beats F:/RAP_ARCHIVES/raw_beats --reports F:/reports
+    python build_captions.py --beats F:/RAP_ARCHIVES/raw_beats --reports F:/reports
 """
 import argparse
 import json
@@ -195,7 +195,7 @@ def main():
     print(f"\n=== {ok} captions written, {skipped} skipped, {no_report} had no report "
           f"(captioned from filename/tags only) ===")
     if not args.dry_run:
-        print("Next: 01_prepare_dataset.py will use these .caption.txt verbatim as prompts.")
+        print("Next: prepare_dataset.py will use these .caption.txt verbatim as prompts.")
 
 
 if __name__ == "__main__":

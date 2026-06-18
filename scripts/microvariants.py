@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-13_microvariants.py  -  Timbre-level humanization ("no two hits the same")
+microvariants.py  -  Timbre-level humanization ("no two hits the same")
 Generate N subtle micro-variants of every one-shot in a folder via low-strength
-audio-to-audio. Feed the output to 08_beat_builder.py --rotate so every hit in
+audio-to-audio. Feed the output to beat_builder.py --rotate so every hit in
 a beat is a slightly different take of the same drum - like a human drummer.
 
 Usage (GPU + stable-audio-tools):
-    python 13_microvariants.py --model-config model_config.json --ckpt hiphop_v1.ckpt \
+    python microvariants.py --model-config model_config.json --ckpt hiphop_v1.ckpt \
         --input organized/drums_oneshots/kicks --variants 8 --strength 0.15 \
         --prompt "hip hop, drums oneshots, kicks, one shot" --out variants/kicks
 """
@@ -50,7 +50,7 @@ def main():
             audio = audio[:, : init.shape[1]]
             sat_common.save_wav(audio, out_dir / f"{wav.stem}_var{v:02d}_seed{seed}.wav", sr)
         print(f"{wav.name}: {args.variants} variants -> {out_dir}/")
-    print("\nUse with:  08_beat_builder.py --library ... --rotate  (point the library's")
+    print("\nUse with:  beat_builder.py --library ... --rotate  (point the library's")
     print("instrument folders at these variant folders, or copy variants in).")
 
 

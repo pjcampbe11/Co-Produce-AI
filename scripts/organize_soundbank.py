@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-07_organize_soundbank.py
+organize_soundbank.py
 Turn a messy, untagged soundbank into the labeled tag-folder structure the rest
-of the toolkit expects (01_prepare_dataset.py and 08_beat_builder.py).
+of the toolkit expects (prepare_dataset.py and beat_builder.py).
 
 Classification = filename keywords first, audio analysis as fallback:
   one-shots (<= 2.5s): kick / 808_bass / snare_clap / hat / perc / fx
@@ -13,8 +13,8 @@ files go to _review/ for manual sorting - the report tells you what to listen to
 Files are COPIED by default (originals untouched); use --move to relocate.
 
 Usage:
-    python 07_organize_soundbank.py --input messy_bank --output organized --dry-run
-    python 07_organize_soundbank.py --input messy_bank --output organized
+    python organize_soundbank.py --input messy_bank --output organized --dry-run
+    python organize_soundbank.py --input messy_bank --output organized
 """
 import argparse
 import csv
@@ -141,7 +141,7 @@ def main():
     ap.add_argument("--limit", type=int, default=0, help="Process only first N audio files (sampling)")
     ap.add_argument("--ai-tags", action="store_true",
                     help="After organizing, run CLAP zero-shot tagging (pip install laion-clap). "
-                         "Writes <file>.tags.json read by 01_prepare_dataset.py")
+                         "Writes <file>.tags.json read by prepare_dataset.py")
     args = ap.parse_args()
 
     in_root, out_root = Path(args.input), Path(args.output)

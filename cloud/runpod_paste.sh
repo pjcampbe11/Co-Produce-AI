@@ -11,11 +11,11 @@ cd /workspace
 echo "=== [1/5] installing ==="
 pip install -q "audio-separator[gpu]" yt-dlp
 
-echo "=== [2/5] writing 11_remove_vocals.py ==="
-cat > /workspace/11_remove_vocals.py <<'PYEOF'
+echo "=== [2/5] writing remove_vocals.py ==="
+cat > /workspace/remove_vocals.py <<'PYEOF'
 #!/usr/bin/env python3
 """
-11_remove_vocals.py
+remove_vocals.py
 One job: strip vocals from a large set of MP3/WAV files.
 
 Engines (June 2026):
@@ -28,8 +28,8 @@ Engines (June 2026):
 See README_vocal_removal.md for setup and details.
 
 Usage:
-    python 11_remove_vocals.py --input songs/ --output instrumentals/
-    python 11_remove_vocals.py --input songs/ --output out/ --engine demucs --keep-vocals
+    python remove_vocals.py --input songs/ --output instrumentals/
+    python remove_vocals.py --input songs/ --output out/ --engine demucs --keep-vocals
 """
 import argparse
 import shutil
@@ -214,7 +214,7 @@ yt-dlp -x --audio-format mp3 --download-archive done.txt \
 cd /workspace
 
 echo "=== [4/5] removing vocals (GPU) -> /workspace/raw_beats ==="
-python /workspace/11_remove_vocals.py \
+python /workspace/remove_vocals.py \
   --input /workspace/mp3 --output /workspace/raw_beats \
   --mp3 --keep-vocals --require-gpu
 

@@ -6,7 +6,7 @@ songs there are two engines, depending on whether you want vocals.
 ## A) Instrumental full songs - Stable Audio 3 (you already have it)
 SA3 Medium generates up to ~380 s (6+ min). New `song` subcommand:
 ```bash
-python scripts/22_sa3_workflow.py song --model medium \
+python scripts/sa3_workflow.py song --model medium \
   --prompt "boom bap hip hop instrumental, 90 BPM, key of F minor, dusty soul sample, \
 intro then verse loop then hook with horns, vinyl crackle" \
   --duration 180 --out song_instr.wav
@@ -14,14 +14,14 @@ intro then verse loop then hook with horns, vinyl crackle" \
 Works with your fine-tuned beat LoRA too: add `--lora F:\lora_beats\....safetensors`.
 License: Stability Community License (free commercial < $1M revenue).
 
-## B) Full songs WITH vocals + lyrics - HeartMuLa (25_song_generate.py)
+## B) Full songs WITH vocals + lyrics - HeartMuLa (song_generate.py)
 HeartMuLa is an open song model (Apache-2.0 - true commercial use, no revenue
 cap) that turns LYRICS + STYLE TAGS into a complete sung song, multilingual,
 up to ~6 min.
 
 Setup (one-time):  bash cloud/heartmula_setup.sh
 ```bash
-python scripts/25_song_generate.py \
+python scripts/song_generate.py \
   --heartlib /workspace/heartlib --ckpt /workspace/heartlib/ckpt \
   --lyrics-file prompts/song_lyrics.example.txt \
   --tags "boom bap,hip hop,male vocals,dusty,90 bpm" \

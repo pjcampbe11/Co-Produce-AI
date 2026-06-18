@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-25_song_generate.py  -  Full songs WITH vocals + lyrics (HeartMuLa)
+song_generate.py  -  Full songs WITH vocals + lyrics (HeartMuLa)
 
 Wraps HeartMuLa (Apache-2.0, github.com/HeartMuLa/heartlib) - an open-source
 song foundation model that generates complete songs (vocals + instrumental)
@@ -8,7 +8,7 @@ from LYRICS + STYLE TAGS, up to ~6 minutes, multilingual. Apache-2.0 means
 true commercial use with no revenue cap (unlike the Stability Community License).
 
 This is the vocals/lyrics path. For INSTRUMENTAL full songs (2-4 min) use:
-    python 22_sa3_workflow.py song --model medium --prompt "..." --duration 180 --out song.wav
+    python sa3_workflow.py song --model medium --prompt "..." --duration 180 --out song.wav
 
 Setup (see cloud/heartmula_setup.sh):
     git clone https://github.com/HeartMuLa/heartlib && cd heartlib && pip install -e .
@@ -17,11 +17,11 @@ Setup (see cloud/heartmula_setup.sh):
     hf download --local-dir ./ckpt/HeartCodec-oss  HeartMuLa/HeartCodec-oss-20260123
 
 Usage:
-    python 25_song_generate.py --heartlib /path/to/heartlib --ckpt /path/to/heartlib/ckpt \
+    python song_generate.py --heartlib /path/to/heartlib --ckpt /path/to/heartlib/ckpt \
         --lyrics-file my_song.txt --tags "boom bap,hip hop,male vocals,dusty,90 bpm" \
         --duration 3 --out song.mp3
     # or inline lyrics:
-    python 25_song_generate.py --heartlib ... --ckpt ... --lyrics-text "[Verse]\nrise and grind..." \
+    python song_generate.py --heartlib ... --ckpt ... --lyrics-text "[Verse]\nrise and grind..." \
         --tags "trap,dark,808" --out song.mp3
 
 Lyrics use [Intro]/[Verse]/[Chorus]/[Bridge]/[Outro] section tags (see README).

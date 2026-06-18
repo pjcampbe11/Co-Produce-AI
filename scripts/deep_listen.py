@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-23_deep_listen.py  -  Learn everything possible about an audio file.
+deep_listen.py  -  Learn everything possible about an audio file.
 
 Layered analysis (each layer degrades gracefully if its dependency is absent;
 the report states exactly which layers ran):
@@ -22,8 +22,8 @@ the report states exactly which layers ran):
 Outputs <name>.analysis.json (machine) + <name>.analysis.md (human).
 
 Usage:
-    python 23_deep_listen.py --input track.mp3 --out reports/
-    python 23_deep_listen.py --input folder/ --out reports/        # batch
+    python deep_listen.py --input track.mp3 --out reports/
+    python deep_listen.py --input folder/ --out reports/        # batch
 Optional: --no-events / --no-vibe to skip model layers; --segment-stems
 (requires audio-separator) analyzes vocals/drums/bass/other separately.
 """
@@ -384,7 +384,7 @@ def analyze(path, args, out_dir, rel=None):
     rep["summary"] = summarize(rep)
     out_dir.mkdir(parents=True, exist_ok=True)
     if getattr(args, "for_captions", False):
-        # slim report: only the fields 26_build_captions.py needs (no bulky
+        # slim report: only the fields build_captions.py needs (no bulky
         # technical/spectral/timeline). Much smaller; faster to write.
         slim = {
             "file": rep["file"],
@@ -413,7 +413,7 @@ def main():
                     help="Skip tracks that already have a report (safe re-run)")
     ap.add_argument("--for-captions", action="store_true",
                     help="Output a slim <stem>.caption.json with ONLY the fields "
-                         "26_build_captions.py needs (bpm/key/kind/sound events/vibe). "
+                         "build_captions.py needs (bpm/key/kind/sound events/vibe). "
                          "Skips the heavy technical/spectral/timeline + .md.")
     args = ap.parse_args()
     p = Path(args.input)

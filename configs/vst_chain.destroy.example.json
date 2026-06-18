@@ -7,5 +7,5 @@
         {"builtin": "LowpassFilter", "params": {"cutoff_frequency_hz": 6500}},
         {"builtin": "Limiter", "params": {"threshold_db": -1.0}}
     ],
-    "_comment": "Deliberately extreme. Swap in your own destructive VST3s (broken tape, vinyl stop, codec abuse) - then 16_destroy_heal.py pulls it back toward music."
+    "_comment": "Deliberately extreme. Swap in your own destructive VST3s (broken tape, vinyl stop, codec abuse) - then destroy_heal.py pulls it back toward music."
 }

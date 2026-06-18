@@ -1,7 +1,7 @@
 """
 custom_metadata.py
 Custom metadata module for stable-audio-tools. Reads the JSON sidecar written by
-01_prepare_dataset.py (same filename as the audio, .json extension) and returns
+prepare_dataset.py (same filename as the audio, .json extension) and returns
 its prompt for text conditioning. Samples without a valid prompt are rejected.
 
 Referenced from configs/dataset_config.json via "custom_metadata_module".
