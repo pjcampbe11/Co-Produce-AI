@@ -8,6 +8,12 @@ has a JSON sidecar with a non-empty prompt. Prints a summary report.
 Usage:
     python validate_dataset.py --dataset dataset
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Pre-flight BEFORE paying for GPU: fails on wrong SR, silence, empty prompts, over-window length.
+#   - 47 s is the Stable Audio Open window; treat clipping warnings (peak>=0.999) seriously.
+# ---------------------------------------------------------------------------
 import argparse
 import json
 import sys

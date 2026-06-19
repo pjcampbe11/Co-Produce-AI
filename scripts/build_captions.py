@@ -25,6 +25,14 @@ Usage:
     # reports in a separate (mirrored) folder:
     python build_captions.py --beats F:/RAP_ARCHIVES/raw_beats --reports F:/reports
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Caption FIELD ORDER is fixed on purpose - the model learns vocabulary by position.
+#   - Subgenre/era lead the caption ONLY when confident (>= --genre-threshold), else plain 'hip hop'.
+#   - Genius producer/era folded in only on confident matches; never song/artist names (avoids name overfit).
+#   - Writes <beat>.caption.txt; prepare_dataset.py uses it VERBATIM as the training prompt.
+# ---------------------------------------------------------------------------
 import argparse
 import json
 import re

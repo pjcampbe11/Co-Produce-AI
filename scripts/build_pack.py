@@ -14,6 +14,12 @@ Usage:
     python build_pack.py --input processed --pack-name "Dusty Crates Vol 1" \
         --out packs --license-file my_license.txt
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Producer-style naming with key/BPM; One Shots vs Loops vs Stems inferred from folder names.
+#   - Writes README + LICENSE + zip. Run AFTER human QA has deleted the duds.
+# ---------------------------------------------------------------------------
 import argparse
 import json
 import shutil

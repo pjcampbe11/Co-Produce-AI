@@ -12,6 +12,12 @@ themes, and mood mix. Writes:
 Usage:
     python lyric_analyze.py --input "F:/Lyrics" --out lyric_model
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Profiles YOUR style: flow density, end-rhyme rate, vocab richness, themes, mood mix.
+#   - Sections split on [Verse]/[Hook] headers if present, else on blank-line stanzas. Writes profile + corpus.jsonl.
+# ---------------------------------------------------------------------------
 import argparse
 import json
 import sys

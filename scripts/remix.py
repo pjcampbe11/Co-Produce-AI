@@ -19,6 +19,12 @@ Usage:
     python remix.py --model-config model_config.json --ckpt hiphop_v1.ckpt \
         --input song.wav --genre rockmetal --mode mashup --current "boom bap hip hop" --out remixes/
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - GENRES = prompt presets. Mode full = become the genre (strength 0.6); mashup = fuse with current (0.4).
+#   - It's audio-to-audio under the hood; remix quality scales with the model - a per-genre LoRA helps a lot.
+# ---------------------------------------------------------------------------
 import argparse
 import sys
 from pathlib import Path

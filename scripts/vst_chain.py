@@ -28,6 +28,12 @@ Usage:
     python vst_chain.py --input processed --output processed_vst --chain configs/vst_chain.example.json
     python vst_chain.py --list-params "C:/.../MyPlugin.vst3"
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Hosts EFFECT VST3s headlessly. --edit N opens a plugin's GUI once; those settings apply to the whole batch.
+#   - --list-params prints a plugin's automatable parameter names so you can set them in the chain JSON.
+# ---------------------------------------------------------------------------
 import argparse
 import json
 import sys

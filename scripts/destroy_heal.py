@@ -13,6 +13,12 @@ Usage:
         --prompt "hip hop, melodic loops, dusty vinyl, warm analog texture" \
         --heal-strength 0.25 --out healed/
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - DESTROY through an extreme VST chain, then HEAL with low-strength a2a; the scars that survive are the texture.
+#   - Great for bass-music grit. Runs vst_chain.py then sat_common generation.
+# ---------------------------------------------------------------------------
 import argparse
 import subprocess
 import sys

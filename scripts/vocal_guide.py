@@ -21,6 +21,13 @@ Usage:
         --lyrics verse.txt --style rap --out guide
     python vocal_guide.py --bpm 90 --key "F minor" --lyrics verse.txt --style sung --out hook
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Builds a flow MIDI aligned to the beat's key+BPM grid + a syllable-segmented lyric file for ACE Studio.
+#   - rap = rhythmic monotone scaffold (humanize in ACE); sung = stepwise contour in the key's scale.
+#   - ACE can't be driven headlessly - you import the MIDI + paste lyrics in ACE, then ACE Bridge plays it in Ableton.
+# ---------------------------------------------------------------------------
 import argparse
 import json
 import re

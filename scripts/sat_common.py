@@ -3,6 +3,14 @@ sat_common.py
 Shared model-inference helpers for the creative-technique scripts (12-19).
 Requires stable-audio-tools + a GPU for anything that generates audio.
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Shared model-inference helpers for the generation scripts (SA3/SAO via stable-audio-tools).
+#   - generate(): init_noise_level = strength*10 maps your 0..1 'strength' onto the sampler's noise scale.
+#   - sampler_type/sigma_min/sigma_max are SAO-tuned diffusion settings - don't change unless you know the model.
+#   - load_audio_file() strips stray quotes from paths and falls back to librosa for MP3s libsndfile can't decode.
+# ---------------------------------------------------------------------------
 import os as _os
 _os.environ.setdefault("USE_TF", "0")          # keep transformers off TensorFlow
 _os.environ.setdefault("USE_TORCH", "1")
@@ -75,6 +83,7 @@ def generate(model, cfg, prompt, seconds, device, steps=100, cfg_scale=7.0,
     kwargs = {}
     if init_audio is not None:
         kwargs["init_audio"] = (cfg["sample_rate"], init_audio)
+        # map the friendly 0..1 'strength' onto the sampler's internal noise scale
         kwargs["init_noise_level"] = float(strength) * 10.0
     audio = generate_diffusion_cond(
         model, steps=steps, cfg_scale=cfg_scale,

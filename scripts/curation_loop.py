@@ -16,6 +16,12 @@ promote: stage keepers (plus prompt sidecars) as a training dataset for the next
 Then: validate_dataset.py on dataset_round2 and fine-tune FROM YOUR LAST
 checkpoint (train.py --pretrained_ckpt_path your_last_unwrapped.ckpt).
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - CLAP-embeds candidates and ranks by similarity to a CENTROID of your best sounds.
+#   - score then promote: keepers become the next fine-tune round's dataset (taste distillation).
+# ---------------------------------------------------------------------------
 import argparse
 import csv
 import json

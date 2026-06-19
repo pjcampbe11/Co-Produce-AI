@@ -6,6 +6,11 @@ its prompt for text conditioning. Samples without a valid prompt are rejected.
 
 Referenced from configs/dataset_config.json via "custom_metadata_module".
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - stable-audio-tools hook: returns the training prompt from the JSON sidecar; rejects samples without one.
+# ---------------------------------------------------------------------------
 import json
 from pathlib import Path
 

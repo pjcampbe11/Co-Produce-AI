@@ -14,6 +14,13 @@ Usage:
     python generate.py --model-config model_config.json --ckpt unwrapped.ckpt \
         --plan prompts/pack_plan.example.json --out generated/ --steps 100 --cfg 7
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - SAO batch generation from a pack plan; sampler settings mirror sat_common.
+#   - --cfg = prompt adherence (6-9). Output is trimmed to each category's requested seconds.
+#   - Sanity-check the whole pipeline anytime with --pretrained stabilityai/stable-audio-open-1.0.
+# ---------------------------------------------------------------------------
 import argparse
 import json
 from pathlib import Path

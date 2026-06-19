@@ -16,6 +16,14 @@ Usage:
     python remove_vocals.py --input songs/ --output instrumentals/
     python remove_vocals.py --input songs/ --output out/ --engine demucs --keep-vocals
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Default engine = BS-RoFormer (SOTA; the SDR is in the ckpt filename). --engine demucs = fallback/4-stem.
+#   - --require-gpu ABORTS on CPU so you never start an accidental multi-day run.
+#   - --mirror recreates input subfolders in output -> prevents same-named tracks colliding. Resumable.
+#   - Moving across drives is copy+delete (slower); the zip step needs scratch space.
+# ---------------------------------------------------------------------------
 import argparse
 import shutil
 import subprocess

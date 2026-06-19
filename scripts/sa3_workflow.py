@@ -22,6 +22,13 @@ All generation subcommands accept --lora my.safetensors --lora-strength 0.8.
 After LoRA training (scripts/train_lora.py in the SA3 repo), point --lora at
 the produced .safetensors. Outputs still flow into postprocess.py -> 05.
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Stable Audio 3 is new - if a flag/loader name differs in your version, run the SA3 repo's --help and match it.
+#   - song duration is clamped near 380 s (model max). flip uses init_noise_level; fill/extend use inpaint masks.
+#   - Works with your trained --lora .safetensors; runs inside the stable-audio-3 repo env.
+# ---------------------------------------------------------------------------
 import argparse
 import json
 import shutil

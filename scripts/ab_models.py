@@ -13,6 +13,12 @@ Usage:
         --out ab_packs/ --base-seed 1234
 Models are loaded one at a time (VRAM-friendly).
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Same seeds + same plan through TWO models; item N in A/ and B/ is the same idea in two voices.
+#   - Models load one at a time (VRAM-friendly) with cache cleared between.
+# ---------------------------------------------------------------------------
 import argparse
 import gc
 import json

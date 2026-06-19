@@ -27,6 +27,12 @@ Usage:
 Lyrics use [Intro]/[Verse]/[Chorus]/[Bridge]/[Outro] section tags (see README).
 Tags are comma-separated, no spaces between (e.g. piano,happy,romantic).
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Wraps HeartMuLa's CLI (no API). If a flag differs in your version, run run_music_generation.py --help.
+#   - --lazy-load loads modules on demand for single-GPU / low VRAM. Lyrics use [Verse]/[Hook] section tags.
+# ---------------------------------------------------------------------------
 import argparse
 import os
 import subprocess

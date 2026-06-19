@@ -13,6 +13,12 @@ Usage:
         --prompt "hip hop, melodic loops, soul keys, dusty response phrase" \
         --strength 0.45 --variations 2
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Watches a folder; stable_size() waits until a file stops growing (export finished) before responding.
+#   - Each new clip gets N a2a variations written to the response folder.
+# ---------------------------------------------------------------------------
 import argparse
 import sys
 import time

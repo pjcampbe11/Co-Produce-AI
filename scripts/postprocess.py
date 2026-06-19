@@ -14,6 +14,13 @@ Usage:
 Category folders containing 'kick', 'snare', 'hat', 'perc' or 'oneshot' in their
 name are treated as one-shots; everything else as loops/stems.
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Auto-rejects silent duds, trims, adds anti-click fades. One-shots peak-normalized to -0.3 dBFS;
+#   - loops/stems loudness-normalized to --lufs (default -14) with a -0.3 dBFS ceiling; re-detects BPM/key; 24-bit out.
+#   - ALWAYS human-QA after - auto-reject catches duds, not taste.
+# ---------------------------------------------------------------------------
 import argparse
 import json
 from pathlib import Path

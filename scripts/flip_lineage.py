@@ -13,6 +13,12 @@ Usage:
         --stage "0.3:hip hop, melodic loops, dark strings, tape warble" \
         --stage "0.35:hip hop, melodic loops, eerie synth, lofi texture"
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Chained audio-to-audio (telephone game). Every stage's prompt/strength/seed/hash is logged to lineage.json.
+#   - Outputs are derivative of the source - cleared material only.
+# ---------------------------------------------------------------------------
 import argparse
 import hashlib
 import json

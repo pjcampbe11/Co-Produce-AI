@@ -10,6 +10,12 @@ Usage (GPU + stable-audio-tools):
         --input organized/drums_oneshots/kicks --variants 8 --strength 0.15 \
         --prompt "hip hop, drums oneshots, kicks, one shot" --out variants/kicks
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Low strength (~0.15) yields same-drum-different-take variants; feed the folder to beat_builder --rotate.
+#   - variant00 is the original; rotation pools should include it.
+# ---------------------------------------------------------------------------
 import argparse
 import sys
 from pathlib import Path

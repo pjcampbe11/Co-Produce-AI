@@ -25,6 +25,13 @@ Notes:
 - Multi-timbral kits (Battery) map MIDI notes to pads; pattern.mid uses GM drum
   notes (kick 36, snare 38, hat 42...) - line your kit up to those or remap.
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Renders MIDI through an INSTRUMENT plugin headless via pedalboard (MIDI msgs carry absolute seconds).
+#   - Plugins load at DEFAULT state - use --edit to pick a preset/kit, or it may be silent (Kontakt needs an .nki).
+#   - --chain runs an effect chain on the rendered audio in the same pass.
+# ---------------------------------------------------------------------------
 import argparse
 import sys
 from pathlib import Path

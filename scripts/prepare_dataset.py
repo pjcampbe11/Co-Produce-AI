@@ -20,6 +20,14 @@ sidecar per WAV containing the training prompt and analysis metadata.
 Usage:
     python prepare_dataset.py --input raw_library --output dataset --max-seconds 40
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Files <= 2.5 s are treated as one-shots (no BPM/key); longer = loops/stems.
+#   - Key = Krumhansl-Schmuckler profile correlation; BPM is octave-folded into --bpm-min/--bpm-max (genre-aware).
+#   - Long files are sliced under the model window; tiny remainders dropped. Output is 44.1k stereo PCM-16.
+#   - If a <file>.caption.txt exists next to the source, it's used verbatim instead of the auto-built prompt.
+# ---------------------------------------------------------------------------
 import argparse
 import json
 import sys
@@ -31,6 +39,7 @@ import soundfile as sf
 from tqdm import tqdm
 
 TARGET_SR = 44100
+# files at/under this are treated as one-shots (no BPM/key, tight trims)
 ONESHOT_MAX_SECONDS = 2.5  # files shorter than this are treated as one-shots
 
 # Krumhansl-Schmuckler key profiles

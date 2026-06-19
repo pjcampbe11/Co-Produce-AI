@@ -19,6 +19,14 @@ Usage:
     python genius_lookup.py --beats "F:/RAP_ARCHIVES/raw_beats" --resume
     # only instrumentals are matched; *_vocals files are skipped.
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Filename -> search query: strips track numbers, _instrumental, [ids], '(OFFICIAL VIDEO)'/'Prod. By' noise.
+#   - Deliberately leaves bare 2-digit leading numbers (so '50 Cent'/'21 Savage' survive); Genius fuzzy-search copes.
+#   - match_score + low_confidence flag let you spot-check; token read from GENIUS_TOKEN env (never hard-code).
+#   - Metadata only - the Genius API does not return lyrics and this never scrapes them.
+# ---------------------------------------------------------------------------
 import argparse
 import difflib
 import json

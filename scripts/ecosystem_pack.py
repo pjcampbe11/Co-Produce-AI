@@ -14,6 +14,12 @@ verify: after postprocess.py, check detected key/BPM in the sidecars against
     python ecosystem_pack.py verify --dir processed --key "F minor" --bpm 90 \
         --bpm-tolerance 3
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - plan locks every prompt in a pack plan to one key+BPM so a whole series inter-combines.
+#   - verify accepts half/double-time BPM matches and quarantines true mismatches.
+# ---------------------------------------------------------------------------
 import argparse
 import json
 import re

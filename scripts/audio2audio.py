@@ -17,6 +17,12 @@ Usage:
 
 Works with the base model too: --pretrained stabilityai/stable-audio-open-1.0
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - --strength = how far it transforms from your input: 0.2 re-texture, 0.5 real flip, 0.8 loose inspiration.
+#   - Outputs are DERIVATIVE of the input - only feed audio you have rights to.
+# ---------------------------------------------------------------------------
 import argparse
 import json
 from pathlib import Path

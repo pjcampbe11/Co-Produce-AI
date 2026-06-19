@@ -14,6 +14,13 @@ Usage:
     python beat_builder.py --library organized --groove grooves/dilla_a.groove.json ...
 Rights note: a groove template stores timing numbers, not audio.
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Extracts per-step timing OFFSETS + accent velocities (numbers, not audio - no rights issue).
+#   - Global grid phase is removed so only the relative micro-timing (the 'pocket') is stored.
+#   - Uses beat_this if installed (more accurate on real mixes), else librosa.
+# ---------------------------------------------------------------------------
 import argparse
 import json
 from pathlib import Path
@@ -88,6 +95,7 @@ def main():
         pairs.append((idx % STEPS, dev, float(s)))
         all_devs.append(dev)
     # remove global grid phase: only relative micro-timing is the groove
+    # remove the global grid phase so only the relative 'pocket' (micro-timing) remains
     phase = float(np.median(all_devs)) if all_devs else 0.0
     for step_idx, dev, s in pairs:
         dev_by_step[step_idx].append(dev - phase)

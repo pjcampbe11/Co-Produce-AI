@@ -16,6 +16,12 @@ Usage:
         --generated generated --run-name hiphop-finetune-v1 \
         --statement "All training audio owned by Patrick Campbell Productions."
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Aggregates training sources + generation seeds + per-file SHA-256 into a certificate.
+#   - It's EVIDENCE you sourced responsibly - not a license. The underlying rights still must exist.
+# ---------------------------------------------------------------------------
 import argparse
 import hashlib
 import json

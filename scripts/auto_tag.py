@@ -36,6 +36,14 @@ filenames - recommended layout):
     python auto_tag.py --full-root F:/STEMS/full --vocals-root F:/STEMS/vocals \
         --beat-root F:/STEMS/beat --resume
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - USE_TF=0 is set at import to keep transformers off a (often broken) TensorFlow.
+#   - Engine auto-picks: qwen if transformers present, else CLAP. Qwen wants ~16 GB VRAM.
+#   - --limit N counts NEWLY-tagged items (skips already-done), so repeated runs walk the dataset.
+#   - Supports parallel-folder OR *_instrumental/_vocals suffix stem layouts.
+# ---------------------------------------------------------------------------
 import os as _os
 _os.environ.setdefault("USE_TF", "0")          # keep transformers off TensorFlow
 _os.environ.setdefault("USE_TORCH", "1")

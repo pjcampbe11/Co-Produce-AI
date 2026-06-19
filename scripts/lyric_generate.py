@@ -16,6 +16,12 @@ Usage:
     python lyric_generate.py --model-dir lyric_model --mode verse --mood dark \
         --theme "grinding through the cold" --bars 16 --variations 2 --out verses
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Local Ollama only (private). Injects your style summary + a few of your REAL sections as voice anchors.
+#   - Small corpora make the model echo your phrasing - treat output as a DRAFT in your voice and edit it.
+# ---------------------------------------------------------------------------
 import argparse
 import json
 import random

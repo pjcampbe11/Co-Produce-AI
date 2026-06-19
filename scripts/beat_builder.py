@@ -26,6 +26,14 @@ Creative options:
                       the style's swing with the reference break's micro-timing
                       and accent profile (groove transplant)
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - STYLES values are per-16th-step HIT PROBABILITIES (0..1), not on/off - that's the humanization.
+#   - swing shifts offbeat 16ths; --groove overrides swing with an extracted timing/accent template.
+#   - --rotate picks a different sample per hit (pair with microvariants.py for a human kit).
+#   - Drum-rack GM map: kick 36, snare 38, hat 42, perc 47, 808 35. Melodic loop must match BPM to lock.
+# ---------------------------------------------------------------------------
 import argparse
 import json
 import random
@@ -39,6 +47,7 @@ SR = 44100
 STEPS_PER_BAR = 16  # 16th-note grid
 
 # Pattern templates: per instrument, 16 steps, value = hit probability (0..1).
+# Each list = 16 sixteenth-note steps; values are HIT PROBABILITIES (0..1), not on/off.
 STYLES = {
     "boom_bap": {
         "swing": 0.58, "hat_choke": 0.9,

@@ -27,6 +27,15 @@ Usage:
 Optional: --no-events / --no-vibe to skip model layers; --segment-stems
 (requires audio-separator) analyzes vocals/drums/bass/other separately.
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Layered analysis; each model layer degrades gracefully if its package is missing.
+#   - PANNs files are auto-downloaded with urllib (Windows has no wget); honors PANNS_DATA_DIR.
+#   - Models are loaded ONCE and cached across the batch - don't refactor that away.
+#   - --for-captions writes a slim <stem>.caption.json (only what build_captions needs).
+#   - rolloff95_hz well below 16 kHz on a 44.1k file = the source was lossy (upsampled).
+# ---------------------------------------------------------------------------
 import os as _os
 _os.environ.setdefault("USE_TF", "0")          # keep transformers off TensorFlow
 _os.environ.setdefault("USE_TORCH", "1")

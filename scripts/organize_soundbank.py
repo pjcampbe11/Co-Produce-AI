@@ -16,6 +16,14 @@ Usage:
     python organize_soundbank.py --input messy_bank --output organized --dry-run
     python organize_soundbank.py --input messy_bank --output organized
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Classifies filename-keywords FIRST, audio-analysis only as fallback.
+#   - Files below --min-confidence go to _review/ for manual sorting.
+#   - COPIES by default (originals safe); --move relocates. --resume re-runs safely.
+#   - --ai-tags adds local CLAP zero-shot tags after sorting. .vst3 bundles & junk handled.
+# ---------------------------------------------------------------------------
 import argparse
 import csv
 import shutil

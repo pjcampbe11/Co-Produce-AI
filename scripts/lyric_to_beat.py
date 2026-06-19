@@ -10,6 +10,12 @@ exact vocal_guide.py command to make the flow MIDI for ACE Studio, and writes a
 Usage:
     python lyric_to_beat.py --lyrics verses/verse_dark_01.txt --out beat_brief
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Infers a lyric's mood + flow density and maps them to a genre/BPM/key + beat prompt.
+#   - Prints the exact sa3_workflow.py and vocal_guide.py commands so the lyric seeds both beat and vocal.
+# ---------------------------------------------------------------------------
 import argparse
 import json
 import sys

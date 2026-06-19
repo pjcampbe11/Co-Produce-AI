@@ -11,6 +11,12 @@ Usage:
     python plugin_scan.py                      # scan default Windows locations
     python plugin_scan.py --dirs "D:/My VSTs"  # add extra folders
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Scans the standard Windows VST3/VST2 folders (+ --dirs). .vst3 bundles are recorded but NOT descended into.
+#   - instrument-vs-effect is a guess from the name; writes plugins_catalog.json for the dashboard browser.
+# ---------------------------------------------------------------------------
 import argparse
 import json
 import os

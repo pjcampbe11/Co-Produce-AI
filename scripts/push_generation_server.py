@@ -25,6 +25,12 @@ Usage:
         --ckpt hiphop_v1.ckpt --presets prompts/push_presets.example.json \
         --out "C:/Users/you/Documents/Ableton/GenSamples"
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - OSC server holds the model in memory; map Push pads/knobs via Live's Connection Kit OSC Send.
+#   - A 'busy' flag drops overlapping fire messages so you don't queue runaway jobs.
+# ---------------------------------------------------------------------------
 import argparse
 import sys
 import time

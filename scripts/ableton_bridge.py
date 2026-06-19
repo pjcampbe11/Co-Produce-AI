@@ -18,6 +18,12 @@ Usage:
     python ableton_bridge.py --beat beats/boom_bap_92bpm_01 --track 0 --scene 0
     python ableton_bridge.py --beat beats/... --track 0 --scene 0 --fire
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Needs AbletonOSC installed as a Live control surface. Pushes tempo + creates the clip's notes over OSC.
+#   - Uses the GM drum map; samples must sit on those notes in your Drum Rack.
+# ---------------------------------------------------------------------------
 import argparse
 import json
 import time

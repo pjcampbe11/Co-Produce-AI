@@ -1,4 +1,10 @@
 """lyric_common.py - shared text helpers for the lyric scripts (stdlib only)."""
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Heuristic helpers: syllables = vowel groups; rime = last vowel+coda; mood = small lexicon.
+#   - These are approximations (not phonetic-perfect) - good enough for style profiling, not scansion.
+# ---------------------------------------------------------------------------
 import re
 from collections import Counter
 
