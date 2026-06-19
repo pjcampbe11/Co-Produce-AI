@@ -123,6 +123,7 @@ python scripts/beat_builder.py --library "F:/SoundBankAI" --style boom_bap --bpm
 <p align="center"><img src="docs/gifs/pod.gif" width="80%"><br><sub><i>▶ Demo: spinning up a pod, uploading data, running a step, pulling results.</i></sub></p>
 
 **Minimums (operator picks anything at or above):**
+
 | Step | Min VRAM | Suggested pod |
 |---|---|---|
 | SA3 **LoRA** train | 16 GB | RTX 4090 / A5000 (24 GB) |
