@@ -13,7 +13,8 @@ An end-to-end studio that learns <i>your</i> beats, lyrics, and library — then
 
 ## 📖 Table of Contents
 
-**Getting started**
+### Getting started
+
 1. [What is Beat Toolkit?](#1-what-is-beat-toolkit)
 2. [How it all fits together](#2-how-it-all-fits-together)
 3. [Quick start](#3-quick-start)
@@ -21,7 +22,8 @@ An end-to-end studio that learns <i>your</i> beats, lyrics, and library — then
 5. [Cloud GPU pod (default for everything GPU)](#5-cloud-gpu-pod-default-for-everything-gpu)
 6. [Legal & licensing](#6-legal--licensing)
 
-**The pipeline**
+### The pipeline
+
 7. [Organize your soundbank](#7-organize-your-soundbank)
 8. [Remove vocals (stem separation)](#8-remove-vocals)
 9. [Deep Listen — analyze any track](#9-deep-listen)
@@ -43,7 +45,8 @@ An end-to-end studio that learns <i>your</i> beats, lyrics, and library — then
 25. [Genre expansion: rock/metal & dubstep/DnB](#25-genre-expansion)
 26. [Dashboard (web UI)](#26-dashboard)
 
-**Reference & appendices**
+### Reference & appendices
+
 27. [Training specs & costs](#27-specs--costs)
 28. [Sourcing lossless audio](#28-lossless)
 29. [yt-dlp commands](#29-ytdlp)
