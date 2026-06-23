@@ -241,6 +241,17 @@ def _tag_groups(items, engine, args):
         except Exception as e:
             failed += 1
             print(f"[{i}/{len(items)}] FAILED {key}: {e}")
+            # If everything is failing identically, it's a model/engine problem,
+            # not a per-file one - abort fast with guidance instead of spamming.
+            if ok == 0 and failed >= 5:
+                sys.exit(
+                    f"\nAborting: first {failed} files all failed the same way ({e}).\n"
+                    "This is an engine/model load problem, not your audio. Options:\n"
+                    "  - CLAP download is flaky on Windows: pip install -U laion-clap "
+                    "(and delete its cache in %USERPROFILE%/.cache), then retry.\n"
+                    "  - Or run auto_tag on a cloud pod with --engine qwen3-omni (16 GB+ GPU).\n"
+                    "  - Or SKIP tagging entirely: it is OPTIONAL. build_captions.py works without "
+                    ".tags.json (it uses deep_listen bpm/key/instruments + genius producer/era).\n")
     print(f"\n=== {ok} tagged, {skipped} already-done/skipped, {failed} failed ===")
 
 
