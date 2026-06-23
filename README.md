@@ -42,6 +42,15 @@ An end-to-end studio that learns <i>your</i> beats, lyrics, and library — then
 22. [Lyric model — write in your voice](#22-lyric-model)
 23. [Post-process, package, provenance](#23-finish)
 24. [Creative Techniques Lab](#24-creative-techniques)
+    - [Taste distillation](#ct-curation)
+    - [Micro-variants](#ct-microvariants)
+    - [Groove DNA](#ct-groove)
+    - [Flip lineage](#ct-lineage)
+    - [Destroy-and-heal](#ct-destroyheal)
+    - [Two-producer packs](#ct-abmodels)
+    - [Push as an instrument](#ct-push)
+    - [AI session musician](#ct-callresponse)
+    - [Ecosystem packs](#ct-ecosystem)
 25. [Genre expansion: rock/metal & dubstep/DnB](#25-genre-expansion)
 26. [Dashboard (web UI)](#26-dashboard)
 
@@ -436,21 +445,92 @@ python scripts/provenance.py --pack packs/DustyCratesVol1 --dataset dataset --ge
 <a name="24-creative-techniques"></a>
 ## 24. Creative Techniques Lab
 
-**What it is.** Techniques the AI-beat crowd isn't doing — built on the loops *between* the tools.
+**What it is.** Techniques the AI-beat crowd isn't doing — built on the loops *between* the tools. Each one below has a one-line idea and **5 concrete ways to use it** with the toolkit. Most are GPU-backed → **cloud pod default**.
 
 <p align="center"><img src="docs/gifs/creative.gif" width="80%"><br><sub><i>▶ Demo: micro-variants + groove transplant + destroy-and-heal.</i></sub></p>
 
-- **Taste distillation** (`curation_loop.py`) — CLAP-rank generations against your best, keep the closest, retrain on the keepers. Your ear becomes training signal.
-- **Micro-variants** (`microvariants.py`) — 8 subtle takes of each one-shot via low-strength a2a; pair with `beat_builder --rotate` so no two hits are identical.
-- **Groove DNA** (`groove_dna.py`) — extract a break's micro-timing + accents into a template (numbers, not audio); apply to your samples via `beat_builder --groove`. "Quantize to Dilla."
-- **Flip lineage** (`flip_lineage.py`) — chained a2a (telephone-game morph), every stage + seeds logged.
-- **Destroy-and-heal** (`destroy_heal.py`) — wreck audio through an extreme VST chain, then low-strength a2a heals it back to musicality. THE bass-music texture machine.
-- **Two-producer packs** (`ab_models.py`) — same seeds/plan through two LoRAs; identical idea, two sonic personalities.
-- **Push as an instrument** (`push_generation_server.py`) — OSC server holds your model in memory; map Push pads/knobs to fire generation jobs.
-- **AI session musician** (`call_response.py`) — watches a folder; every clip you export gets answered with variations.
-- **Ecosystem packs** (`ecosystem_pack.py`) — lock a whole pack series to one key + BPM so every volume inter-combines; `verify` quarantines mismatches.
+> In the examples, **`<MODEL>`** = either your trained model (`--model-config model_config.json --ckpt hiphop_v1.ckpt`) or the base (`--pretrained stabilityai/stable-audio-open-1.0`).
 
-Most are GPU-backed → **cloud pod default**. Extra installs noted per script.
+<a name="ct-curation"></a>
+### Taste distillation — `curation_loop.py`
+CLAP-rank generations against a folder of your best sounds, keep the closest, retrain on the keepers. Your ear becomes the training signal.
+1. Rank 500 generated kicks against your 30 favorites, keep the top 10%: `python scripts/curation_loop.py score --candidates generated/Kicks --reference my_best_kicks --keep-top 0.1 --keep-dir round2/kicks`
+2. Keep an absolute best-50 melodic loops (a value ≥1 = a count, not a fraction): `python scripts/curation_loop.py score --candidates generated/MelodicLoops --reference my_best_loops --keep-top 50 --keep-dir round2/loops`
+3. Turn the keepers into the next fine-tune dataset: `python scripts/curation_loop.py promote --keep-dir round2 --dataset-dir dataset_round2 --base-prompt "hip hop, dusty"`
+4. Closed loop: retrain your LoRA on `dataset_round2`, regenerate, then `score` the new batch against the same reference — each round converges on your taste.
+5. QC gate before shipping: `score` a finished pack's candidates against your whole catalog and only keep rows above a similarity you eyeball in the emitted `curation_scores.csv`.
+
+<a name="ct-microvariants"></a>
+### Micro-variants — `microvariants.py`
+8 subtle takes of each one-shot via low-strength audio-to-audio; pair with `beat_builder --rotate` so no two hits are identical (like a real drummer).
+1. 8 takes of every kick: `python scripts/microvariants.py <MODEL> --input organized/drums_oneshots/kicks --variants 8 --strength 0.15 --prompt "hip hop, kicks, one shot, punchy" --out variants/kicks`
+2. Tighter snare variants (lower strength = closer to original): `... --input organized/drums_oneshots/snares --strength 0.12 --prompt "hip hop, snares, one shot, cracking" --out variants/snares`
+3. Hat variants for rolling hi-hats: `... --input organized/drums_oneshots/hats --strength 0.18 --variants 6 --out variants/hats`
+4. 808 variants: `... --input organized/drums_oneshots/808s --strength 0.15 --prompt "808 bass, one shot, sub" --out variants/808s`
+5. Build with them so every hit differs: `python scripts/beat_builder.py --library variants --style boom_bap --rotate --bpm 90 --out beats_human`
+
+<a name="ct-groove"></a>
+### Groove DNA — `groove_dna.py`
+Extract a break's micro-timing + accents into a template (numbers, not audio — no rights issue); apply to your samples via `beat_builder --groove`. "Quantize to Dilla."
+1. Extract a swung break's pocket: `python scripts/groove_dna.py --input classic_break.wav --name dilla_a --out grooves`
+2. Extract an amen's feel with the better tracker: `python scripts/groove_dna.py --input amen.wav --name amen_01 --engine beat_this --out grooves`
+3. Capture your *own* signature pocket from a beat you made: `python scripts/groove_dna.py --input my_best_beat.wav --name my_pocket --out grooves`
+4. Play your kit with that timing: `python scripts/beat_builder.py --library "F:/SoundBankAI" --style boom_bap --bpm 90 --groove grooves/dilla_a.groove.json --out beats_dilla`
+5. Groove + variety together: `python scripts/beat_builder.py --library variants --style boom_bap --groove grooves/my_pocket.groove.json --rotate --out beats`
+
+<a name="ct-lineage"></a>
+### Flip lineage — `flip_lineage.py`
+Chained audio-to-audio (telephone-game morph); every stage's prompt/strength/seed/hash is logged to `lineage.json`. The evolution itself is content.
+1. Soul → dark → eerie on a loop: `python scripts/flip_lineage.py <MODEL> --input soul_loop.wav --out lineages/soul --stage "0.3:hip hop, soul keys, dusty" --stage "0.35:hip hop, dark strings, tape" --stage "0.4:hip hop, eerie synth, lofi"`
+2. Morph a drum break across genres: `... --input break.wav --out lineages/break --stage "0.4:boom bap drums" --stage "0.5:drum and bass break" --stage "0.5:halftime dubstep drums"`
+3. Gentle structure-preserving chain (low strengths): `... --stage "0.25:..." --stage "0.25:..." --stage "0.25:..."`
+4. Wander far (high strengths) for happy accidents: `... --stage "0.6:..." --stage "0.6:..."`
+5. Keep the `lineage.json` with the pack as a provenance/story artifact (pairs with `provenance.py`).
+
+<a name="ct-destroyheal"></a>
+### Destroy-and-heal — `destroy_heal.py`
+Wreck audio through an extreme VST chain, then low-strength a2a heals it back toward musicality — the scars that survive are the texture. THE bass-music machine.
+1. Dusty boom-bap heal: `python scripts/destroy_heal.py <MODEL> --input loops --chain configs/vst_chains/destroy_extreme.json --prompt "hip hop, dusty vinyl, warm analog" --heal-strength 0.25 --out healed`
+2. Neuro bass texture: `... --prompt "drum and bass, neuro growl bass" --heal-strength 0.3 --out healed_neuro`
+3. Vinyl-wrecked melodic loop: `... --input melodic_loops --prompt "lofi, vinyl crackle, warped tape" --out healed_lofi`
+4. A/B the wreck vs the heal: add `--keep-destroyed` to save both stages side by side.
+5. Dial the scar: `--heal-strength 0.15` keeps it gnarly, `0.4` leans on the model to smooth it.
+
+<a name="ct-abmodels"></a>
+### Two-producer packs — `ab_models.py`
+Same seeds + same plan through two LoRAs; item N in A/ and B/ is the same idea in two sonic personalities.
+1. 70s-soul vs Memphis-90s: `python scripts/ab_models.py --plan prompts/pack_plan.example.json --model-a-config cfgA.json --model-a-ckpt soul70s.ckpt --model-b-config cfgB.json --model-b-ckpt memphis90.ckpt --out ab_packs --base-seed 1234`
+2. Your model vs the base (how much your LoRA changed it): `... --model-a-config model_config.json --model-a-ckpt hiphop_v1.ckpt --model-b-pretrained stabilityai/stable-audio-open-1.0`
+3. Two subgenre LoRAs (boom-bap vs trap) on one plan to compare flips.
+4. Reproducible matched pairs: keep `--base-seed` fixed so A and B share seeds.
+5. Ship as paired "interpretations" — a Vol-A / Vol-B release from one creative idea.
+
+<a name="ct-push"></a>
+### Push as an instrument — `push_generation_server.py`
+An OSC server holds your model in memory; map Push pads/knobs (via Live's free Connection Kit OSC Send) to fire generation jobs — generation becomes performance.
+1. Launch with presets: `python scripts/push_generation_server.py <MODEL> --presets prompts/push_presets.example.json --out "C:/Ableton/GenSamples"`
+2. Map a Push pad → OSC `/gen/preset 3` then `/gen/fire` so one pad spits a kick.
+3. Map a knob → `/gen/strength` to morph between re-texture and full flip live.
+4. Set `/gen/source <wav>` then fire to get audio-to-audio variations of a loaded loop.
+5. Point `--out` at a folder in Live's browser so fired samples land on Push instantly.
+
+<a name="ct-callresponse"></a>
+### AI session musician — `call_response.py`
+Watches a folder; every clip you export from Live gets answered with N variations in a response folder. Trade bars with a model trained on your catalog.
+1. Trade melodic phrases: `python scripts/call_response.py <MODEL> --watch "C:/Ableton/Call" --respond "C:/Ableton/Response" --prompt "hip hop, soul keys response" --strength 0.45 --variations 2`
+2. Drum call/response: `... --prompt "boom bap drum fill, dusty" --strength 0.5`
+3. More takes per call: `... --variations 4`
+4. Tighter answers that stay close to your phrase: `... --strength 0.35`
+5. Wire it to Live: export a clip (right-click → Export Audio) into the `--watch` folder; the answer appears in `--respond` to drop on the next scene.
+
+<a name="ct-ecosystem"></a>
+### Ecosystem packs — `ecosystem_pack.py`
+Lock a whole pack series to one key + BPM so every volume inter-combines; `verify` quarantines mismatches. Modular packs a loose catalog can't promise.
+1. Lock a plan to F minor / 90: `python scripts/ecosystem_pack.py plan --base prompts/pack_plan.example.json --key "F minor" --bpm 90 --name "Crate Ecosystem Vol 2" --out prompts/eco_fmin_90_v2.json`
+2. Lock a DnB series at 174: `python scripts/ecosystem_pack.py plan --base prompts/pack_plan.dubstep_dnb.json --key "G minor" --bpm 174 --name "Rollers Vol 1" --out prompts/eco_dnb.json`
+3. Verify a finished folder matches the lock: `python scripts/ecosystem_pack.py verify --dir processed --key "F minor" --bpm 90`
+4. Dry-run the check first (flag, don't move): `python scripts/ecosystem_pack.py verify --dir processed --key "F minor" --bpm 90 --report-only`
+5. Build a multi-volume series: lock Vol 1–4 to the same key/BPM so every melodic loop in Vol 3 plays over every drum loop in Vol 1.
 
 <a name="25-genre-expansion"></a>
 ## 25. Genre expansion: rock/metal & dubstep/DnB
