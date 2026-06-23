@@ -75,7 +75,16 @@ An end-to-end studio that learns <i>your</i> beats, lyrics, and library — then
 
 **Who it's for.** Producers and small AI-audio services who want owned, rights-clean, genre-deep output — not the homogenized sound of shared models.
 
-<p align="center"><img src="docs/gifs/overview.gif" width="80%"><br><sub><i>▶ Demo: end-to-end — a folder of beats becoming a trained model and a finished pack.</i></sub></p>
+**▶ Demo — a folder of beats becomes a trained model and a finished pack**
+```console
+$ python scripts/prepare_dataset.py --input raw_beats --output dataset --name-contains _instrumental
+Done. 1500 source files processed.  Log: dataset/prepare_log.txt
+$ python scripts/validate_dataset.py --dataset dataset
+Files: 3120   Total audio: 9.7 h   Dataset is ready for training.
+$ # ... train on a pod ... then:
+$ python scripts/build_pack.py --input processed --pack-name "Vol 1" --out packs
+Pack built: packs/Vol1  (200 samples)
+```
 
 <a name="2-how-it-all-fits-together"></a>
 ## 2. How it all fits together
@@ -130,7 +139,14 @@ python scripts/beat_builder.py --library "F:/SoundBankAI" --style boom_bap --bpm
 
 **What it is.** Training and large-model generation run on a **rented GPU pod**, not your local card — it's faster, cheaper than it sounds, and avoids dependency pain. This is the **default** for every GPU step in this README; a local GPU is only a fallback.
 
-<p align="center"><img src="docs/gifs/pod.gif" width="80%"><br><sub><i>▶ Demo: spinning up a pod, uploading data, running a step, pulling results.</i></sub></p>
+**▶ Demo — spin up a pod, run a step, pull results**
+```console
+# on the pod (RTX 4090, /workspace volume):
+$ bash /workspace/toolkit/cloud/sa3_setup.sh
+Ready. Train a LoRA with:  uv run python scripts/train_lora.py --model medium-base ...
+$ runpodctl send /workspace/lora_beats/lora_step2500.safetensors
+Code is: 8338-galileo-...   # receive on your PC with: runpodctl receive <code>
+```
 
 **Minimums (operator picks anything at or above):**
 
@@ -169,7 +185,18 @@ Read this before commercializing (not legal advice — consult an IP attorney):
 
 **What it is.** Turns a messy, unsorted sample library into the tagged folder structure the toolkit trains and builds from — auto-classifying kicks/snares/hats/percs/808s, drum loops, melodic loops, vocals, FX, and routing MIDI/REX/presets. Classification uses filename keywords first, then audio analysis (spectral/onset features) as a fallback, with a confidence-scored review CSV.
 
-<p align="center"><img src="docs/gifs/organize.gif" width="80%"><br><sub><i>▶ Demo: a chaotic folder → clean tag-folders + review.csv.</i></sub></p>
+**▶ Demo — a chaotic folder → clean tag-folders + review.csv**
+```console
+$ python scripts/organize_soundbank.py --input "F:/Sound Bank" --output "F:/Organized" --dry-run
+Classifying: 100%|██████████████████| 14990/14990 [04:12<00:00, 59it/s]
+=== DRY RUN - nothing moved ===
+  drums_oneshots/kicks            1038
+  drums_oneshots/snares           1780
+  drums_loops                     2604
+  melodic_loops                   4173
+  _review                          312
+Full report: F:/Organized/review.csv
+```
 
 **Setup & run** (local; pure DSP, no GPU):
 ```powershell
@@ -185,7 +212,15 @@ Files are **copied** (originals safe) unless `--move`. `--dry-run` previews to `
 
 **What it is.** Strips vocals from a large batch of MP3/WAV to get clean instrumentals (and optional acapellas), using **BS-RoFormer** (current SOTA, ~12.9 dB vocal SDR) with a Demucs fallback.
 
-<p align="center"><img src="docs/gifs/vocal_removal.gif" width="80%"><br><sub><i>▶ Demo: a folder of songs → *_instrumental files, GPU-accelerated.</i></sub></p>
+**▶ Demo — a folder of songs → *_instrumental files (GPU)**
+```console
+$ python scripts/remove_vocals.py --input mp3 --output raw_beats --mp3 --keep-vocals --require-gpu --mirror
+Acceleration: GPU  [torch CUDA: NVIDIA GeForce RTX 4090 | onnxruntime: CUDA]
+2982 file(s) found, 2982 to process.
+[1/2982] Kendrick Lamar - Backseat Freestyle.mp3   (15.2s)
+[2/2982] ...
+=== 2982 instrumentals written to raw_beats/ ===
+```
 
 **Setup & run** (GPU — **cloud pod default**; runs locally on 8 GB+):
 ```bash
@@ -201,7 +236,13 @@ python scripts/remove_vocals.py --input songs/ --output raw_beats/ --mp3 --keep-
 
 **What it is.** Learns everything possible about a file: technical truth (sample rate, LUFS, crest/dynamics, stereo correlation, clipping, band-by-band spectrum, lossy-upsample detection), musical analysis (BPM + tempo stability, key, onset density, structure, energy arc), **sound identification** (every event with timestamps across AudioSet's 527 classes via PANNs), and **mood/genre/instrument/production** (CLAP zero-shot). Outputs `.analysis.json` + readable `.analysis.md`.
 
-<p align="center"><img src="docs/gifs/deep_listen.gif" width="80%"><br><sub><i>▶ Demo: drop a track → full technical + musical + vibe report.</i></sub></p>
+**▶ Demo — drop a track → full technical + musical + vibe report**
+```console
+$ python scripts/deep_listen.py --input track.mp3 --out reports/
+track.mp3: 92.0 BPM; key F minor (conf 0.71); -9.8 LUFS; feels dark, nostalgic;
+           reads as boom bap hip hop; contains kick drum, hi-hat, piano, vinyl crackle
+Wrote reports/track.analysis.json + reports/track.analysis.md
+```
 
 **Setup & run** (GPU optional — PANNs/CLAP use it if present):
 ```bash
@@ -218,7 +259,14 @@ python scripts/deep_listen.py --input "F:/RAP_ARCHIVES/raw_beats" --out "F:/RAP_
 
 **What it is.** Tags the *feel* of a beat in free-form language (not a fixed list) by having an audio-language model **listen** and describe it. Can tag the full mix, just the vocal, just the beat, or all stems separately — using your already-separated stems.
 
-<p align="center"><img src="docs/gifs/auto_tag.gif" width="80%"><br><sub><i>▶ Demo: a beat → "dark, dusty, trap, 808-heavy" written to a sidecar.</i></sub></p>
+**▶ Demo — a beat → free-form mood/vibe tags written to a sidecar**
+```console
+$ python scripts/auto_tag.py --stems-dir raw_beats --source beat --engine qwen3-omni --limit 3
+Engine: qwen3-omni   Source: beat
+[1/3] 002 - Baby Keem: dark, dusty, trap, 808 bass, aggressive, vinyl texture
+[2/3] 003 - Young Dolph: soulful, mellow, boom bap, warm keys
+=== 3 tagged, 0 skipped, 0 failed ===
+```
 
 **Setup & run** (GPU — **cloud pod default**; Qwen wants 16 GB+):
 ```bash
@@ -234,7 +282,13 @@ Engines: `qwen3-omni` (most detailed) → `qwen2-audio` (lighter) → `clap` (li
 
 **What it is.** Matches each beat to a Genius song by filename and writes a metadata sidecar — **producer, writers, album, release year, URL** (metadata only; never lyrics). Feeds real production lineage into your captions.
 
-<p align="center"><img src="docs/gifs/genius.gif" width="80%"><br><sub><i>▶ Demo: filenames → producer/era metadata sidecars.</i></sub></p>
+**▶ Demo — filenames → producer/era metadata sidecars**
+```console
+$ python scripts/genius_lookup.py --beats raw_beats --limit 3
+[1/3] Young Dolph - Money Callin  ->  Young Dolph - Money Callin
+[2/3] Lil Wayne - Swag Surf  ->  Lil Wayne - Swag Surf  (LOW CONF)
+=== 2 matched, 0 no-match, 0 skipped, 1 flagged low-confidence ===
+```
 
 **Setup & run** (local; needs a free Genius token):
 ```powershell
@@ -252,7 +306,13 @@ Cleans track numbers/`_instrumental`/"(OFFICIAL VIDEO)" noise from filenames, ta
 
 **What it is.** Composes ONE canonical training caption per beat in a consistent field order — fusing Deep Listen analysis + your auto-tags + Genius producer/era — so your model learns audio *and* production lineage. Leads with a subgenre only when the analysis is confident, else plain `hip hop`.
 
-<p align="center"><img src="docs/gifs/captions.gif" width="80%"><br><sub><i>▶ Demo: three sidecars → "trap, 808 bass, dark, 140 BPM, key of F minor, prod Speaker Knockerz, 2010s".</i></sub></p>
+**▶ Demo — three sidecars → one canonical training caption**
+```console
+$ python scripts/build_captions.py --beats raw_beats
+002 - Baby Keem_instrumental.mp3: trap, hi-hat, 808 bass, dark, modern polished
+   production, 140 BPM, key of F minor, loop, prod Speaker Knockerz, 2010s
+=== 1500 captions written, 0 skipped, 12 had no report ===
+```
 
 **Setup & run** (local):
 ```powershell
@@ -267,7 +327,14 @@ Writes `<beat>.caption.txt` next to each file; `prepare_dataset.py` uses it verb
 
 **What it is.** Converts your library to 44.1 kHz stereo, slices long files under the model window, auto-detects BPM/key, writes per-file prompt sidecars, then validates the set before you spend a cent on GPU.
 
-<p align="center"><img src="docs/gifs/prepare.gif" width="80%"><br><sub><i>▶ Demo: raw beats → clean dataset/ + "ready for training".</i></sub></p>
+**▶ Demo — raw beats → clean dataset/ + 'ready for training'**
+```console
+$ python scripts/prepare_dataset.py --input raw_beats --output dataset --name-contains _instrumental
+Preparing: 100%|██████████| 1500/1500   Done. 1500 source files processed.
+$ python scripts/validate_dataset.py --dataset dataset
+Files: 3120   Total audio: 9.7 h   Kinds: {'loop': 3120}
+Errors: 0   ===  Dataset is ready for training. ===
+```
 
 **Setup & run** (local):
 ```powershell
@@ -283,7 +350,13 @@ python scripts/validate_dataset.py --dataset "F:/dataset_beats"
 
 **What it is.** Fine-tunes an open audio model on *your* dataset so generation sounds like your catalog. Two paths: **SA3 LoRA** (recommended — small adapter, ~$1–2, an hour or two, stackable per-genre) and **SAO full fine-tune** (maximum ownership, ~$8–40). Cloud pod is the default.
 
-<p align="center"><img src="docs/gifs/train.gif" width="80%"><br><sub><i>▶ Demo: dataset → LoRA training on a pod, demo audio improving over steps.</i></sub></p>
+**▶ Demo — dataset → LoRA, demo audio improving over steps (on a pod)**
+```console
+$ uv run python scripts/train_lora.py --model medium-base --data_dir sa3_beats --rank 16 --steps 2500 --output_dir lora_beats
+step  500/2500 | loss 0.182 | demo audio -> lora_beats/demos/step500.wav
+step 1500/2500 | loss 0.121 | demo audio -> lora_beats/demos/step1500.wav
+step 2500/2500 | loss 0.098 | saved lora_beats/lora_step2500.safetensors
+```
 
 **Mental model:** cost is **GPU-hours, not per-file** — the loader samples random crops across thousands of steps. A 500-file and a 3,000-file run cost ~the same. You don't pick "sets at once"; you set batch size + steps. **Sweet-spot dataset: 500–1,500 well-labeled, on-aesthetic files** — curation beats raw count.
 
@@ -308,7 +381,13 @@ Watch the trainer's demo audio; **stop when it sounds like your aesthetic but no
 
 **What it is.** Batch-generates audio from a pack plan (counts, durations, prompts) using your fine-tuned model. Over-generate 2–3× and curate hard.
 
-<p align="center"><img src="docs/gifs/generate.gif" width="80%"><br><sub><i>▶ Demo: a pack plan → folders of kicks/snares/loops.</i></sub></p>
+**▶ Demo — a pack plan → folders of kicks/snares/loops**
+```console
+$ python scripts/sa3_workflow.py plan --model medium-base --lora hiphop_v1.safetensors --plan prompts/pack_plan.example.json --out generated
+[Kicks] 1/30 ... 30/30        [Snares] 1/30 ... 30/30
+[Hats] 25/25  [DrumLoops] 25/25  [MelodicLoops] 25/25  [Stems] 10/10
+Done -> generated/   (run postprocess.py next)
+```
 
 **Setup & run** (GPU — **cloud pod default**; runs locally on 8 GB+):
 ```bash
@@ -340,7 +419,14 @@ python scripts/sa3_workflow.py plan --model medium-base --lora metal_v1.safetens
 
 **What it is.** Feed any WAV and get new sounds *derived* from it, steered by a prompt — the model treats your file as the diffusion seed; `--strength` sets how far it transforms (0.2 re-texture → 0.5 real flip → 0.8 loose inspiration).
 
-<p align="center"><img src="docs/gifs/audio2audio.gif" width="80%"><br><sub><i>▶ Demo: a break → four flipped variations.</i></sub></p>
+**▶ Demo — a break → four flipped variations**
+```console
+$ python scripts/audio2audio.py --ckpt hiphop_v1.ckpt --input break.wav \
+    --prompt "boom bap, 90 BPM, dusty drum break" --strength 0.5 --variations 4 --out flipped
+1/4 -> break_var01_s0.50_seed1837.wav
+2/4 -> break_var02_s0.50_seed40912.wav
+3/4 -> ...   Done. Variations in flipped/
+```
 
 ```bash
 python scripts/audio2audio.py --model-config model_config.json --ckpt hiphop_v1.ckpt --input my_break.wav \
@@ -367,7 +453,14 @@ python scripts/audio2audio.py --pretrained stabilityai/stable-audio-open-1.0 --i
 
 **What it is.** A pure remixer: re-imagine a finished track as **hip-hop / rock-metal / dubstep / DnB** (`full`), or **fuse** a target genre with the track's current vibe (`mashup`).
 
-<p align="center"><img src="docs/gifs/remix.gif" width="80%"><br><sub><i>▶ Demo: one beat → a DnB remix and a trap-mashup.</i></sub></p>
+**▶ Demo — one beat → a DnB remix and a trap mashup**
+```console
+$ python scripts/remix.py --pretrained stabilityai/stable-audio-open-1.0 --input song.wav --genre dnb --mode full --variations 3 --out remixes
+Remix [full] -> dnb (strength 0.6)
+  1/3 -> song_dnb_full_v01_seed771.wav
+  2/3 -> song_dnb_full_v02_seed22310.wav
+Done -> remixes/  (run postprocess.py on keepers)
+```
 
 ```bash
 python scripts/remix.py --pretrained stabilityai/stable-audio-open-1.0 --input song.wav --genre dnb --mode full --variations 3 --out remixes/
@@ -396,7 +489,13 @@ python scripts/remix.py --model-config model_config.json --ckpt hiphop_v1.ckpt -
 
 **What it is.** Sequences kicks/snares/hats/percs/808s from your organized library on style grids (boom_bap, trap, drill, lofi, rock, metal, dbeat, dubstep, dnb, amen) with swing + humanization, layers a melodic loop, and outputs master + stems + `pattern.mid` + a manifest of exactly which samples were used. No GPU needed.
 
-<p align="center"><img src="docs/gifs/beat_builder.gif" width="80%"><br><sub><i>▶ Demo: a sample folder → a finished 4-bar beat + MIDI.</i></sub></p>
+**▶ Demo — a sample folder → a finished beat + MIDI**
+```console
+$ python scripts/beat_builder.py --library "F:/SoundBankAI" --style boom_bap --bpm 90 --bars 4 --count 1 --melodic "F:/SoundBankAI/melodic_loops" --out beats
+Built beats/boom_bap_90bpm_01
+  master.wav (11.7s), stem_kick/snare/hat/perc/melodic.wav, pattern.mid, manifest.json
+  kick -> Kick (Cole).wav  snare -> Tappy Rim.wav  melodic -> OS_VC_90_..._Cm.wav
+```
 
 ```bash
 python scripts/beat_builder.py --library "F:/SoundBankAI" --style boom_bap --bpm 90 --bars 4 --count 8 --melodic "F:/SoundBankAI/melodic_loops" --out beats
@@ -424,7 +523,14 @@ python scripts/beat_builder.py --library "F:/SoundBankAI" --style metal --bpm 17
 
 **What it is.** Drive your real plugins headlessly with pedalboard — render MIDI through your **instruments** (Battery, Massive, Kontakt, FM8…) and process audio through your **effects** (Saturn, tape, comps, limiters). A scanner catalogs what's installed; the dashboard's Plugin browser lets you pick by name.
 
-<p align="center"><img src="docs/gifs/vst.gif" width="80%"><br><sub><i>▶ Demo: pattern.mid → Battery render → dusty effect chain → finished loop.</i></sub></p>
+**▶ Demo — pattern.mid → Battery render → dusty effect chain**
+```console
+$ python scripts/vst_instrument.py --vst3 ".../Battery 4.vst3" --midi beats/.../pattern.mid \
+    --chain configs/vst_chains/dusty_boombap.json --out kit_dusty.wav
+Rendering 46 MIDI events -> 11.7s @ 44100 Hz
+Applying 5-stage effect chain from configs/vst_chains/dusty_boombap.json
+Wrote kit_dusty.wav
+```
 
 ```bash
 pip install pedalboard
@@ -455,7 +561,15 @@ python scripts/vst_chain.py --input songs --output instrumentals --chain configs
 
 **What it is.** Beyond loops — complete tracks. **Instrumental** songs via Stable Audio 3 (up to ~380 s, works with your beat LoRA); **songs with vocals from your lyrics** via HeartMuLa (Apache-2.0, no revenue cap).
 
-<p align="center"><img src="docs/gifs/full_songs.gif" width="80%"><br><sub><i>▶ Demo: a prompt → a 3-minute instrumental; lyrics → a sung/rapped song.</i></sub></p>
+**▶ Demo — a prompt → a 3-min instrumental; lyrics → a sung/rapped song**
+```console
+$ python scripts/sa3_workflow.py song --model medium --lora hiphop_v1.safetensors \
+    --prompt "boom bap instrumental, 90 BPM, F minor, vinyl" --duration 180 --out song.wav
+Song (180s) -> song.wav
+$ python scripts/song_generate.py --heartlib ./heartlib --ckpt ./heartlib/ckpt \
+    --lyrics-file verse.txt --tags "boom bap,male rap vocals,dusty,90 bpm" --duration 3 --out song.mp3
+Song -> song.mp3
+```
 
 ```bash
 # instrumental (SA3), works with your LoRA:
@@ -484,7 +598,13 @@ python scripts/ace_step_workflow.py song --prompt "drum and bass, rolling, male 
 
 **What it is.** The highest-control vocal path — ACE Studio (you own it + ACE Bridge in Ableton) turns MIDI + lyrics into sung/rapped vocals. The toolkit prepares ACE's inputs: a **flow/melody MIDI aligned to your beat's key + BPM**, plus a syllable-segmented lyric file.
 
-<p align="center"><img src="docs/gifs/ace.gif" width="80%"><br><sub><i>▶ Demo: beat + lyrics → flow MIDI → ACE raps it → ACE Bridge over the beat in Ableton.</i></sub></p>
+**▶ Demo — beat + lyrics → flow MIDI for ACE Studio**
+```console
+$ python scripts/vocal_guide.py --beat MyBeat_instrumental.mp3 --lyrics verse.txt --style rap --out guide
+Wrote guide.mid  (90 BPM, key F minor, style rap)
+Wrote guide_lyrics.txt  (16 lines)
+In ACE Studio: import guide.mid -> paste lyrics -> pick a Rap voice -> render.
+```
 
 ```bash
 python scripts/vocal_guide.py --beat MyBeat_instrumental.mp3 --lyrics verse.txt --style rap --out guide
@@ -514,7 +634,15 @@ Then in ACE Studio: import `guide.mid`, paste `guide_lyrics.txt` onto the notes,
 
 **What it is.** Train on *your years of lyrics*, profile your style (flow density, rhyme rate, vocabulary, themes, mood), then generate new verses/hooks in your voice with a **local Ollama** model — fully private. Then seed a beat from any verse.
 
-<p align="center"><img src="docs/gifs/lyrics.gif" width="80%"><br><sub><i>▶ Demo: your lyrics → style profile → a new verse in your voice → a matching beat brief.</i></sub></p>
+**▶ Demo — your lyrics → style profile → a new verse in your voice**
+```console
+$ python scripts/lyric_analyze.py --input "F:/RAP_ARCHIVES/lyrics" --out lyric_model
+STYLE SUMMARY: dense flow (~12.4 syl/line), heavy end-rhyme (0.58); dark, reflective ...
+$ python scripts/lyric_generate.py --model-dir lyric_model --mode verse --mood dark --bars 16 --out verses
+===== verse_dark_01.txt =====
+[Verse]
+Cold mornings, empty pockets, chasing shadows down the road ...
+```
 
 ```powershell
 python scripts/lyric_analyze.py --input "F:/RAP_ARCHIVES/lyrics" --out lyric_model
@@ -543,7 +671,15 @@ python scripts/lyric_to_beat.py --lyrics verses/verse_dark_01.txt --out beat_bri
 
 **What it is.** Turns raw generations into release-quality samples (reject duds, trim, anti-click fades, loudness-normalize, re-detect BPM/key, 24-bit), assembles a standard sellable pack (One Shots / Loops / Stems, producer-style names, README + license + zip), and writes a provenance certificate.
 
-<p align="center"><img src="docs/gifs/finish.gif" width="80%"><br><sub><i>▶ Demo: generated/ → polished pack.zip + provenance certificate.</i></sub></p>
+**▶ Demo — generated/ → polished pack.zip + provenance certificate**
+```console
+$ python scripts/postprocess.py --input generated --output processed --lufs -14
+Done. Kept 487, auto-rejected 13. Output: processed/
+$ python scripts/build_pack.py --input processed --pack-name "Dusty Crates Vol 1" --out packs
+Pack built: packs/DustyCratesVol1  (200 samples)   Zip: packs/DustyCratesVol1.zip
+$ python scripts/provenance.py --pack packs/DustyCratesVol1 --dataset dataset --run-name beats-v1
+Wrote PROVENANCE.json and PROVENANCE_CERTIFICATE.txt
+```
 
 ```bash
 python scripts/postprocess.py --input generated --output processed --lufs -14
@@ -560,7 +696,15 @@ python scripts/provenance.py --pack packs/DustyCratesVol1 --dataset dataset --ge
 
 **What it is.** Techniques the AI-beat crowd isn't doing — built on the loops *between* the tools. Each one below has a one-line idea and **5 concrete ways to use it** with the toolkit. Most are GPU-backed → **cloud pod default**.
 
-<p align="center"><img src="docs/gifs/creative.gif" width="80%"><br><sub><i>▶ Demo: micro-variants + groove transplant + destroy-and-heal.</i></sub></p>
+**▶ Demo — micro-variants + groove transplant + destroy-and-heal**
+```console
+$ python scripts/microvariants.py --ckpt hiphop_v1.ckpt --input organized/drums_oneshots/kicks --variants 8 --strength 0.15 --prompt "kicks, one shot" --out variants/kicks
+Kick (Cole).wav: 8 variants -> variants/kicks/Kick (Cole)/
+$ python scripts/groove_dna.py --input classic_break.wav --name dilla_a --out grooves
+Groove DNA -> grooves/dilla_a.groove.json  (source 89.1 BPM, 23 onsets)
+$ python scripts/destroy_heal.py --ckpt hiphop_v1.ckpt --input loops --chain configs/vst_chains/destroy_extreme.json --prompt "dusty vinyl" --heal-strength 0.25 --out healed
+healed: loop1.wav (seed 4471)
+```
 
 > In the examples, **`<MODEL>`** = either your trained model (`--model-config model_config.json --ckpt hiphop_v1.ckpt`) or the base (`--pretrained stabilityai/stable-audio-open-1.0`).
 
@@ -650,7 +794,13 @@ Lock a whole pack series to one key + BPM so every volume inter-combines; `verif
 
 **What it is.** The same pipeline runs three product lines. What changes per genre: library labels, BPM conventions, and pattern grammars.
 
-<p align="center"><img src="docs/gifs/genres.gif" width="80%"><br><sub><i>▶ Demo: same engine, metal double-kick and a 174 DnB break.</i></sub></p>
+**▶ Demo — same engine, metal double-kick and a 174 DnB break**
+```console
+$ python scripts/beat_builder.py --library "F:/SoundBankAI" --style metal --bpm 168 --count 1 --out beats_metal
+Built beats_metal/metal_168bpm_01   (46 MIDI notes — dense double-kick)
+$ python scripts/beat_builder.py --library "F:/SoundBankAI" --style dnb --bpm 174 --count 1 --out beats_dnb
+Built beats_dnb/dnb_174bpm_01   (two-step break)
+```
 
 - **Beat-builder styles:** `rock` `metal` `dbeat` `dubstep` `dnb` `amen` (plus the hip-hop set).
 - **BPM ranges:** pass `--bpm-min/--bpm-max` on prep/post — DnB 100–200 (never fold 174→87), metal up to 220.
@@ -680,7 +830,14 @@ Then build genre packs from the matching plans: `prompts/pack_plan.rock_metal.js
 
 **What it is.** A local Gradio control panel for the whole suite — a tab per stage grouped into sections (Prep & Analyze · Train & Generate · Beats & Sound · Remix · Lyrics · Finish · Plugins), each with live streaming logs, plus an Audition tab with playback and a remix-the-selected-file panel. Bears-themed (navy/orange).
 
-<p align="center"><img src="docs/gifs/dashboard.gif" width="85%"><br><sub><i>▶ Demo: clicking through sections, running a job, auditioning the result.</i></sub></p>
+**▶ Demo — clicking through sections, running a job, auditioning the result**
+```console
+$ python dashboard.py
+Running on local URL:  http://127.0.0.1:7860
+# Tabs: ⚙️ Settings · 📥 Prep & Analyze · 🧠 Train & Generate · 🥁 Beats & Sound
+#       · 🔁 Remix · ✍️ Lyrics · 📦 Finish · 🔌 Plugins · 🎧 Audition
+# Each tool form streams its live log on the right; Audition plays + remixes results.
+```
 
 ```powershell
 pip install gradio
@@ -761,7 +918,13 @@ Reference/listening only (lossy source; rights caveats apply — don't train a s
 
 **What it is.** Two interchangeable, first-class generation engines ship in this toolkit. You can A/B them and pick per project — same dataset, same captions, different sound and licensing.
 
-<p align="center"><img src="docs/gifs/engines.gif" width="80%"><br><sub><i>▶ Demo: the same pack plan generated by SA3 and by ACE-Step, side by side.</i></sub></p>
+**▶ Demo — the same pack plan through SA3 and through ACE-Step**
+```console
+$ python scripts/sa3_workflow.py plan --model medium-base --lora hiphop_v1.safetensors --plan prompts/pack_plan.example.json --out gen_sa3
+[Kicks] 30/30 ... done -> gen_sa3/
+$ python scripts/ace_step_workflow.py generate --plan prompts/pack_plan.example.json --out gen_ace
+[Kicks] 30 x 1.5s   submitted ... saved Kicks_1_01.wav ...   Done -> gen_ace/
+```
 
 **At a glance:**
 
