@@ -1145,6 +1145,33 @@ Invoke-RestMethod -Method Post -Headers $H -Body $body `
 4. **Batch pack job** — submit many `/run` calls; RunPod queues and fans them across workers up to **Max workers**.
 5. **Discord/Telegram bot backend** — bot posts the user's prompt to `/runsync`, gets the WAV, uploads it back to chat.
 
+### Call it from Go (typed client)
+
+The repo ships a typed Go client at [`clients/go/`](clients/go) that submits a
+job, polls to completion, and decodes the returned `wav_b64` to a `.wav`:
+
+```powershell
+cd clients/go
+go mod tidy
+$env:RUNPOD_API_KEY="your_runpod_api_key"; $env:ENDPOINT_ID="your_endpoint_id"
+go run . -task beat -style trap -bpm 140 -out trap.wav
+```
+
+```console
+$ go run . -task beat -style trap -bpm 140 -out trap.wav
+submitted job b1f2-e3-u1 (status IN_QUEUE)
+status: IN_PROGRESS
+status: IN_PROGRESS
+status: COMPLETED
+wrote trap.wav (5294412 bytes)
+```
+
+Get the two values: **RUNPOD_API_KEY** from the console -> Settings -> API Keys
+(account-wide, shown once); **ENDPOINT_ID** from the console -> Serverless ->
+your endpoint (also the `<ENDPOINT_ID>` in `api.runpod.ai/v2/<ENDPOINT_ID>/run`).
+Uses the official `github.com/runpod/go-sdk`; `Run` returns `{Id,Status}` and
+`Status` returns `{Status,Output,Error,...}`. See `clients/go/README.md`.
+
 *Optional / good-to-have:* keep **Active workers = 0** for hobby use (pay only
 per request) and bump it to 1 only when latency matters; cache big model weights
 on the **network volume** so cold starts skip the download; use **load-balancing
