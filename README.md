@@ -2,10 +2,15 @@
 <p align="center"><b>Turn your own sound into your own AI.</b><br>
 An end-to-end studio that learns <i>your</i> beats, lyrics, and library — then organizes, analyzes, generates, remixes, and packages hip-hop (and rock/metal, dubstep, DnB) from raw crate to finished, rights-traced product.</p>
 
-<p align="center">
-<img src="docs/gifs/hero.gif" alt="Beat Toolkit dashboard demo" width="85%">
-<br><sub><i>▶ Demo: the dashboard driving the full pipeline — organize → analyze → train → generate → remix → pack. (record at docs/gifs/hero.gif)</i></sub>
-</p>
+**▶ Demo — organize → tag → train → generate, end to end**
+```console
+$ python scripts/organize_soundbank.py --input "F:/Sound Bank" --output "F:/Organized" --resume
+Found 14990 audio files.  kicks 1038 · snares 1780 · melodic_loops 4173 ...
+$ python scripts/sa3_workflow.py plan --model medium-base --lora hiphop_v1.safetensors --plan prompts/pack_plan.example.json --out generated
+[Kicks] 30/30  [Snares] 30/30  [MelodicLoops] 25/25 ...  done -> generated/
+$ python scripts/build_pack.py --input processed --pack-name "Dusty Crates Vol 1" --out packs
+Pack built: packs/DustyCratesVol1  (212 samples)   Zip: packs/DustyCratesVol1.zip
+```
 
 > **Engine note:** recommended generation engine is **Stable Audio 3** (LoRA fine-tuning), with **Stable Audio Open 1.0** as the full-fine-tune alternative — open-weight Stability AI models (Community License). Full songs with vocals use **HeartMuLa** (Apache-2.0). Lyric writing runs on a **local Ollama** model. Vocal synthesis bridges to **ACE Studio**. Everything model/GPU-heavy defaults to a **cloud GPU pod**.
 
