@@ -61,6 +61,14 @@ TOOLS = [
         F("--ai-tags", "Run CLAP zero-shot tagging after", "bool", False),
         F("--min-confidence", "Min confidence", "num", 0.5),
     ]),
+    ("\U0001F39A\uFE0F MP3 \u2192 WAV", "mp3_to_wav.py", [
+        F("--input", "File/folder of mp3s", "text"),
+        F("--output", "Output folder", "text"),
+        F("--sample-rate", "Resample Hz (0=keep)", "num", 0),
+        F("--bit-depth", "Bit depth", "choice", "16", ["16", "24", "32"]),
+        F("--mirror", "Mirror subfolders", "bool", True),
+        F("--resume", "Skip existing", "bool", True),
+    ]),
     ("Remove vocals", "remove_vocals.py", [
         F("--input", "Input file/folder", "dir"),
         F("--output", "Output folder", "dir"),
@@ -371,7 +379,7 @@ def build_ui():
 
         # group tools into sections (by script name); leftovers -> "More"
         SECTIONS = [
-            ("\U0001F4E5 Prep & Analyze", ["organize_soundbank.py", "remove_vocals.py", "deep_listen.py",
+            ("\U0001F4E5 Prep & Analyze", ["organize_soundbank.py", "mp3_to_wav.py", "remove_vocals.py", "deep_listen.py",
                                            "auto_tag.py", "genius_lookup.py", "build_captions.py",
                                            "prepare_dataset.py", "validate_dataset.py"]),
             ("\U0001F9E0 Train & Generate", ["sa3_workflow.py", "ace_step_workflow.py", "generate.py", "audio2audio.py", "song_generate.py"]),

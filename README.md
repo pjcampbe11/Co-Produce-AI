@@ -872,6 +872,16 @@ Cost is **GPU-hours, not per-file.** Indicative (June 2026 rates; verify current
 
 You can't un-compress a lossy file — converting MP3→WAV adds nothing. Get true source from: **ripping your own CDs** (EAC/dBpoweramp), **buying WAV/FLAC** (Bandcamp, Beatport, Qobuz), **recording vinyl**, or **cleared-sample services** (Tracklib, Splice). Streaming "lossless" tiers are fine to *listen* to, not to rip for training. Verify with `deep_listen.py` (`rolloff95_hz` + lossy-upsample flag) or Spek. For a pristine commercial model, a **smaller true-WAV core (300–500) beats 1,500 lossy** — source quality > count, and it's the cleaner legal footing.
 
+**Format conversion (`mp3_to_wav.py`).** Batch-decode MP3 (and m4a/ogg/opus/flac/aac) to WAV for DAW/toolkit compatibility — recursive, `--mirror` to keep folders, `--resume`, ffmpeg-backed with a librosa fallback. It's a lossy→PCM decode, so it does **not** recover quality the MP3 discarded (see the caveat above).
+
+**\u25B6 Demo \u2014 batch MP3 \u2192 24-bit WAV**
+```console
+$ python scripts/mp3_to_wav.py --input "F:/RAP_ARCHIVES/mp3" --output "F:/RAP_ARCHIVES/wav" --bit-depth 24 --mirror --resume
+[1/2982] 002 - Baby Keem - Baby Keem.mp3 -> 002 - Baby Keem - Baby Keem.wav
+[2/2982] ...
+=== 2982 converted, 0 skipped, 0 failed -> F:/RAP_ARCHIVES/wav/ ===
+```
+
 <a name="29-ytdlp"></a>
 ## 29. yt-dlp commands
 
