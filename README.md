@@ -319,6 +319,20 @@ python scripts/generate.py --model-config model_config.json --ckpt hiphop_v1.ckp
 ```
 Edit `prompts/pack_plan.example.json` using the **same tag vocabulary you trained with**. `--cfg` = prompt adherence (6–9); sanity-check anytime with the base model via `--pretrained stabilityai/stable-audio-open-1.0`.
 
+**5 examples:**
+```bash
+# 1. SA3 + your LoRA from a pack plan -> generated/<category>/
+python scripts/sa3_workflow.py plan --model medium-base --lora hiphop_v1.safetensors --plan prompts/pack_plan.example.json --out generated
+# 2. SAO full-fine-tune checkpoint
+python scripts/generate.py --model-config model_config.json --ckpt hiphop_v1.ckpt --plan prompts/pack_plan.example.json --out generated --steps 100 --cfg 7
+# 3. base-model sanity check (no training) to test the pipeline
+python scripts/generate.py --pretrained stabilityai/stable-audio-open-1.0 --plan prompts/pack_plan.example.json --out test_gen --steps 80
+# 4. tighter prompt adherence (higher cfg) for a precise pack
+python scripts/generate.py --model-config model_config.json --ckpt hiphop_v1.ckpt --plan prompts/pack_plan.example.json --out generated --cfg 9
+# 5. a genre pack plan (rock/metal or dnb) through the same engine
+python scripts/sa3_workflow.py plan --model medium-base --lora metal_v1.safetensors --plan prompts/pack_plan.rock_metal.json --out generated_metal
+```
+
 *Optional/good-to-have:* SA3 `fill` (inpaint a region) and `extend` (continue a clip) modes; ecosystem-locked plans (see §24) so a whole pack series shares key/BPM.
 
 <a name="16-audio-to-audio"></a>
@@ -332,6 +346,20 @@ Edit `prompts/pack_plan.example.json` using the **same tag vocabulary you traine
 python scripts/audio2audio.py --model-config model_config.json --ckpt hiphop_v1.ckpt --input my_break.wav \
   --prompt "hip hop, boom bap, 90 BPM, dusty drum break, vinyl texture" --strength 0.5 --variations 4 --out flipped/
 ```
+**5 examples:**
+```bash
+# 1. real flip of a drum break (0.5 = clearly transformed but recognizable)
+python scripts/audio2audio.py --model-config model_config.json --ckpt hiphop_v1.ckpt --input break.wav --prompt "hip hop, boom bap, 90 BPM, dusty drum break" --strength 0.5 --variations 4 --out flipped
+# 2. subtle re-texture (0.2) — same groove, new character
+python scripts/audio2audio.py --model-config model_config.json --ckpt hiphop_v1.ckpt --input loop.wav --prompt "warm vinyl, tape saturation" --strength 0.2 --out retex
+# 3. loose inspiration (0.8) — mostly the prompt, a hint of the source
+python scripts/audio2audio.py --model-config model_config.json --ckpt hiphop_v1.ckpt --input loop.wav --prompt "dark cinematic strings" --strength 0.8 --out loose
+# 4. flip a melodic loop into a new key/vibe
+python scripts/audio2audio.py --model-config model_config.json --ckpt hiphop_v1.ckpt --input keys.wav --prompt "soul keys, key of F minor, dusty" --strength 0.45 --variations 3 --out flipped_keys
+# 5. no trained model yet? flip with the base model
+python scripts/audio2audio.py --pretrained stabilityai/stable-audio-open-1.0 --input break.wav --prompt "lofi hip hop drums" --strength 0.5 --out flipped
+```
+
 *Optional/good-to-have:* only feed audio you have rights to (outputs are derivative); run results through `postprocess.py`.
 
 <a name="17-remix"></a>
@@ -347,6 +375,20 @@ python scripts/remix.py --model-config model_config.json --ckpt hiphop_v1.ckpt -
 ```
 Strength auto-picks (full 0.6 / mashup 0.4). Quality scales with the model — a per-genre LoRA makes remixes far more convincing than the base model.
 
+**5 examples:**
+```bash
+# 1. full DnB remix of any track
+python scripts/remix.py --pretrained stabilityai/stable-audio-open-1.0 --input song.wav --genre dnb --mode full --variations 3 --out remixes
+# 2. full dubstep remix
+python scripts/remix.py --pretrained stabilityai/stable-audio-open-1.0 --input song.wav --genre dubstep --mode full --out remixes
+# 3. rock/metal MASHUP that keeps the original's hip-hop bones
+python scripts/remix.py --model-config model_config.json --ckpt hiphop_v1.ckpt --input song.wav --genre rockmetal --mode mashup --current "boom bap hip hop" --out remixes
+# 4. hip-hop mashup of a DnB track
+python scripts/remix.py --pretrained stabilityai/stable-audio-open-1.0 --input dnb_track.wav --genre hiphop --mode mashup --current "drum and bass" --out remixes
+# 5. subtle remix (override strength) — light genre nudge
+python scripts/remix.py --model-config model_config.json --ckpt hiphop_v1.ckpt --input song.wav --genre dnb --mode mashup --strength 0.3 --out remixes
+```
+
 *Optional/good-to-have:* also available as a **Remix tab** and a **Remix-the-selected-file** panel inside the dashboard's Audition view.
 
 <a name="18-beat-builder"></a>
@@ -360,6 +402,20 @@ Strength auto-picks (full 0.6 / mashup 0.4). Quality scales with the model — a
 python scripts/beat_builder.py --library "F:/SoundBankAI" --style boom_bap --bpm 90 --bars 4 --count 8 --melodic "F:/SoundBankAI/melodic_loops" --out beats
 ```
 `--rotate` picks a different sample per hit (pair with micro-variants for human feel); `--groove file.groove.json` applies an extracted groove (see §24).
+
+**5 examples:**
+```bash
+# 1. classic boom bap, 4 bars, 8 beats to choose from
+python scripts/beat_builder.py --library "F:/SoundBankAI" --style boom_bap --bpm 90 --bars 4 --count 8 --out beats
+# 2. trap at 140 with 808s
+python scripts/beat_builder.py --library "F:/SoundBankAI" --style trap --bpm 140 --bars 4 --count 6 --out beats_trap
+# 3. lofi with a melodic loop layered + a swung groove template
+python scripts/beat_builder.py --library "F:/SoundBankAI" --style lofi --bpm 82 --melodic "F:/SoundBankAI/melodic_loops" --groove grooves/dilla_a.groove.json --out beats_lofi
+# 4. drill, every hit a different sample (human feel)
+python scripts/beat_builder.py --library "F:/SoundBankAI" --style drill --bpm 142 --rotate --out beats_drill
+# 5. cross-genre: a metal double-kick pattern from your kit (see §25)
+python scripts/beat_builder.py --library "F:/SoundBankAI" --style metal --bpm 170 --bars 4 --count 4 --out beats_metal
+```
 
 *Optional/good-to-have:* `pattern.mid` drops onto an Ableton Drum Rack (GM mapping: kick 36, snare 38, hat 42, perc 47, 808 35); match the melodic loop's BPM to the beat so it locks.
 
@@ -377,6 +433,20 @@ python scripts/vst_instrument.py --vst3 ".../Battery 4.vst3" --midi beats/.../pa
 python scripts/vst_chain.py --input processed --output processed_vst --chain configs/vst_chains/dusty_boombap.json
 ```
 Ready-made chains built from common plugins live in `configs/vst_chains/` (dusty boom-bap, metal master, bass-music mangle, destroy chain, Ozone vocal-suppress). Use `--edit N` to dial a plugin's GUI once; settings apply to the whole batch. `--list-params` prints automatable names.
+
+**5 examples:**
+```bash
+# 1. dusty boom-bap glue on a folder of processed samples (Saturn 2 -> TASCAM tape -> Pro-C -> Pro-L)
+python scripts/vst_chain.py --input processed --output processed_dusty --chain configs/vst_chains/dusty_boombap.json
+# 2. metal master chain (Pro-Q -> Trash -> Pro-C -> Pro-L)
+python scripts/vst_chain.py --input metal_loops --output metal_mastered --chain configs/vst_chains/metal_master.json
+# 3. bass-music mangle (Thermal -> Portal -> Pro-Q -> Pro-L)
+python scripts/vst_chain.py --input bass_loops --output bass_mangled --chain configs/vst_chains/bassmusic_neuro.json
+# 4. render a beat's MIDI through your Battery kit AND glue it in one step
+python scripts/vst_instrument.py --vst3 "C:/Program Files/Common Files/VST3/Battery 4.vst3" --midi beats/boom_bap_90bpm_01/pattern.mid --chain configs/vst_chains/dusty_boombap.json --out kit_dusty.wav
+# 5. last-resort vocal suppression via Ozone Master Rebalance (open GUI to pull Vocals down)
+python scripts/vst_chain.py --input songs --output instrumentals --chain configs/vst_chains/ozone_vocal_suppress.json --edit 0
+```
 
 *Optional/good-to-have:* **bake your sound into the model** — run your *training dataset* through a character chain before fine-tuning so the model learns your saturation/tape identity; Kontakt needs an `.nki` loaded; ACE Bridge can't render headless (needs the ACE app).
 
@@ -546,6 +616,21 @@ Lock a whole pack series to one key + BPM so every volume inter-combines; `verif
 - **Library vocab:** label palm-muted chugs/drop-tuning/blast-beats (metal); reese/wobble/neuro/amen/two-step (bass music).
 
 QA ears differ: metal → flabby chugs, fake cymbal decay; bass music → check sub weight (30–60 Hz), LFO-locked wobbles. Plan 3–4× overgeneration for bass music.
+
+**5 examples (one per new style):**
+```bash
+# 1. rock — straight-8ths backbeat at 120
+python scripts/beat_builder.py --library "F:/SoundBankAI" --style rock --bpm 120 --bars 4 --count 6 --out beats_rock
+# 2. metal — double-kick under a halftime backbeat at 168
+python scripts/beat_builder.py --library "F:/SoundBankAI" --style metal --bpm 168 --bars 4 --count 6 --out beats_metal
+# 3. d-beat / punk drive at 180
+python scripts/beat_builder.py --library "F:/SoundBankAI" --style dbeat --bpm 180 --bars 4 --count 4 --out beats_dbeat
+# 4. dubstep — 140 halftime, 808 lane as bass stabs
+python scripts/beat_builder.py --library "F:/SoundBankAI" --style dubstep --bpm 140 --bars 4 --count 6 --out beats_dubstep
+# 5. DnB two-step / amen at 174 (prepare data with --bpm-min 100 --bpm-max 200 so 174 isn't folded to 87)
+python scripts/beat_builder.py --library "F:/SoundBankAI" --style dnb --bpm 174 --bars 4 --count 6 --out beats_dnb
+```
+Then build genre packs from the matching plans: `prompts/pack_plan.rock_metal.json` and `prompts/pack_plan.dubstep_dnb.json` (feed them to `sa3_workflow.py plan` / `ace_step_workflow.py generate`).
 
 <a name="26-dashboard"></a>
 ## 26. Dashboard (web UI)
