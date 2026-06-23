@@ -67,7 +67,8 @@ Pack built: packs/DustyCratesVol1  (212 samples)   Zip: packs/DustyCratesVol1.zi
 30. [Business & learning path](#30-business)
 31. [Full script reference](#31-scripts)
 32. [Engine choice: Stable Audio 3 vs ACE-Step 1.5](#32-engines)
-33. [License & notice](#33-license)
+33. [Serverless API (RunPod) — host the toolkit as an endpoint](#33-serverless)
+34. [License & notice](#34-license)
 
 > **How to read this:** every feature section follows the same shape — a plain-English **What it is**, a **Demo** gif, the **Setup & run** steps, and **Optional / good-to-have** extras. Demos live in `docs/gifs/` (placeholders — record them from the dashboard). Anything needing a GPU shows the **cloud pod** path first.
 
@@ -984,7 +985,177 @@ What the examples do: `generate` reuses your existing `prompts/pack_plan.*.json`
 
 ---
 
-<a name="33-license"></a>
-## 33. License & notice
+<a name="33-serverless"></a>
+## 33. Serverless API (RunPod) — host the toolkit as an endpoint
+
+**What it is.** Everything above runs a script on a pod you rent by the hour. A
+**Serverless endpoint** instead wraps one toolkit job (generate a beat, tag a
+file, flip a sample) behind an HTTPS URL that **auto-scales to zero** — you pay
+only for the seconds a request actually runs, with no idle GPU bill. This is how
+you'd turn Beat Toolkit into a service (a website "generate" button, a Discord
+bot, a batch tagger) instead of a thing you SSH into.
+
+Use it when you want on-demand, pay-per-request inference. Keep using a normal
+**pod** (§5) for training, dataset prep, and interactive/dashboard work — those
+are long-running and stateful, the opposite of serverless.
+
+**▶ Demo —**
+
+```console
+$ # 1) local test of the handler before you ever build an image
+$ python serverless/handler.py --test_input '{"input":{"task":"beat","style":"boom_bap","bpm":90}}'
+--- Starting Serverless Worker |  Version 1.7.0 ---
+INFO   | Using test_input provided via command line
+INFO   | local_test | beat_builder: style=boom_bap bpm=90 bars=8
+INFO   | job results: {"wav_b64":"UklGR&...","seconds":17.0,"style":"boom_bap"}
+INFO   | Local testing complete, exiting.
+
+$ # 2) call the deployed endpoint (async): submit -> poll -> get the wav
+$ curl -s -H "Authorization: Bearer $RUNPOD_API_KEY" -H "Content-Type: application/json" \
+    -d '{"input":{"task":"beat","style":"trap","bpm":140}}' \
+    https://api.runpod.ai/v2/$ENDPOINT_ID/run
+{"id":"b1f2-e3","status":"IN_QUEUE"}
+$ curl -s -H "Authorization: Bearer $RUNPOD_API_KEY" \
+    https://api.runpod.ai/v2/$ENDPOINT_ID/status/b1f2-e3
+{"status":"COMPLETED","output":{"wav_b64":"UklGR&...","seconds":15.2,"style":"trap"}}
+```
+
+### How Serverless works (30-second version)
+
+A request hits your **endpoint** -> if no **worker** is warm, one cold-starts
+(container boot + model load into VRAM) -> the worker runs your **handler
+function** on the JSON `input` -> the result is stored (`/run`, async) or
+returned inline (`/runsync`, blocks until done) -> idle workers shut down after
+a grace period. Cold starts are the main latency cost; you cut them with
+**FlashBoot**, **model caching**, or keeping **active workers ≥ 1**.
+
+### Setup & run
+
+The development loop is: **write a handler -> test locally -> package as a Docker
+image -> push to a registry -> create the endpoint -> send requests.**
+
+**1. Write a handler.** A handler takes a job and returns JSON-serializable
+output. Drop this at `serverless/handler.py` — it routes one `task` field to the
+toolkit scripts you already have:
+
+```python
+# serverless/handler.py  -  wraps Beat Toolkit scripts as a RunPod handler
+import base64, subprocess, tempfile, os, runpod
+
+def _wav_b64(path):
+    with open(path, "rb") as f:
+        return base64.b64encode(f.read()).decode()
+
+def handler(event):
+    """event['input'] = {"task": "beat"|"tag"|"flip", ...task-specific args}"""
+    inp = event.get("input", {}) or {}
+    task = inp.get("task", "beat")
+    out = tempfile.mkdtemp()
+
+    if task == "beat":                         # beats from your own samples
+        wav = os.path.join(out, "beat.wav")
+        subprocess.run(["python", "scripts/beat_builder.py",
+                        "--style", inp.get("style", "boom_bap"),
+                        "--bpm", str(inp.get("bpm", 90)),
+                        "--out", wav], check=True)
+        return {"wav_b64": _wav_b64(wav), "style": inp.get("style", "boom_bap")}
+
+    if task == "tag":                          # heuristic tagger (no model dl)
+        import sys; sys.path.insert(0, "scripts")
+        import auto_tag
+        tags, cap = auto_tag.caption_heuristic(inp["path"])
+        return {"tags": tags, "caption": cap}
+
+    if task == "flip":                         # audio-to-audio derive
+        wav = os.path.join(out, "flip.wav")
+        subprocess.run(["python", "scripts/audio2audio.py",
+                        "--input", inp["path"], "--prompt", inp.get("prompt", ""),
+                        "--strength", str(inp.get("strength", 0.6)),
+                        "--out", wav], check=True)
+        return {"wav_b64": _wav_b64(wav)}
+
+    return {"error": f"unknown task '{task}'"}
+
+runpod.serverless.start({"handler": handler})  # required entrypoint
+```
+
+Test it locally first (no Docker, no cloud) — the SDK gives every handler a
+`--test_input` CLI:
+
+```powershell
+pip install runpod
+python serverless/handler.py --test_input '{\"input\":{\"task\":\"beat\",\"style\":\"boom_bap\",\"bpm\":90}}'
+```
+
+**2. Package it as a Docker image.** Serverless runs your code as a container, so
+you need a `Dockerfile` (GPU base if the task needs CUDA — generation/flip do,
+heuristic tagging does not):
+
+```dockerfile
+# serverless/Dockerfile
+FROM runpod/base:0.6.2-cuda12.1.0
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt runpod
+COPY scripts/ scripts/
+COPY serverless/handler.py .
+CMD ["python", "-u", "handler.py"]
+```
+
+**3. Build & push to a registry** (Docker Hub here; must be a linux/amd64 image):
+
+```powershell
+docker build --platform linux/amd64 -t YOUR_DOCKERHUB_USER/beat-toolkit-sls:latest -f serverless/Dockerfile .
+docker push YOUR_DOCKERHUB_USER/beat-toolkit-sls:latest
+```
+
+*No Docker locally?* Skip steps 2–3 and use RunPod's **GitHub integration** —
+point an endpoint at this repo and RunPod builds the image for you on each push.
+
+**4. Create the endpoint.** In the RunPod console -> **Serverless** -> **New
+Endpoint**: set the container image (or GitHub repo), pick a GPU tier, and set
+scaling — **Max workers** (burst ceiling), **Active workers** (kept warm; 0 =
+cheapest, ≥1 = no cold start), **Idle timeout**, and enable **FlashBoot** to
+shrink cold starts. Attach your **network volume** (`d39orqnjjh`, §32-ish — see
+`cloud/connect.md`) if the handler needs your dataset or model weights.
+
+**5. Send requests.** Each endpoint exposes standard operations under
+`https://api.runpod.ai/v2/<ENDPOINT_ID>/` with your `RUNPOD_API_KEY` as a bearer
+token:
+
+| Op | Use |
+| --- | --- |
+| `POST /run` | submit async job -> returns a job `id` (poll `/status/<id>`) |
+| `POST /runsync` | submit and block until the result returns (good for short jobs) |
+| `GET /status/<id>` | check `IN_QUEUE` / `RUNNING` / `COMPLETED` + output |
+| `GET /health` | worker counts and queue depth |
+
+```powershell
+$H = @{ Authorization = "Bearer $env:RUNPOD_API_KEY"; "Content-Type" = "application/json" }
+$body = '{"input":{"task":"beat","style":"drill","bpm":142}}'
+Invoke-RestMethod -Method Post -Headers $H -Body $body `
+  -Uri "https://api.runpod.ai/v2/$env:ENDPOINT_ID/runsync"
+```
+
+### Five things you can serve this way
+
+1. **Beat-on-demand** — `{"task":"beat","style":"trap","bpm":140}` returns a WAV; wire it to a website "Generate" button.
+2. **Hosted tagger** — `{"task":"tag","path":"s3://d39orqnjjh/raw_beats/x.wav"}` runs the heuristic engine; CPU worker, scales to zero, near-free.
+3. **Sample flip API** — `{"task":"flip","prompt":"dusty soul chop","strength":0.6}` for an audio-to-audio microservice.
+4. **Batch pack job** — submit many `/run` calls; RunPod queues and fans them across workers up to **Max workers**.
+5. **Discord/Telegram bot backend** — bot posts the user's prompt to `/runsync`, gets the WAV, uploads it back to chat.
+
+*Optional / good-to-have:* keep **Active workers = 0** for hobby use (pay only
+per request) and bump it to 1 only when latency matters; cache big model weights
+on the **network volume** so cold starts skip the download; use **load-balancing
+endpoints** (instead of queue-based) if you later want a streaming/real-time
+FastAPI server; SSH into a running worker to debug, and watch **logs** in the
+console while you iterate. Queue-based endpoints + this handler pattern are the
+right default for batch beat/pack generation.
+
+---
+
+<a name="34-license"></a>
+## 34. License & notice
 
 Fine-tunes/runs Stability AI models (Stable Audio Open 1.0 / Stable Audio 3) under the **Stability AI Community License** (free commercial use under US$1M annual revenue; enterprise above — https://stability.ai/license). Full songs with vocals use **HeartMuLa** (Apache-2.0). Model weights are **not** included. **Only train on audio you own or that is explicitly cleared for ML training.** See §6.
