@@ -463,6 +463,20 @@ python scripts/sa3_workflow.py song --model medium --lora my.safetensors --promp
 # vocals + lyrics (HeartMuLa):  bash cloud/heartmula_setup.sh
 python scripts/song_generate.py --heartlib /workspace/heartlib --ckpt /workspace/heartlib/ckpt --lyrics-file prompts/song_lyrics.example.txt --tags "boom bap,hip hop,male vocals,dusty,90 bpm" --duration 3 --out song.mp3 --lazy-load
 ```
+**5 examples:**
+```bash
+# 1. 3-min instrumental in your trained sound (SA3 + your beat LoRA)
+python scripts/sa3_workflow.py song --model medium --lora hiphop_v1.safetensors --prompt "boom bap instrumental, 90 BPM, F minor, dusty soul, vinyl crackle" --duration 180 --out song_boombap.wav
+# 2. short 60s dark trap loopable bed
+python scripts/sa3_workflow.py song --model medium --prompt "dark trap instrumental, 140 BPM, eerie keys, heavy 808" --duration 60 --out song_trap.wav
+# 3. full song WITH rapped vocals from your lyrics (HeartMuLa)
+python scripts/song_generate.py --heartlib /workspace/heartlib --ckpt /workspace/heartlib/ckpt --lyrics-file verse.txt --tags "boom bap,hip hop,male rap vocals,dusty,90 bpm" --duration 3 --out song_vocal.mp3 --lazy-load
+# 4. sung hook, female vocal, soulful
+python scripts/song_generate.py --heartlib /workspace/heartlib --ckpt /workspace/heartlib/ckpt --lyrics-file hook.txt --tags "soul,rnb,female vocals,smooth,warm" --duration 2 --out hook_sung.mp3 --lazy-load
+# 5. the MIT engine instead (ACE-Step) — instrumental or vocal in one model
+python scripts/ace_step_workflow.py song --prompt "drum and bass, rolling, male rap vocals, 174 BPM" --lyrics-file verse.txt --bpm 174 --key "G minor" --duration 180 --out song_dnb
+```
+
 *Optional/good-to-have:* HeartMuLa wants 16 GB+ (`--lazy-load` on a single GPU) → **cloud pod default**; lyric sections use `[Intro]/[Verse]/[Chorus]/[Bridge]/[Outro]`.
 
 <a name="21-ace-studio"></a>
@@ -477,6 +491,21 @@ python scripts/vocal_guide.py --beat MyBeat_instrumental.mp3 --lyrics verse.txt 
 # then: import guide.mid into ACE, paste guide_lyrics.txt onto the notes, pick a Rap voice, render.
 ```
 `--style rap` = rhythmic monotone scaffold; `--style sung` = stepwise topline in the key's scale.
+
+**5 examples:**
+```bash
+# 1. rap flow MIDI auto-keyed/timed from a beat (reads BPM/key from its Deep Listen sidecar)
+python scripts/vocal_guide.py --beat "F:/RAP_ARCHIVES/raw_beats/MyBeat_instrumental.mp3" --lyrics verse.txt --style rap --out guide
+# 2. explicit tempo/key when you have no sidecar
+python scripts/vocal_guide.py --bpm 90 --key "F minor" --lyrics verse.txt --style rap --out guide
+# 3. a sung topline (stepwise melody in the key's scale) for a hook
+python scripts/vocal_guide.py --bpm 88 --key "A minor" --lyrics hook.txt --style sung --out hook_guide
+# 4. double-time feel — lay 2 bars of lyric per bar of beat for fast flows
+python scripts/vocal_guide.py --bpm 150 --key "C minor" --lyrics verse.txt --style rap --bars-per-line 2 --out guide_fast
+# 5. feed a generated verse straight in (lyric model -> ACE)
+python scripts/lyric_generate.py --model-dir lyric_model --mode verse --mood dark --out verses && python scripts/vocal_guide.py --bpm 90 --key "F minor" --lyrics verses/verse_dark_01.txt --style rap --out guide
+```
+Then in ACE Studio: import `guide.mid`, paste `guide_lyrics.txt` onto the notes, pick a Rap/sung voice, render; ACE Bridge plays it over the beat in Ableton.
 
 *Optional/good-to-have:* feed lyrics from the lyric model (§22); ACE's own Vocal→MIDI can extract a melody from an existing vocal (a manual step in ACE).
 
@@ -493,6 +522,20 @@ python scripts/lyric_analyze.py --input "F:/RAP_ARCHIVES/lyrics" --out lyric_mod
 python scripts/lyric_generate.py --model-dir lyric_model --mode verse --mood dark --theme "grinding through the cold" --bars 16 --out verses
 python scripts/lyric_to_beat.py --lyrics verses/verse_dark_01.txt --out beat_brief   # -> genre/BPM/key + commands
 ```
+**5 examples:**
+```bash
+# 1. profile your style first (once)
+python scripts/lyric_analyze.py --input "F:/RAP_ARCHIVES/lyrics" --out lyric_model
+# 2. a dark 16-bar verse on a theme
+python scripts/lyric_generate.py --model-dir lyric_model --mode verse --mood dark --theme "grinding through the cold" --bars 16 --out verses
+# 3. a triumphant hook (shorter), two variations to pick from
+python scripts/lyric_generate.py --model-dir lyric_model --mode hook --mood triumphant --bars 8 --variations 2 --out hooks
+# 4. reflective verse with a snappier/lighter local model (faster on a small GPU)
+python scripts/lyric_generate.py --model-dir lyric_model --mode verse --mood reflective --model llama3.2:3b --out verses
+# 5. turn a generated verse into a matching beat brief (genre/BPM/key + commands)
+python scripts/lyric_to_beat.py --lyrics verses/verse_dark_01.txt --out beat_brief
+```
+
 *Optional/good-to-have:* small corpora make models echo your phrasing — treat output as a **draft in your voice** and edit; `llama3.2:3b` is snappier on small GPUs, or run Ollama on a **cloud pod** for higher quality.
 
 <a name="23-finish"></a>
