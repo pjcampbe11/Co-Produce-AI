@@ -68,7 +68,8 @@ Pack built: packs/DustyCratesVol1  (212 samples)   Zip: packs/DustyCratesVol1.zi
 31. [Full script reference](#31-scripts)
 32. [Engine choice: Stable Audio 3 vs ACE-Step 1.5](#32-engines)
 33. [Serverless API (RunPod) — host the toolkit as an endpoint](#33-serverless)
-34. [License & notice](#34-license)
+34. [Pod workflow — SSH, SCP & cloning the repo to a pod](#34-pod-workflow)
+35. [License & notice](#35-license)
 
 > **How to read this:** every feature section follows the same shape — a plain-English **What it is**, a **Demo** gif, the **Setup & run** steps, and **Optional / good-to-have** extras. Demos live in `docs/gifs/` (placeholders — record them from the dashboard). Anything needing a GPU shows the **cloud pod** path first.
 
@@ -1182,7 +1183,150 @@ right default for batch beat/pack generation.
 
 ---
 
-<a name="34-license"></a>
-## 34. License & notice
+<a name="34-pod-workflow"></a>
+## 34. Pod workflow — SSH, SCP & cloning the repo to a pod
+
+**What it is.** A **pod** (§5) is a full GPU box you SSH into and run the toolkit
+on directly — the right place for training, dataset prep, and heavy tagging. This
+section covers getting *in* (SSH), getting *code in* (clone this repo), and
+getting *files in and out* (SCP + the S3 network volume). Quick-reference values
+and copy-paste commands also live in [`cloud/connect.md`](cloud/connect.md).
+
+> Two transfer paths, different jobs: **SCP** is point-to-point to one running
+> pod (fast for a few files); the **S3 network volume** is persistent storage you
+> upload once and mount on *any* pod (best for your dataset/models). See §33 and
+> `cloud/connect.md` for the S3 side.
+
+**▶ Demo — end-to-end: connect, clone, push beats, run, pull results**
+
+```console
+$ # connect (copy the exact command from the pod's Connect tab -> "SSH over exposed TCP")
+$ ssh root@213.173.108.12 -p 17445 -i $env:USERPROFILE\.ssh\id_ed25519
+root@gpu-pod:/workspace#
+
+root@gpu-pod:/workspace# git clone https://github.com/pjcampbe11/Beat-Toolkit.git
+Cloning into 'Beat-Toolkit'... done.
+root@gpu-pod:/workspace# pip install -q -r Beat-Toolkit/requirements.txt
+
+$ # (new local terminal) push beats up to the pod's /workspace
+$ scp -P 17445 -i $env:USERPROFILE\.ssh\id_ed25519 -r "F:\RAP_ARCHIVES\raw_beats" root@213.173.108.12:/workspace/
+Death Wish_instrumental.mp3              100%  6MB   5.9MB/s   00:01
+...
+
+root@gpu-pod:/workspace# cd Beat-Toolkit/scripts && python auto_tag.py --stems-dir /workspace/raw_beats --source beat --engine qwen3-omni --resume
+
+$ # pull the tagged sidecars back down
+$ scp -P 17445 -i $env:USERPROFILE\.ssh\id_ed25519 -r root@213.173.108.12:/workspace/raw_beats "F:\RAP_ARCHIVES\raw_beats_tagged"
+```
+
+### Prerequisites
+
+You need an **SSH key** registered with RunPod and a pod that supports a
+**public IP** (so SCP/SFTP work). Generate and register the key once:
+
+```powershell
+ssh-keygen -t ed25519 -C "patcampbell82@gmail.com"
+Get-Content $env:USERPROFILE\.ssh\id_ed25519.pub | Set-Clipboard   # paste into console -> Settings -> SSH Public Keys
+```
+
+Official templates (Runpod PyTorch, Stable Diffusion) already run an SSH daemon.
+On a **custom template**, expose TCP port 22 and start the daemon — replace
+`sleep infinity` in your start command with:
+
+```bash
+bash -c 'apt update; DEBIAN_FRONTEND=noninteractive apt-get install openssh-server -y; \
+  mkdir -p ~/.ssh; cd ~/.ssh; chmod 700 ~/.ssh; \
+  echo "$PUBLIC_KEY" >> authorized_keys; chmod 700 authorized_keys; \
+  service ssh start; sleep infinity'
+```
+
+### 1. Connect (SSH)
+
+Open the pod's **Connect** tab in the console and copy the **SSH over exposed
+TCP** command (this is the one that supports SCP). Its shape:
+
+```powershell
+ssh root@<POD_IP> -p <SSH_PORT> -i $env:USERPROFILE\.ssh\id_ed25519
+```
+
+`root` = pod user, `<POD_IP>` = public IP, `<SSH_PORT>` = the mapped external
+port (not 22). If it **asks for a password**, the key isn't registered right —
+you pasted the `SHA256:` fingerprint instead of the `ssh-ed25519 AAAA...` key,
+dropped the `ssh-ed25519` prefix, or pointed `-i` at the wrong file. RunPod SSH
+never needs a password.
+
+### 2. Clone this repo onto the pod
+
+The pod has its own disk, so pull the toolkit directly on it:
+
+```bash
+cd /workspace
+git clone https://github.com/pjcampbe11/Beat-Toolkit.git
+pip install -r Beat-Toolkit/requirements.txt
+```
+
+Because the repo is **private**, the clone will prompt for a GitHub username +
+**personal access token** (as the password). To avoid typing it interactively,
+prefix the token in the URL for that one command (then clear your shell history):
+
+```bash
+git clone https://USERNAME:YOUR_PAT@github.com/pjcampbe11/Beat-Toolkit.git
+```
+
+Clone onto the **network volume** (mounted at `/workspace` when you attach it to
+the pod) so the code + any models persist across pods and survive a pod restart.
+
+### 3. Copy files TO the pod (SCP)
+
+Run these in a **local** terminal (not the SSH session), using the same IP/port/key:
+
+```powershell
+# a single file
+scp -P <SSH_PORT> -i $env:USERPROFILE\.ssh\id_ed25519 myfile.wav root@<POD_IP>:/workspace/
+
+# an entire folder (e.g. your beats)
+scp -P <SSH_PORT> -i $env:USERPROFILE\.ssh\id_ed25519 -r "F:\RAP_ARCHIVES\raw_beats" root@<POD_IP>:/workspace/
+```
+
+### 4. Copy files FROM the pod (SCP)
+
+```powershell
+# a single file
+scp -P <SSH_PORT> -i $env:USERPROFILE\.ssh\id_ed25519 root@<POD_IP>:/workspace/out/beat.wav .
+
+# an entire results folder
+scp -P <SSH_PORT> -i $env:USERPROFILE\.ssh\id_ed25519 -r root@<POD_IP>:/workspace/Beat-Toolkit/out "F:\RAP_ARCHIVES\out"
+```
+
+### 5. Or use the S3 network volume (no pod needed to stage data)
+
+Upload your dataset to the volume **once** from your PC, then any pod that mounts
+it reads from `/workspace` — no re-SCP per pod. Full commands in
+[`cloud/connect.md`](cloud/connect.md); the short version:
+
+```powershell
+aws s3 cp "F:\RAP_ARCHIVES\raw_beats" s3://d39orqnjjh/raw_beats/ --recursive `
+  --profile runpod --region eu-ro-1 --endpoint-url https://s3api-eu-ro-1.runpod.io --checksum-algorithm CRC32
+```
+
+### Five things you'll do this way
+
+1. **Clone + run** — SSH in, `git clone`, `pip install -r requirements.txt`, run any script in `scripts/`.
+2. **Stage a dataset** — `scp -r "F:\RAP_ARCHIVES\raw_beats"` up, or push it to the S3 volume once and mount it.
+3. **Tag on GPU** — `auto_tag.py --engine qwen3-omni` on the pod (the heavy engine that won't fit your local 6 GB card).
+4. **Pull results back** — `scp -r root@<ip>:/workspace/.../out` down to `F:` when a job finishes.
+5. **Persist across pods** — clone + cache models onto the network volume so a fresh pod is ready in seconds.
+
+*Optional / good-to-have:* add an `~/.ssh/config` entry (`Host rp` with
+`HostName`, `Port`, `User root`, `IdentityFile`) so you can just `ssh rp` and
+`scp ... rp:/workspace/`; use `rsync -avP -e "ssh -p <PORT> -i <KEY>"` instead of
+SCP for resumable, delta transfers of big folders; and remember **only the
+network volume persists** — files written to a pod's local disk vanish when the
+pod is terminated.
+
+---
+
+<a name="35-license"></a>
+## 35. License & notice
 
 Fine-tunes/runs Stability AI models (Stable Audio Open 1.0 / Stable Audio 3) under the **Stability AI Community License** (free commercial use under US$1M annual revenue; enterprise above — https://stability.ai/license). Full songs with vocals use **HeartMuLa** (Apache-2.0). Model weights are **not** included. **Only train on audio you own or that is explicitly cleared for ML training.** See §6.
