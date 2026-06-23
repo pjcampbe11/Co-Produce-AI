@@ -1,0 +1,19 @@
+# Normalize line endings: store LF in the repo, let Windows check out CRLF.
+# Stops "every file modified" noise on Windows after a pull.
+* text=auto eol=lf
+
+# Files that must keep CRLF on Windows to run correctly
+*.bat   text eol=crlf
+*.ps1   text eol=crlf
+
+# Binary / audio assets git should never touch
+*.wav   binary
+*.mp3   binary
+*.flac  binary
+*.aif   binary
+*.aiff  binary
+*.png   binary
+*.jpg   binary
+*.mid   binary
+*.ckpt  binary
+*.safetensors binary
