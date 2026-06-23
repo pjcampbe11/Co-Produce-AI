@@ -287,6 +287,16 @@ runpodctl send /workspace/lora_beats/lora_step2500.safetensors   # receive on yo
 ```
 Watch the trainer's demo audio; **stop when it sounds like your aesthetic but not like specific files** (overfitting). ~2000–3000 steps is a good range for this size.
 
+**Alternative engine — ACE-Step 1.5 (MIT, no revenue cap):**
+A second first-class engine, often the better pick for commercial work (MIT license removes the $1M cap, one model does beats *and* vocal songs, LoRA from ~8 songs). It runs as a REST server you drive with `ace_step_workflow.py`:
+```bash
+bash cloud/ace_step_setup.sh                 # clone + uv sync (cloud pod default; ~6 GB min, 20 GB+ for XL)
+cd ACE-Step-1.5 && ACESTEP_API_HOST=0.0.0.0 uv run acestep-api    # REST on :8001 (or `uv run acestep` for the Gradio LoRA-training UI)
+python scripts/ace_step_workflow.py generate --plan prompts/pack_plan.example.json --out generated_ace
+python scripts/ace_step_workflow.py song --prompt "boom bap, dusty, male rap vocals, 90 BPM" --lyrics-file verse.txt --bpm 90 --key "F minor" --duration 180 --out song
+```
+LoRA-train via the ACE-Step Gradio "LoRA Training" tab (one-click, ~8 songs/~1 h on 12 GB) — your `build_captions.py` captions feed the annotation step. A/B it against SA3 and keep whichever wins per project.
+
 **SAO full fine-tune (24 GB+ pod):** `cloud/runpod_setup.sh` then `train.py` (see flags inline). Use when LoRA stops capturing your sound.
 
 *Optional/good-to-have:* one **LoRA per subgenre** (swap/blend at runtime); `--base_precision bf16 --adapter_type lora-xs` for ~5.5 GB VRAM; resume from a checkpoint to continue-train; keep several checkpoints (last isn't always best).
