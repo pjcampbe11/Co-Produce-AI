@@ -1276,6 +1276,27 @@ git clone https://USERNAME:YOUR_PAT@github.com/pjcampbe11/Beat-Toolkit.git
 Clone onto the **network volume** (mounted at `/workspace` when you attach it to
 the pod) so the code + any models persist across pods and survive a pod restart.
 
+### One-shot bootstrap (clone + install + ready)
+
+Skip the manual clone/install: paste this on a fresh pod to pull the repo onto
+the network volume and install everything in one go ([`cloud/pod_bootstrap.sh`](cloud/pod_bootstrap.sh)):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/pjcampbe11/Beat-Toolkit/main/cloud/pod_bootstrap.sh | bash
+```
+
+Private repo (prompts otherwise) — pass a token, which the script clears from the
+environment after cloning:
+
+```bash
+GH_TOKEN=YOUR_PAT bash -c 'curl -fsSL https://raw.githubusercontent.com/pjcampbe11/Beat-Toolkit/main/cloud/pod_bootstrap.sh | bash'
+```
+
+It clones to `/workspace/Beat-Toolkit` (falls back to `$HOME` if no volume),
+installs `requirements.txt`, routes HF/torch caches to the volume so future pods
+skip re-downloads, and prints the exact tag/enrich/caption commands to run next.
+Re-running it just pulls latest and reinstalls (idempotent).
+
 ### 3. Copy files TO the pod (SCP)
 
 Run these in a **local** terminal (not the SSH session), using the same IP/port/key:
