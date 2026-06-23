@@ -157,10 +157,101 @@ def caption_clap(audio_path):
     return [CLAP_VOCAB[i] for i in order if sims[i] >= 0.25], "clap zero-shot (list-based fallback)"
 
 
+def caption_heuristic(audio_path):
+    """Download-free, GPU-free tagger built only from librosa DSP features.
+
+    Operator notes
+    --------------
+    This is the reliable LOCAL engine. It needs no model checkpoint, no network,
+    and no CUDA - just librosa/numpy (already core deps). It will never throw the
+    "Expecting value: line 1 column 1" CLAP-loader error because it loads nothing.
+    Tags are derived from measurable signal properties (brightness, energy,
+    dynamics, sub/bass content, percussiveness, tempo), so they are honest to the
+    audio even if less "semantic" than CLAP/Qwen. Good enough to drive captions.
+    """
+    import numpy as np, librosa
+    y, sr = librosa.load(str(audio_path), sr=22050, mono=True, duration=90)
+    if y.size == 0:
+        return [], "heuristic (empty audio)"
+    y = y / (np.max(np.abs(y)) or 1.0)              # peak-normalize so thresholds are level-independent
+
+    # --- tempo (handle librosa API rename across versions) ---
+    tempo = 0.0
+    for fn in ("feature.rhythm.tempo", "beat.tempo"):
+        try:
+            mod = librosa
+            for part in fn.split("."):
+                mod = getattr(mod, part)
+            tempo = float(np.atleast_1d(mod(y=y, sr=sr, aggregate=np.median))[0]); break
+        except Exception:
+            continue
+
+    # --- spectral / energy descriptors ---
+    cent    = float(np.mean(librosa.feature.spectral_centroid(y=y, sr=sr)))      # brightness (Hz)
+    flat    = float(np.mean(librosa.feature.spectral_flatness(y=y)))             # noisiness 0..1 (tonal->noisy)
+    zcr     = float(np.mean(librosa.feature.zero_crossing_rate(y)))             # ~high-freq/edginess
+    rms     = librosa.feature.rms(y=y)[0]
+    energy  = float(np.mean(rms))                                               # overall loudness/density
+    dyn     = float(np.std(rms))                                               # dynamics (punch vs flat)
+    onset   = float(np.mean(librosa.onset.onset_strength(y=y, sr=sr)))          # busyness
+
+    # --- frequency-band energy ratios (sub / low / high) ---
+    S = np.abs(librosa.stft(y, n_fft=2048))
+    freqs = librosa.fft_frequencies(sr=sr, n_fft=2048)
+    total = float(S.sum()) or 1.0
+    band = lambda lo, hi: float(S[(freqs >= lo) & (freqs < hi)].sum()) / total
+    sub, low, high = band(20, 80), band(80, 250), band(4000, sr / 2)
+
+    # --- harmonic vs percussive balance ---
+    try:
+        h, perc = librosa.effects.hpss(y)
+        perc_ratio = float(np.mean(np.abs(perc)) / (np.mean(np.abs(perc)) + np.mean(np.abs(h)) + 1e-9))
+    except Exception:
+        perc_ratio = 0.5
+
+    t = []
+    # brightness
+    if cent > 2800: t.append("bright")
+    elif cent < 1400: t.append("dark")
+    else: t.append("warm")
+    # energy / mood
+    if energy > 0.14 and onset > 2.0: t.append("energetic")
+    if energy < 0.06: t += ["mellow", "laid back"]
+    if dyn > 0.06 and perc_ratio > 0.55: t.append("hard hitting")
+    if dyn < 0.025: t.append("hypnotic")
+    # texture
+    if flat > 0.02 or zcr > 0.12: t += ["gritty", "distorted"]
+    elif flat < 0.004: t.append("smooth")
+    if high < 0.06 and cent < 1800: t.append("dusty vinyl")   # rolled-off top = lofi/sampled feel
+    # low end
+    if sub > 0.05: t += ["808 heavy", "sub bass"]
+    if low > 0.20: t.append("bass heavy")
+    # percussive vs melodic
+    if perc_ratio > 0.62: t.append("drum heavy")
+    elif perc_ratio < 0.4: t.append("melodic")
+    # tempo-informed genre hints (rough; only when a tempo was found)
+    if tempo:
+        if 60 <= tempo <= 82 and energy < 0.09: t.append("lofi")
+        elif 82 <= tempo <= 100: t.append("boom bap")
+        elif 128 <= tempo <= 152 and sub > 0.04: t += ["trap", "drill"]
+        elif 158 <= tempo <= 182: t.append("drum and bass")
+        elif 118 <= tempo <= 130: t += ["house", "techno"]
+    # dedup, keep order, cap
+    seen, out = set(), []
+    for x in t:
+        if x and x not in seen:
+            seen.add(x); out.append(x)
+    cap = (f"heuristic: tempo~{tempo:.0f}bpm centroid {cent:.0f}Hz energy {energy:.3f} "
+           f"sub {sub:.2f} perc {perc_ratio:.2f}; tags {', '.join(out[:10])}")
+    return out[:10], cap
+
+
 def tag_source(audio_path, engine):
     if engine in ("qwen3-omni", "qwen2-audio"):
         cap = caption_qwen(audio_path, engine)
         return tags_from_caption(cap), cap
+    if engine == "heuristic":
+        return caption_heuristic(audio_path)
     tags, note = caption_clap(audio_path)
     return tags, note
 
@@ -292,8 +383,11 @@ def main():
     ap.add_argument("--vocal-suffix", default="_vocals")
     ap.add_argument("--source", choices=["full", "vocals", "beat", "all"], default="full",
                     help="Which audio to analyze. vocals/beat/all need stem separation.")
-    ap.add_argument("--engine", choices=["auto", "qwen3-omni", "qwen2-audio", "clap"],
-                    default="auto")
+    ap.add_argument("--engine",
+                    choices=["auto", "qwen3-omni", "qwen2-audio", "clap", "heuristic"],
+                    default="auto",
+                    help="heuristic = pure-DSP local tagger (no model/GPU/network, "
+                         "never fails to load); clap/qwen = semantic but need downloads/GPU")
     ap.add_argument("--resume", action="store_true", help="Skip files that already have .tags.json (guarantees no beat is tagged twice across runs)")
     ap.add_argument("--limit", type=int, default=0, help="Process up to N not-yet-done items this run")
     ap.add_argument("--shuffle", action="store_true", help="Random selection order, so each --limit batch is a random sample of what's left")
@@ -303,11 +397,19 @@ def main():
     # resolve engine
     engine = args.engine
     if engine == "auto":
+        # Prefer a semantic engine ONLY when a GPU is actually present; otherwise
+        # fall back to the heuristic DSP tagger (reliable, no downloads) instead of
+        # CLAP, whose checkpoint loader is flaky on Windows/CPU.
+        try:
+            import torch  # noqa
+            has_cuda = torch.cuda.is_available()
+        except Exception:
+            has_cuda = False
         try:
             import transformers  # noqa
-            engine = "qwen2-audio"  # safe default; pass --engine qwen3-omni for max detail
+            engine = "qwen2-audio" if has_cuda else "heuristic"
         except ImportError:
-            engine = "clap"
+            engine = "heuristic"
     print(f"Engine: {engine}   Source: {args.source}")
 
     if args.stems_dir:
