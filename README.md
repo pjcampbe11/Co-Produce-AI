@@ -316,13 +316,20 @@ $ python scripts/genius_lookup.py --beats raw_beats --limit 3
 === 2 matched, 0 no-match, 0 skipped, 1 flagged low-confidence ===
 ```
 
-**Setup & run** (local; needs a free Genius token):
+**Setup & run** (local; needs a free Genius token). Get the token:
+
+1. Go to <https://genius.com/api-clients> and log in (any Genius/Google account).
+2. Click **New API Client**. Enter any **App Name** and **App Website URL** (e.g. `https://coproduceai.com`) → **Save**.
+3. On the client page, click **Generate Access Token** and copy the **Client Access Token**.
+
+Then set it and run (key stays in your shell, never in the repo):
+
 ```powershell
-# make a client at https://genius.com/api-clients -> Generate Access Token
-$env:GENIUS_TOKEN = "your_client_access_token"
+$env:GENIUS_TOKEN = "paste_client_access_token"
 pip install requests
 python scripts/genius_lookup.py --beats "F:/RAP_ARCHIVES/raw_beats" --resume
 ```
+macOS/Linux: `export GENIUS_TOKEN=...`. Persist on Windows with `setx GENIUS_TOKEN "..."` (new terminal). Full per-service steps: [`cheatsheets/api-keys.md`](cheatsheets/api-keys.md).
 Cleans track numbers/`_instrumental`/"(OFFICIAL VIDEO)" noise from filenames, takes the best hit, records a `match_score` + `low_confidence` flag so you can spot-check.
 
 *Optional/good-to-have:* `--limit 25` test first; the token stays in an env var (never hard-coded); low-confidence matches are flagged, not trusted blindly.
@@ -1687,6 +1694,18 @@ $ python scripts/genre_playlists.py -g dnb
 $env:SPOTIFY_CLIENT_ID="xxx"; $env:SPOTIFY_CLIENT_SECRET="yyy"   # optional: $env:YOUTUBE_API_KEY="zzz"
 python scripts/genre_playlists.py -g all --limit 8 --format md --out playlists.md
 ```
+
+Keys are all optional (no keys = working YouTube/Apple Music/SoundCloud links).
+For **Spotify**, follow the 6-step app setup in §37. For **YouTube** (live, ranked
+playlists instead of a search link):
+
+1. Go to <https://console.cloud.google.com> and create or select a project.
+2. **APIs & Services → Library** → search **YouTube Data API v3** → **Enable**.
+3. **APIs & Services → Credentials → Create credentials → API key** → copy it.
+4. `$env:YOUTUBE_API_KEY="paste_key"` (macOS/Linux: `export`; persist: `setx`).
+
+**Apple Music** needs a paid-Apple-Developer MusicKit JWT (`APPLE_MUSIC_TOKEN`);
+without it you get a search link. All key steps: [`cheatsheets/api-keys.md`](cheatsheets/api-keys.md).
 
 Genres: `hiphop`, `boom_bap`, `trap`, `drill`, `lofi`, `rock`, `metal`,
 `rockmetal`, `dubstep`, `dnb`, or `all`. Reachable in the dashboard under
