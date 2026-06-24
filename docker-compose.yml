@@ -1,4 +1,4 @@
-# Beat Toolkit SaaS - API + worker + Redis.  `docker compose up --build`
+# CoProduce AI SaaS - API + worker + Redis.  `docker compose up --build`
 # For a real GPU worker, add the override:  docker compose -f docker-compose.yml -f docker-compose.gpu.yml up --build
 services:
   redis:

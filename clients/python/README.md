@@ -1,6 +1,6 @@
 # clients/python — API example (signup → submit → download)
 
-A single-file client for the Beat Toolkit SaaS API ([README §35](../../README.md#35-saas)).
+A single-file client for the CoProduce AI SaaS API ([README §35](../../README.md#35-saas)).
 
 ```bash
 pip install -r requirements.txt

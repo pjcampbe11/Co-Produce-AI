@@ -1,4 +1,4 @@
-# Deploy & go-live checklist (Beat Toolkit SaaS)
+# Deploy & go-live checklist (CoProduce AI SaaS)
 
 Operational steps to take the [`server/`](server) stack (README §35) from
 `docker compose up` to a real, public, billable service. Code is ready; this is

@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Beat Toolkit - one-shot pod bootstrap.
+# CoProduce AI - one-shot pod bootstrap.
 #
 # Clones the repo onto the pod (prefers the network volume at /workspace so it
 # persists), installs Python deps, and prints what to run next. Idempotent: if
 # the repo already exists it just pulls + reinstalls.
 #
 # Usage on a fresh pod (paste into the pod's SSH session):
-#   curl -fsSL https://raw.githubusercontent.com/pjcampbe11/Beat-Toolkit/main/cloud/pod_bootstrap.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/pjcampbe11/CoProduceAI/main/cloud/pod_bootstrap.sh | bash
 # Private-repo clone? Provide a token first (cleared from env after use):
 #   GH_TOKEN=ghp_xxx bash pod_bootstrap.sh
 # Optional env:
@@ -15,7 +15,7 @@
 #   TAG_ENGINE=qwen3-omni     used only by the optional auto-run line below
 set -euo pipefail
 
-REPO_HTTPS="https://github.com/pjcampbe11/Beat-Toolkit.git"
+REPO_HTTPS="https://github.com/pjcampbe11/CoProduceAI.git"
 WORKDIR="${WORKDIR:-/workspace}"
 # Fall back to $HOME if /workspace isn't mounted/writable on this pod.
 if ! mkdir -p "$WORKDIR" 2>/dev/null || [ ! -w "$WORKDIR" ]; then
@@ -27,19 +27,19 @@ cd "$WORKDIR"
 # Build clone URL (inject token only if the repo is private and a token is given).
 CLONE_URL="$REPO_HTTPS"
 if [ -n "${GH_TOKEN:-}" ]; then
-  CLONE_URL="https://x-access-token:${GH_TOKEN}@github.com/pjcampbe11/Beat-Toolkit.git"
+  CLONE_URL="https://x-access-token:${GH_TOKEN}@github.com/pjcampbe11/CoProduceAI.git"
 fi
 
-if [ -d Beat-Toolkit/.git ]; then
+if [ -d CoProduceAI/.git ]; then
   echo "[bootstrap] repo exists - pulling latest"
-  git -C Beat-Toolkit pull --ff-only || true
+  git -C CoProduceAI pull --ff-only || true
 else
-  echo "[bootstrap] cloning into $WORKDIR/Beat-Toolkit"
-  git clone "$CLONE_URL" Beat-Toolkit
+  echo "[bootstrap] cloning into $WORKDIR/CoProduceAI"
+  git clone "$CLONE_URL" CoProduceAI
 fi
 unset GH_TOKEN  # don't leave the token in the environment
 
-cd Beat-Toolkit
+cd CoProduceAI
 echo "[bootstrap] installing Python deps"
 python -m pip install -q --upgrade pip
 python -m pip install -q -r requirements.txt
@@ -54,9 +54,9 @@ fi
 
 cat <<NEXT
 
-[bootstrap] READY in $WORKDIR/Beat-Toolkit
+[bootstrap] READY in $WORKDIR/CoProduceAI
 Next steps:
-  cd $WORKDIR/Beat-Toolkit/scripts
+  cd $WORKDIR/CoProduceAI/scripts
 
   # GPU tagging (the heavy engine that won't fit a small local card):
   python auto_tag.py --stems-dir /workspace/raw_beats --source beat --engine ${TAG_ENGINE:-qwen3-omni} --resume

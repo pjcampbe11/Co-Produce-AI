@@ -1,4 +1,4 @@
-"""RunPod Serverless handler for Beat Toolkit.
+"""RunPod Serverless handler for CoProduce AI.
 
 Operator notes
 --------------

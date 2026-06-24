@@ -1,5 +1,5 @@
 # ============================================================
-# Beat Toolkit - Python dependencies
+# CoProduce AI - Python dependencies
 # ------------------------------------------------------------
 # FIRST, make a virtual environment so this stays isolated:
 #     python -m venv .venv

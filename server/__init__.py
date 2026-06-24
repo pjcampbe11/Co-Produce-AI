@@ -1,1 +1,1 @@
-"""Beat Toolkit SaaS backend (FastAPI + RQ + Stripe)."""
+"""CoProduce AI SaaS backend (FastAPI + RQ + Stripe)."""

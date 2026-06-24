@@ -1,4 +1,4 @@
-# serverless/ — host Beat Toolkit as a RunPod endpoint
+# serverless/ — host CoProduce AI as a RunPod endpoint
 
 See the main [README section 33](../README.md#33-serverless) for the full guide.
 

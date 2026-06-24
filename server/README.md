@@ -1,4 +1,4 @@
-# server/ — Beat Toolkit SaaS backend
+# server/ — CoProduce AI SaaS backend
 
 Turns the toolkit into a multi-tenant service: an authenticated REST API, a
 Redis-backed **job queue** with scalable workers, credit **metering**, and

@@ -1,4 +1,4 @@
-# Beat Toolkit SaaS server
+# CoProduce AI SaaS server
 fastapi>=0.110
 uvicorn[standard]>=0.29
 sqlmodel>=0.0.16
