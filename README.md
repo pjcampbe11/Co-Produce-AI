@@ -81,7 +81,8 @@ Pack built: packs/DustyCratesVol1  (212 samples)   Zip: packs/DustyCratesVol1.zi
 38. [Hip-hop beats inspired by (playlist)](#38-inspired)
 39. [Cheat sheets & genre playlist finder](#39-cheatsheets)
 40. [Engines & unified generation router](#40-engines-router)
-41. [License & notice](#41-license)
+41. [Sample chopper (MPC One+ / Ableton Push)](#41-sample-chop)
+42. [License & notice](#42-license)
 
 > **How to read this:** every feature section follows the same shape — a plain-English **What it is**, a **Demo** gif, the **Setup & run** steps, and **Optional / good-to-have** extras. Demos live in `docs/gifs/` (placeholders — record them from the dashboard). Anything needing a GPU shows the **cloud pod** path first.
 
@@ -147,7 +148,7 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-Optional features pull extra packages — each section lists them, and §41 breaks down every line of `requirements.txt` (what it is and which feature needs it).
+Optional features pull extra packages — each section lists them, and §42 breaks down every line of `requirements.txt` (what it is and which feature needs it).
 
 **ffmpeg** is needed for MP3/M4A decoding (yt-dlp, librosa fallback): `winget install ffmpeg`.
 
@@ -1833,7 +1834,60 @@ dashboard under **Train & Generate**.
 
 ---
 
-<a name="41-license"></a>
-## 41. License & notice
+<a name="41-sample-chop"></a>
+## 41. Sample chopper (MPC One+ / Ableton Push)
+
+**What it is.** `sample_chop.py` takes a sample and rebuilds it into **5 new
+variations** the way classic producers do — chopping, rearranging, repitching,
+reversing, stuttering. Each variation exports a **master loop**, the individual
+**chop one-shots** (stems, one per pad), a **MIDI pattern**, a cue-marked master
+for auto-slicing, and ready folders for **MPC One+** and **Ableton Push 2**.
+
+It works **standalone** (just renders audio), and the chops drop straight onto
+hardware pads. With `--producer` it chops in a known producer's signature style.
+
+**▶ Demo —**
+
+```console
+$ python scripts/sample_chop.py --input soul_loop.wav --producer j_dilla --bpm 90 --out chops
+[producer] j_dilla: dilla + dilla + chipmunk + reverse + stutter
+[chop] 14 slices from soul_loop.wav
+[var1] dilla: master + 14 slices + pattern.mid -> chops/var1_j_dilla_dilla
+... 5 variations, each with mpc/ + ableton/ folders
+```
+
+### Producer styles (`--producer`)
+
+Ten sample-chopping greats, each mapped to a 5-variation style set + feel
+(swing, density, pitch bias, dust, quantize): `j_dilla` (micro-chop, off-quantize
+swing), `kanye_west` (chipmunk soul), `dj_premier` (tight chopped stabs),
+`9th_wonder` (clean grid soul), `rza` (gritty pitched-down), `madlib` (loose,
+dusty), `pete_rock` (smooth soul/jazz), `just_blaze` (big pitched-up soul),
+`the_alchemist` (hazy loops/halftime), `knxwledge` (lo-fi swung). List them:
+`python scripts/sample_chop.py --list-producers`.
+
+### Get it onto your gear
+
+Every variation has a `slices/` folder (numbered one-shots) — the **guaranteed**
+path on any device. **MPC One+:** copy the variation folder over and load
+`mpc/program.xpm`, or drag the slices onto pads. **Ableton / Push 2:** drag the
+`ableton/` WAVs onto a Drum Rack (Push plays the pads) and drop `pattern.mid`
+into a clip; or import `master_sliced.wav` and use Slice-to-MIDI. `pattern.mid`
+maps pad 1 → note 36.
+
+```powershell
+python scripts/sample_chop.py --input vocal.mp3 --producer kanye_west --target both --adg --out chops
+python scripts/sample_chop.py --input loop.wav --grid 16 --pads 16 --stems   # AI: chop the melodic stem
+```
+
+*Optional / good-to-have:* `--stems` separates the source (audio-separator) and
+chops the melodic layer; `--reimagine` adds an audio2audio AI flip of each master;
+`--adg` writes an Ableton Drum Rack preset (experimental — the slice folder always
+works). Only use sources you have the rights to chop (see §6).
+
+---
+
+<a name="42-license"></a>
+## 42. License & notice
 
 Fine-tunes/runs Stability AI models (Stable Audio Open 1.0 / Stable Audio 3) under the **Stability AI Community License** (free commercial use under US$1M annual revenue; enterprise above — https://stability.ai/license). Full songs with vocals use **HeartMuLa** (Apache-2.0). Model weights are **not** included. **Only train on audio you own or that is explicitly cleared for ML training.** See §6.

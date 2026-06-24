@@ -27,6 +27,7 @@ All scripts are in `scripts/`. Run `python scripts/<name>.py --help` for full fl
 | `audio2audio.py` | flip a sound | `--input --prompt --strength` |
 | `remix.py` | genre transform / mashup | `--input --genre --mode` |
 | `beat_builder.py` | beats from your samples | `--style --bpm --bars --count` |
+| `sample_chop.py` | chop a sample \u2192 5 MPC/Push variations | `--input --producer --target --pads` |
 | `song_generate.py` | full songs w/ vocals (HeartMuLa) | `--lyrics-file --tags --duration` |
 | `yue_workflow.py` | lyrics \u2192 full song (YuE) | `--yue --lyrics --genre --segments` |
 | `diffrhythm_workflow.py` | fast lyrics \u2192 song (DiffRhythm) | `--diffrhythm --lyrics --prompt` |
