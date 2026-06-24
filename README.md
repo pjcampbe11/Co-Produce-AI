@@ -1875,10 +1875,27 @@ path on any device. **MPC One+:** copy the variation folder over and load
 into a clip; or import `master_sliced.wav` and use Slice-to-MIDI. `pattern.mid`
 maps pad 1 → note 36.
 
+Five quick examples (no AI — pure DSP, fast, offline):
+
 ```powershell
-python scripts/sample_chop.py --input vocal.mp3 --producer kanye_west --target both --adg --out chops
-python scripts/sample_chop.py --input loop.wav --grid 16 --pads 16 --stems   # AI: chop the melodic stem
+python scripts/sample_chop.py --producer j_dilla    --input dusty_soul_loop.wav --bpm 90 --out chops
+python scripts/sample_chop.py --producer kanye_west  --input otis_vocal.mp3 --bpm 92 --target both --out chops
+python scripts/sample_chop.py --producer dj_premier  --input jazz_stab.wav --grid 16 --pads 16 --bpm 93 --out chops
+python scripts/sample_chop.py --producer 9th_wonder  --input soul_45.wav --bpm 86 --out chops
+python scripts/sample_chop.py --producer madlib      --input obscure_jazz.wav --bars 4 --bpm 87 --out chops
 ```
+
+Five with the AI flags (`--stems` = separate + chop the melodic layer, `--reimagine` = audio2audio flip):
+
+```powershell
+python scripts/sample_chop.py --producer rza           --input full_song.mp3 --stems --bpm 88 --out chops
+python scripts/sample_chop.py --producer the_alchemist --input hazy_psych.wav --reimagine --adg --target ableton --bpm 82 --out chops
+python scripts/sample_chop.py --producer pete_rock     --input horn_loop.wav --stems --reimagine --target mpc --bpm 91 --out chops
+python scripts/sample_chop.py --producer just_blaze    --input triumph_soul.wav --reimagine --bars 4 --bpm 96 --out chops
+python scripts/sample_chop.py --producer knxwledge     --input lofi_chop.wav --stems --bpm 89 --out chops
+```
+
+Full set — five per producer, with and without AI — in [`cheatsheets/sample-chop-examples.md`](cheatsheets/sample-chop-examples.md).
 
 *Optional / good-to-have:* `--stems` separates the source (audio-separator) and
 chops the melodic layer; `--reimagine` adds an audio2audio AI flip of each master;
