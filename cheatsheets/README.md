@@ -8,3 +8,4 @@ Quick one-page references for Co-Produce AI. Full docs live in the
 - [saas-and-cloud.md](saas-and-cloud.md) — run the API/queue/Stripe + pods/SCP/S3
 - [best-songs-by-genre.md](best-songs-by-genre.md) — find reference playlists per genre (uses `genre_playlists.py`)
 - [api-keys.md](api-keys.md) — step-by-step: get every API key the toolkit can use
+- [sample-chop-examples.md](sample-chop-examples.md) — 5 chop examples per producer (with/without AI)

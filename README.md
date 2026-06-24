@@ -1864,7 +1864,7 @@ swing), `kanye_west` (chipmunk soul), `dj_premier` (tight chopped stabs),
 `9th_wonder` (clean grid soul), `rza` (gritty pitched-down), `madlib` (loose,
 dusty), `pete_rock` (smooth soul/jazz), `just_blaze` (big pitched-up soul),
 `the_alchemist` (hazy loops/halftime), `knxwledge` (lo-fi swung). List them:
-`python scripts/sample_chop.py --list-producers`.
+`python scripts/sample_chop.py --list-producers`. **Five worked examples per producer** (with and without the AI flags) are in [`cheatsheets/sample-chop-examples.md`](cheatsheets/sample-chop-examples.md).
 
 ### Get it onto your gear
 
