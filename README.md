@@ -72,7 +72,9 @@ Pack built: packs/DustyCratesVol1  (212 samples)   Zip: packs/DustyCratesVol1.zi
 34. [Pod workflow — SSH, SCP & cloning the repo to a pod](#34-pod-workflow)
 35. [SaaS server — job queue, REST API & Stripe billing](#35-saas)
 36. [Requirements & dependencies (with venv setup)](#36-requirements)
-37. [License & notice](#37-license)
+37. [Spotify playlist metadata extractor](#37-playlist-meta)
+38. [Hip-hop beats inspired by (playlist)](#38-inspired)
+39. [License & notice](#39-license)
 
 > **How to read this:** every feature section follows the same shape — a plain-English **What it is**, a **Demo** gif, the **Setup & run** steps, and **Optional / good-to-have** extras. Demos live in `docs/gifs/` (placeholders — record them from the dashboard). Anything needing a GPU shows the **cloud pod** path first.
 
@@ -138,7 +140,7 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-Optional features pull extra packages — each section lists them, and §37 breaks down every line of `requirements.txt` (what it is and which feature needs it).
+Optional features pull extra packages — each section lists them, and §39 breaks down every line of `requirements.txt` (what it is and which feature needs it).
 
 **ffmpeg** is needed for MP3/M4A decoding (yt-dlp, librosa fallback): `winget install ffmpeg`.
 
@@ -1551,7 +1553,79 @@ removal). On a fresh GPU pod, `cloud/pod_bootstrap.sh` installs it all for you.
 
 ---
 
-<a name="37-license"></a>
-## 37. License & notice
+<a name="37-playlist-meta"></a>
+## 37. Spotify playlist metadata extractor
+
+**What it is.** `playlist_meta.py` pulls **all available metadata** from a public
+Spotify playlist — track titles, artists, album, release date, duration,
+popularity, ISRC, explicit flag, and **when each track was added** — plus
+optional **audio features** (BPM, key, energy, danceability) and **sample data**.
+Point it at a playlist with `-pl` / `--playlist` and choose `md` / `json` / `csv`
+output. Reports default to **newest-added first**.
+
+> **Sample source, honestly.** WhoSampled has no free public API (academic/paid
+> only, and Spotify acquired it in Nov 2025). So `--samples` uses the **Genius
+> `song_relationships`** API — the legitimate "samples / interpolations /
+> sampled-in" data — reusing your `GENIUS_TOKEN`. `--whosampled` is an optional
+> best-effort path through a RapidAPI provider (needs `RAPIDAPI_KEY`).
+
+**▶ Demo —**
+
+```console
+$ python scripts/playlist_meta.py -pl https://open.spotify.com/playlist/7MNBsBwgsqAsRZkdNE4E5Y --audio-features
+[playlist_meta] 'Hip-Hop Beats' - 84 tracks
+# Hip-Hop Beats
+- Owner: you   - Followers: 312   - Tracks: 84
+| # | Added | Title | Artists | Album | Release | Len | Pop | BPM | Key |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | 2026-06-20 | ... | ... | ... | 2025-11-03 | 173s | 64 | 142 | F#m |
+```
+
+### Setup & run
+
+Create a Spotify app at developer.spotify.com (no user login needed — public
+reads use the **Client Credentials** flow) and set the two env vars:
+
+```powershell
+$env:SPOTIFY_CLIENT_ID="xxx"; $env:SPOTIFY_CLIENT_SECRET="yyy"
+python scripts/playlist_meta.py -pl <url> --audio-features --format md --out playlist.md
+```
+
+Five ways to use it:
+
+1. **Newest-added report** (default): `-pl <url>` → markdown, newest first.
+2. **Spreadsheet**: `-pl <url> -f csv -o playlist.csv`.
+3. **Vibe match**: `--audio-features` → BPM/key/energy to find beats that fit.
+4. **Sample lineage**: `--samples` (needs `GENIUS_TOKEN`) → what each track samples/interpolates.
+5. **Full dump**: `--format json --audio-features --samples --out playlist.json` for downstream tooling.
+
+*Optional / good-to-have:* `--sort popularity|release|name`, `--limit N`, and
+`--whosampled` (RapidAPI). Reachable in the dashboard under **Prep & Analyze →
+Spotify playlist meta**. Only metadata is fetched — no audio is downloaded.
+
+---
+
+<a name="38-inspired"></a>
+## 38. Hip-hop beats inspired by (playlist)
+
+The reference playlist this toolkit is tuned against — **[▶ open on Spotify](https://open.spotify.com/playlist/7MNBsBwgsqAsRZkdNE4E5Y)**.
+
+<!-- GitHub strips iframes in markdown; the live, playable embed renders in
+     docs/inspired.html and in the dashboard's "Inspiration" tab. -->
+<iframe data-testid="embed-iframe" style="border-radius:12px"
+  src="https://open.spotify.com/embed/playlist/7MNBsBwgsqAsRZkdNE4E5Y?utm_source=generator"
+  width="100%" height="420" frameBorder="0"
+  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+  loading="lazy"></iframe>
+
+The playable embed is in **[`docs/inspired.html`](docs/inspired.html)** (open it
+locally or host it) and live in the **dashboard → 🎶 Inspiration** tab. The embed
+mirrors the playlist's own order — sort it by *Date added* in Spotify to play
+newest-first; `playlist_meta.py` already defaults its report to newest-added first.
+
+---
+
+<a name="39-license"></a>
+## 39. License & notice
 
 Fine-tunes/runs Stability AI models (Stable Audio Open 1.0 / Stable Audio 3) under the **Stability AI Community License** (free commercial use under US$1M annual revenue; enterprise above — https://stability.ai/license). Full songs with vocals use **HeartMuLa** (Apache-2.0). Model weights are **not** included. **Only train on audio you own or that is explicitly cleared for ML training.** See §6.

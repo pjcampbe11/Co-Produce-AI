@@ -104,6 +104,16 @@ TOOLS = [
         F("--limit", "Limit (0 = all)", "num", 0),
         F("--resume", "Resume (skip enriched)", "bool", True),
     ]),
+    ("\U0001F3B5 Spotify playlist meta", "playlist_meta.py", [
+        F("--playlist", "Playlist URL / URI / id", "text", info="-pl / --playlist"),
+        F("--format", "Output format", "choice", "md", ["md", "json", "csv"]),
+        F("--sort", "Sort", "choice", "added", ["added", "popularity", "release", "name"]),
+        F("--audio-features", "Add BPM/key/energy", "bool", True),
+        F("--samples", "Add sample data (Genius)", "bool", False),
+        F("--whosampled", "Also WhoSampled (RapidAPI)", "bool", False),
+        F("--limit", "Limit (0 = all)", "num", 0),
+        F("--out", "Save report to file", "text"),
+    ]),
     ("Build captions", "build_captions.py", [
         F("--beats", "Beats folder", "dir"),
         F("--reports", "Reports folder (optional)", "dir"),
@@ -499,7 +509,7 @@ def build_ui():
         # group tools into sections (by script name); leftovers -> "More"
         SECTIONS = [
             ("\U0001F4E5 Prep & Analyze", ["organize_soundbank.py", "mp3_to_wav.py", "remove_vocals.py", "deep_listen.py",
-                                           "auto_tag.py", "genius_lookup.py", "build_captions.py",
+                                           "auto_tag.py", "genius_lookup.py", "playlist_meta.py", "build_captions.py",
                                            "prepare_dataset.py", "validate_dataset.py"]),
             ("\U0001F9E0 Train & Generate", ["sa3_workflow.py", "ace_step_workflow.py", "generate.py", "audio2audio.py", "song_generate.py"]),
             ("\U0001F941 Beats & Sound", ["beat_builder.py", "vst_instrument.py", "vst_chain.py"]),
@@ -575,6 +585,19 @@ def build_ui():
                 "**SaaS server** \u2014 turn the toolkit into a product: authenticated REST API + Redis job queue + Stripe billing in `server/` (`docker compose up --build`). See README \u00A735.\n\n"
                 "_GPU tip: run **this dashboard** on a pod to drive its GPU from the same UI; expose port 7860._"
             )
+
+        with gr.Tab("\U0001F3B6  Inspiration"):
+            gr.Markdown("#### Hip-hop beats inspired by\nThe reference playlist this "
+                        "toolkit is tuned against. Use **Prep & Analyze \u2192 Spotify playlist "
+                        "meta** to pull its full metadata + samples.")
+            gr.HTML('<iframe data-testid="embed-iframe" style="border-radius:12px" '
+                    'src="https://open.spotify.com/embed/playlist/7MNBsBwgsqAsRZkdNE4E5Y?utm_source=generator" '
+                    'width="100%" height="420" frameBorder="0" '
+                    'allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" '
+                    'loading="lazy"></iframe>')
+            gr.Markdown("<span style='color:#9FB3C8'>Tip: the embed mirrors the playlist's own "
+                        "order \u2014 sort the playlist by *Date added* in Spotify to play "
+                        "newest-first. The metadata report defaults to newest-added first.</span>")
 
         with gr.Tab("\U0001F3A7  Audition"):
             gr.Markdown("#### Audition + Remix\nList audio, click a file to play \u2014 then remix it into another genre.")
