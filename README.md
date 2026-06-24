@@ -80,7 +80,8 @@ Pack built: packs/DustyCratesVol1  (212 samples)   Zip: packs/DustyCratesVol1.zi
 37. [Spotify playlist metadata extractor](#37-playlist-meta)
 38. [Hip-hop beats inspired by (playlist)](#38-inspired)
 39. [Cheat sheets & genre playlist finder](#39-cheatsheets)
-40. [License & notice](#40-license)
+40. [Engines & unified generation router](#40-engines-router)
+41. [License & notice](#41-license)
 
 > **How to read this:** every feature section follows the same shape — a plain-English **What it is**, a **Demo** gif, the **Setup & run** steps, and **Optional / good-to-have** extras. Demos live in `docs/gifs/` (placeholders — record them from the dashboard). Anything needing a GPU shows the **cloud pod** path first.
 
@@ -146,7 +147,7 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-Optional features pull extra packages — each section lists them, and §40 breaks down every line of `requirements.txt` (what it is and which feature needs it).
+Optional features pull extra packages — each section lists them, and §41 breaks down every line of `requirements.txt` (what it is and which feature needs it).
 
 **ffmpeg** is needed for MP3/M4A decoding (yt-dlp, librosa fallback): `winget install ffmpeg`.
 
@@ -960,6 +961,8 @@ Reference/listening only (lossy source; rights caveats apply — don't train a s
 | `sat_common.py` `lyric_common.py` `custom_metadata.py` | shared helpers |
 
 `requirements.txt` lists core + per-feature optional deps. `cloud/` has pod setup scripts; `configs/` has dataset/VST-chain configs; `prompts/` has pack plans + example lyrics.
+
+- **Engines/router:** `generate_engine.py` (unified `--engine`), `yue_workflow.py`, `diffrhythm_workflow.py`, `musicgen_workflow.py` — see §40 and `docs/engines.md`.
 
 <a name="32-engines"></a>
 ## 32. Engine choice: Stable Audio 3 vs ACE-Step 1.5
@@ -1776,7 +1779,55 @@ sellable model on copyrighted tracks (see §6). `--format json` for tooling.
 
 ---
 
-<a name="40-license"></a>
-## 40. License & notice
+<a name="40-engines-router"></a>
+## 40. Engines & unified generation router
+
+**What it is.** Co-Produce AI drives several music models; pick one through a
+single router instead of remembering which script is which. Full comparison +
+"when to use which" in [`docs/engines.md`](docs/engines.md).
+
+**Prompt → beat:** `sa3` (your-sound LoRA), `sao` (full fine-tune), `ace-step`
+(fast), `musicgen` (**melody conditioning** — hum→beat). **Lyrics → full song:**
+`yue` (lyrics→5-min song, closest to Suno), `diffrhythm` (fast drafts),
+`heartmula`, `ace-step`. All self-hostable and commercial-friendly.
+
+**▶ Demo —**
+
+```console
+$ python scripts/generate_engine.py --list
+  sa3         [prompt] Stable Audio 3 LoRA (your-sound)
+  ace-step    [prompt] ACE-Step 1.5 (fast, REST; also does vocals)
+  musicgen    [prompt] MusicGen (+ melody conditioning)
+  yue         [lyrics] YuE - lyrics to full song
+  diffrhythm  [lyrics] DiffRhythm - fast lyrics to song
+  ...
+```
+
+```powershell
+# pick an engine; flags pass through to that engine's workflow
+python scripts/generate_engine.py --engine sa3 --plan prompts/pack_plan.example.json --out generated
+python scripts/generate_engine.py --engine musicgen --prompt "boom bap, dusty, 90 bpm" --melody hum.wav --out gen
+python scripts/generate_engine.py --engine yue --yue ~/YuE --lyrics verse.txt --genre "hip hop, 90 bpm" --out songs
+```
+
+New adapters: [`yue_workflow.py`](scripts/yue_workflow.py),
+[`diffrhythm_workflow.py`](scripts/diffrhythm_workflow.py),
+[`musicgen_workflow.py`](scripts/musicgen_workflow.py) — cloud setup in
+`cloud/yue_setup.sh`, `cloud/diffrhythm_setup.sh`, `cloud/musicgen_setup.sh`.
+
+**ACE Studio vocals.** `vocal_guide.py` now also exports **expression envelopes** —
+power (CC11), breathiness (CC74), and pitch inflection — as MIDI CC lanes plus a
+`<out>_expression.json` the ACE Bridge applies per note, so AI vocals sit far more
+naturally. Clone your own voice in ACE Studio once and reuse it across tracks.
+
+*Optional / good-to-have:* `yue` wants a 16–24 GB GPU; use `diffrhythm` for fast
+drafts then re-render the keeper in `yue`. `musicgen-melody` is the only engine
+that conditions on a hummed/played melody. All engines are reachable in the
+dashboard under **Train & Generate**.
+
+---
+
+<a name="41-license"></a>
+## 41. License & notice
 
 Fine-tunes/runs Stability AI models (Stable Audio Open 1.0 / Stable Audio 3) under the **Stability AI Community License** (free commercial use under US$1M annual revenue; enterprise above — https://stability.ai/license). Full songs with vocals use **HeartMuLa** (Apache-2.0). Model weights are **not** included. **Only train on audio you own or that is explicitly cleared for ML training.** See §6.

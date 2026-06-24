@@ -1,7 +1,7 @@
 # Cheat sheets
 
 Quick one-page references for Co-Produce AI. Full docs live in the
-[main README](../README.md).
+[main README](../README.md). Engine comparison: [`docs/engines.md`](../docs/engines.md).
 
 - [cli-quickref.md](cli-quickref.md) — every script + its key flags, at a glance
 - [pipeline.md](pipeline.md) — the crate-to-pack flow in order, copy-paste

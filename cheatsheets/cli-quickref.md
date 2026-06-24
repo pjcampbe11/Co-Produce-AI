@@ -28,6 +28,10 @@ All scripts are in `scripts/`. Run `python scripts/<name>.py --help` for full fl
 | `remix.py` | genre transform / mashup | `--input --genre --mode` |
 | `beat_builder.py` | beats from your samples | `--style --bpm --bars --count` |
 | `song_generate.py` | full songs w/ vocals (HeartMuLa) | `--lyrics-file --tags --duration` |
+| `yue_workflow.py` | lyrics \u2192 full song (YuE) | `--yue --lyrics --genre --segments` |
+| `diffrhythm_workflow.py` | fast lyrics \u2192 song (DiffRhythm) | `--diffrhythm --lyrics --prompt` |
+| `musicgen_workflow.py` | prompt (+melody) \u2192 instrumental | `--prompt --melody --model` |
+| `generate_engine.py` | **unified router** for all engines | `--engine <name> --list` |
 
 ## Creative Lab
 `microvariants.py` · `groove_dna.py` · `flip_lineage.py` · `destroy_heal.py` ·

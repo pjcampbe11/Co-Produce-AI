@@ -30,4 +30,7 @@ python scripts/build_pack.py  --input processed --pack-name "Dusty Crates Vol 1"
 python scripts/provenance.py  --pack packs/DustyCratesVol1 --dataset dataset --generated generated
 ```
 
+Pick a generation engine via the router (see `docs/engines.md`):
+`python scripts/generate_engine.py --engine sa3|ace-step|musicgen|yue|diffrhythm|heartmula ...`
+
 Tagging is **optional** — `build_captions.py` works from deep_listen + genius alone.
