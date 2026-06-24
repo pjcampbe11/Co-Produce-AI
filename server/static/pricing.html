@@ -3,57 +3,160 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Co-Produce AI — Pricing</title>
+<link rel="icon" href="/static/mark.svg">
 <style>
-  :root{--navy:#0B162A;--card:#0F2038;--line:#1D3357;--orange:#C83803;--orange2:#FF8A3D;--ink:#EAF0F7;--sub:#9FB3C8}
+  :root{--navy:#0B162A;--navy2:#13294B;--card:#0F2038;--line:#1D3357;--orange:#C83803;
+        --orange2:#FF8A3D;--ink:#EAF0F7;--sub:#9FB3C8;--mut:#5F7791}
   *{box-sizing:border-box} body{margin:0;background:var(--navy);color:var(--ink);
-    font-family:Inter,system-ui,sans-serif;padding:40px 16px}
-  h1{text-align:center;margin:0 0 6px;font-size:30px} p.sub{text-align:center;color:var(--sub);margin:0 0 28px}
-  .grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));max-width:980px;margin:0 auto}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;display:flex;flex-direction:column}
+    font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+  header{display:flex;align-items:center;justify-content:space-between;padding:20px 0;
+    border-bottom:1px solid var(--line)}
+  .brand{display:flex;align-items:center;gap:12px}
+  .badge{width:40px;height:40px;border-radius:11px;background:var(--card);
+    border:1.5px solid var(--orange);position:relative;flex:none}
+  .badge svg{position:absolute;inset:0}
+  .brand b{font-size:18px;font-weight:800} .brand b span{color:var(--orange2)}
+  nav a{color:var(--sub);font-size:14px;margin-left:22px} nav a:hover{color:var(--ink)}
+  .hero{text-align:center;padding:48px 0 10px}
+  .hero h1{font-size:34px;margin:0 0 8px} .hero h1 span{color:var(--orange2)}
+  .hero p{color:var(--sub);margin:0 auto;max-width:560px;font-size:16px}
+  .toggle{display:flex;justify-content:center;gap:8px;margin:24px 0 6px}
+  .toggle button{background:var(--card);border:1px solid var(--line);color:var(--sub);
+    padding:8px 16px;border-radius:999px;font-weight:600;cursor:pointer;font-size:13px}
+  .toggle button.on{background:var(--orange);border-color:var(--orange);color:#fff}
+  .grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));margin:22px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px;
+    display:flex;flex-direction:column}
   .card.feat{border-color:var(--orange);box-shadow:0 0 0 1px var(--orange)}
-  .name{font-weight:800;font-size:18px;color:var(--orange2)} .price{font-size:34px;font-weight:800;margin:10px 0}
-  .price small{font-size:14px;color:var(--sub);font-weight:500} ul{list-style:none;padding:0;margin:10px 0 20px;color:var(--sub)}
-  li{padding:6px 0;border-bottom:1px solid var(--line)} li b{color:var(--ink)}
-  button{margin-top:auto;background:var(--orange);color:#fff;border:0;border-radius:10px;padding:12px;font-weight:700;cursor:pointer}
-  button:hover{background:#E2540F} .key{max-width:980px;margin:22px auto 0;text-align:center;color:var(--sub);font-size:13px}
-  input{background:#13243F;border:1px solid #26405F;color:var(--ink);border-radius:8px;padding:8px;width:320px;max-width:80%}
-  #msg{max-width:980px;margin:14px auto 0;text-align:center;min-height:20px}
-</style></head>
+  .tag{align-self:flex-start;background:rgba(255,138,61,.15);color:var(--orange2);
+    font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;margin-bottom:10px}
+  .name{font-weight:800;font-size:19px;color:var(--orange2)}
+  .price{font-size:36px;font-weight:800;margin:8px 0 2px}
+  .price small{font-size:14px;color:var(--sub);font-weight:500}
+  .credits{color:var(--sub);font-size:13px;margin-bottom:14px}
+  ul{list-style:none;padding:0;margin:6px 0 22px;color:var(--sub);font-size:14px}
+  li{padding:7px 0;border-bottom:1px solid var(--line);display:flex;gap:8px;align-items:flex-start}
+  li::before{content:"✓";color:var(--orange2);font-weight:800}
+  button.cta{margin-top:auto;background:var(--orange);color:#fff;border:0;border-radius:11px;
+    padding:13px;font-weight:700;cursor:pointer;font-size:15px} button.cta:hover{background:#E2540F}
+  button.cta.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+  .keybar{display:flex;gap:10px;align-items:center;justify-content:center;
+    background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:12px 16px;margin:6px auto 0;max-width:560px;flex-wrap:wrap}
+  .keybar input{background:var(--navy);border:1px solid var(--line);color:var(--ink);
+    border-radius:8px;padding:9px 12px;width:300px;max-width:100%;font-size:14px}
+  #msg{text-align:center;min-height:22px;margin-top:12px;color:var(--orange2);font-size:14px}
+  .faq{margin:46px 0 10px} .faq h2{text-align:center;font-size:22px;margin-bottom:18px}
+  .qa{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:16px 18px;margin-bottom:12px}
+  .qa b{display:block;margin-bottom:6px} .qa p{margin:0;color:var(--sub);font-size:14px;line-height:1.6}
+  footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0;
+    color:var(--mut);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  footer a{color:var(--sub)}
+</style>
+</head>
 <body>
-  <h1>🎹 Co-Produce AI <span style="color:var(--orange2)">Plans</span></h1>
-  <p class="sub">Pay only for what you generate. Credits never expire within an active plan.</p>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <span class="badge"><svg viewBox="0 0 40 40" width="40" height="40"><path d="M13 12 L27 20 L13 28 Z" fill="#C83803" opacity="0.55"/><path d="M18 12 L32 20 L18 28 Z" fill="#FF8A3D"/></svg></span>
+      <b>Co-Produce<span> AI</span></b>
+    </div>
+    <nav>
+      <a href="https://coproduceai.com">coproduceai.com</a>
+      <a href="https://github.com/pjcampbe11/Co-Produce-AI">GitHub</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Plans that <span>scale with your sound</span></h1>
+    <p>Turn your beats, lyrics, and samples into an AI co-producer that sounds like you. Pay only for what you generate — credits never expire on an active plan.</p>
+  </section>
+
+  <div class="toggle">
+    <button id="t-month" class="on" onclick="setCycle('month')">Monthly</button>
+    <button id="t-year" onclick="setCycle('year')">Annual · save 20%</button>
+  </div>
+
   <div class="grid">
     <div class="card">
-      <div class="name">Free</div><div class="price">$0</div>
-      <ul><li><b>10</b> credits to start</li><li>Beat &amp; tag tasks</li><li>Community support</li></ul>
-      <button onclick="alert('Just sign up via the API to get your free credits.')">Start free</button>
+      <div class="name">Free</div>
+      <div class="price" data-m="$0" data-y="$0">$0</div>
+      <div class="credits"><b id="c-free">10</b> credits to start</div>
+      <ul><li>Beat &amp; tag generation</li><li>Dashboard + local tools</li><li>Community support</li></ul>
+      <button class="cta ghost" onclick="signupHint()">Start free</button>
     </div>
     <div class="card feat">
-      <div class="name">Creator</div><div class="price">$19<small>/mo</small></div>
-      <ul><li><b>500</b> credits / month</li><li>All tasks incl. flip &amp; remix</li><li>Email support</li></ul>
-      <button onclick="checkout('price_creator_monthly')">Choose Creator</button>
+      <div class="tag">Most popular</div>
+      <div class="name">Creator</div>
+      <div class="price" data-m="$19" data-y="$15">$19<small>/mo</small></div>
+      <div class="credits"><b>500</b> credits / month</div>
+      <ul><li>All tasks incl. flip &amp; remix</li><li>Audio features &amp; samples</li><li>Email support</li></ul>
+      <button class="cta" onclick="checkout('creator')">Choose Creator</button>
     </div>
     <div class="card">
-      <div class="name">Pro</div><div class="price">$79<small>/mo</small></div>
-      <ul><li><b>3000</b> credits / month</li><li>All tasks incl. full songs</li><li>Priority queue</li></ul>
-      <button onclick="checkout('price_pro_monthly')">Choose Pro</button>
+      <div class="name">Pro</div>
+      <div class="price" data-m="$79" data-y="$63">$79<small>/mo</small></div>
+      <div class="credits"><b>3,000</b> credits / month</div>
+      <ul><li>All tasks incl. full songs</li><li>Priority GPU queue</li><li>Private model fine-tunes</li></ul>
+      <button class="cta" onclick="checkout('pro')">Choose Pro</button>
     </div>
   </div>
-  <div class="key">Your API key: <input id="key" placeholder="bt_..."> (from <code>POST /v1/signup</code>)</div>
+
+  <div class="keybar">
+    <span style="color:var(--sub);font-size:14px">API key</span>
+    <input id="key" placeholder="bt_…">
+    <span style="color:var(--mut);font-size:12px">from POST /v1/signup</span>
+  </div>
   <div id="msg"></div>
+
+  <section class="faq">
+    <h2>Questions</h2>
+    <div class="qa"><b>What's a credit?</b><p>One credit ≈ one generation. A beat or tag costs 1, a flip 2, a remix 3, a full song 5. Failed jobs are automatically refunded.</p></div>
+    <div class="qa"><b>Does it train on my own sound?</b><p>Yes — that's the point. Feed it your beats, lyrics, and sample library and it co-produces in your style. Your data and private models stay yours.</p></div>
+    <div class="qa"><b>Can I self-host?</b><p>Absolutely. The whole stack is open on GitHub — run the dashboard locally or deploy the API + workers yourself. Plans are for the hosted service.</p></div>
+    <div class="qa"><b>Cancel anytime?</b><p>Yes. Subscriptions are managed through Stripe; cancel whenever and you keep access through the period you've paid for.</p></div>
+  </section>
+
+  <footer>
+    <span>© <span id="yr"></span> Co-Produce AI · coproduceai.com</span>
+    <span><a href="https://github.com/pjcampbe11/Co-Produce-AI">GitHub</a> · <a href="https://coproduceai.com">Home</a></span>
+  </footer>
+</div>
+
 <script>
-async function checkout(priceId){
-  const key=document.getElementById('key').value.trim();
-  const msg=document.getElementById('msg');
-  if(!key){msg.textContent='Enter your API key first.';return;}
-  msg.textContent='Creating checkout…';
-  try{
-    const r=await fetch('/v1/billing/checkout',{method:'POST',
-      headers:{'authorization':'Bearer '+key,'content-type':'application/json'},
-      body:JSON.stringify({price_id:priceId})});
-    const d=await r.json();
-    if(d.url){window.location=d.url;} else {msg.textContent=d.detail||'Checkout failed (is Stripe configured?).';}
-  }catch(e){msg.textContent='Error: '+e;}
-}
+  document.getElementById('yr').textContent = new Date().getFullYear();
+  // price ids your server maps in STRIPE_PRICES (monthly vs annual)
+  var PRICES = {
+    creator: {month:'price_creator_monthly', year:'price_creator_annual'},
+    pro:     {month:'price_pro_monthly',     year:'price_pro_annual'}
+  };
+  var cycle = 'month';
+  function setCycle(c){
+    cycle = c;
+    document.getElementById('t-month').classList.toggle('on', c==='month');
+    document.getElementById('t-year').classList.toggle('on', c==='year');
+    document.querySelectorAll('.price').forEach(function(el){
+      var v = el.getAttribute(c==='month'?'data-m':'data-y');
+      var per = el.querySelector('small') ? '<small>/mo</small>' : '';
+      el.innerHTML = v + (v!=='$0' ? per : '');
+    });
+  }
+  function signupHint(){ msg("Create a free account with POST /v1/signup to get your API key + 10 credits."); }
+  async function checkout(plan){
+    var key = document.getElementById('key').value.trim();
+    if(!key){ msg("Enter your API key first (from /v1/signup)."); return; }
+    msg("Creating checkout…");
+    try{
+      var r = await fetch('/v1/billing/checkout',{method:'POST',
+        headers:{'authorization':'Bearer '+key,'content-type':'application/json'},
+        body:JSON.stringify({price_id: PRICES[plan][cycle]})});
+      var d = await r.json();
+      if(d.url){ window.location = d.url; } else { msg(d.detail || 'Checkout failed — is Stripe configured?'); }
+    }catch(e){ msg('Error: '+e); }
+  }
+  function msg(t){ document.getElementById('msg').textContent = t; }
 </script>
 </body></html>

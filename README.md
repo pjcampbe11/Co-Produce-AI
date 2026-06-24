@@ -1,4 +1,9 @@
-<h1 align="center">🎛️ Co-Produce AI</h1>
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo.svg">
+    <img alt="Co-Produce AI" src="assets/logo-dark.svg" width="360">
+  </picture>
+</p>
 <p align="center"><b>Turn your beats, lyrics, and samples into a co-producer that sounds like you.</b><br>
 An end-to-end studio that learns <i>your</i> beats, lyrics, and library — then organizes, analyzes, generates, remixes, and packages hip-hop, rock/metal, dubstep, and DnB from raw crate to finished, rights-traced product.</p>
 <p align="center"><a href="https://github.com/pjcampbe11/Co-Produce-AI/actions/workflows/ci.yml"><img src="https://github.com/pjcampbe11/Co-Produce-AI/actions/workflows/ci.yml/badge.svg" alt="CI"></a></p>

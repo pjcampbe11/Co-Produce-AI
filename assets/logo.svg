@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 120" role="img" aria-label="Co-Produce AI">
+  <rect x="12" y="24" width="72" height="72" rx="18" fill="#0F2038" stroke="#C83803" stroke-width="2.5"/>
+  <path d="M30 42 L60 60 L30 78 Z" fill="#C83803" opacity="0.55"/>
+  <path d="M42 42 L72 60 L42 78 Z" fill="#FF8A3D"/>
+  <text x="104" y="74" font-family="Inter, Segoe UI, sans-serif" font-size="42" font-weight="800" fill="#EAF0F7">Co-Produce<tspan fill="#FF8A3D"> AI</tspan></text>
+</svg>
