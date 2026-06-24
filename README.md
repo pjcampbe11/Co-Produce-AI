@@ -1,6 +1,7 @@
 <h1 align="center">🎛️ Beat Toolkit</h1>
 <p align="center"><b>Turn your own sound into your own AI.</b><br>
 An end-to-end studio that learns <i>your</i> beats, lyrics, and library — then organizes, analyzes, generates, remixes, and packages hip-hop (and rock/metal, dubstep, DnB) from raw crate to finished, rights-traced product.</p>
+<p align="center"><a href="https://github.com/pjcampbe11/Beat-Toolkit/actions/workflows/ci.yml"><img src="https://github.com/pjcampbe11/Beat-Toolkit/actions/workflows/ci.yml/badge.svg" alt="CI"></a></p>
 
 **▶ Demo — organize → tag → train → generate, end to end**
 ```console
@@ -1463,7 +1464,7 @@ python clients/python/beat_client.py --base-url http://localhost:8000     --sign
 
 *Optional / good-to-have:* put the API behind a reverse proxy with TLS, move
 `DATABASE_URL` to Postgres, and scale workers per lane independently. Full details
-+ curl tour in [`server/README.md`](server/README.md).
++ curl tour in [`server/README.md`](server/README.md); the production go-live checklist (Postgres, TLS, Stripe live keys, object storage, signup lockdown) is in [`DEPLOY.md`](DEPLOY.md). CI runs the test suite on every push.
 
 ---
 
