@@ -265,8 +265,10 @@ def build_rows(items, feats, args):
         if not isinstance(it, dict):
             continue
         t = it.get("track")
+        if t is None:
+            t = it.get("item")          # Spotify /items nests the track under 'item'
         if t is None and "name" in it and "artists" in it:
-            t = it                      # some responses return the track directly
+            t = it                      # or returns the track directly
         t = t or {}
         if not t or t.get("type") == "episode":
             continue
