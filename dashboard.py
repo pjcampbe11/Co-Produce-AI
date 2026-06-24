@@ -549,6 +549,7 @@ def build_ui():
                 "(`serverless/handler.py` + `serverless/Dockerfile`). Call it from Go with `clients/go` "
                 "(`go run . -task beat -style trap -bpm 140 -out trap.wav`). Set `RUNPOD_API_KEY` "
                 "(console \u2192 Settings \u2192 API Keys) and `ENDPOINT_ID` (console \u2192 Serverless \u2192 your endpoint).\n\n"
+                "**SaaS server** \u2014 turn the toolkit into a product: authenticated REST API + Redis job queue + Stripe billing in `server/` (`docker compose up --build`). See README \u00A735.\n\n"
                 "_GPU tip: run **this dashboard** on a pod to drive its GPU from the same UI; expose port 7860._"
             )
 

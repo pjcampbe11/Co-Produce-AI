@@ -1,0 +1,65 @@
+# server/ — Beat Toolkit SaaS backend
+
+Turns the toolkit into a multi-tenant service: an authenticated REST API, a
+Redis-backed **job queue** with scalable workers, credit **metering**, and
+**Stripe** subscription billing. Full guide: [README §35](../README.md#35-saas).
+
+## Architecture
+
+```
+client ──HTTPS──> FastAPI (api)  ──enqueue──> Redis ──> Worker(s) ──> scripts/*
+                     │  credits/metering            run beat/tag/flip/remix/song
+                     └── Stripe (checkout + webhooks) grants credits
+   SQLModel DB (users, api keys, jobs, credit ledger)   results on a shared volume
+```
+
+## Run locally
+
+```bash
+cp server/.env.example server/.env     # fill in Stripe keys + price map
+docker compose up --build              # api :8000, worker, redis
+docker compose up --scale worker=3     # more throughput
+```
+
+## Quick API tour
+
+```bash
+# 1) create an account (returns your API key once)
+curl -s -X POST localhost:8000/v1/signup -H 'content-type: application/json' \
+  -d '{"email":"you@example.com"}'
+# -> {"user_id":"...","api_key":"bt_xxx","credits":10}
+
+KEY=bt_xxx
+# 2) submit a job (meters credits)
+curl -s -X POST localhost:8000/v1/jobs -H "authorization: Bearer $KEY" \
+  -H 'content-type: application/json' -d '{"task":"beat","params":{"style":"trap","bpm":140}}'
+# 3) poll + download the wav
+curl -s localhost:8000/v1/jobs/<id> -H "authorization: Bearer $KEY"
+curl -s localhost:8000/v1/jobs/<id>/result -H "authorization: Bearer $KEY" -o out.wav
+# 4) buy a subscription (returns a Stripe Checkout URL)
+curl -s -X POST localhost:8000/v1/billing/checkout -H "authorization: Bearer $KEY" \
+  -H 'content-type: application/json' -d '{"price_id":"price_creator_monthly"}'
+```
+
+## Stripe
+
+1. Create products/prices in the Stripe dashboard; put their ids in
+   `STRIPE_PRICES` (price → plan + monthly credits).
+2. Set `STRIPE_SECRET_KEY`. For webhooks, add an endpoint to
+   `POST /v1/webhooks/stripe` and put its signing secret in
+   `STRIPE_WEBHOOK_SECRET`. Locally: `stripe listen --forward-to localhost:8000/v1/webhooks/stripe`.
+3. `checkout.session.completed` / `invoice.paid` grant credits;
+   `customer.subscription.deleted` downgrades to free.
+
+## Task costs (credits)
+
+| task | cost | runs |
+| --- | --- | --- |
+| beat | 1 | `beat_builder.py` |
+| tag  | 1 | `auto_tag.py` (heuristic) |
+| flip | 2 | `audio2audio.py` |
+| remix| 3 | `remix.py` |
+| song | 5 | (wire to `song_generate.py`) |
+
+Edit `TASK_COSTS` in `server/tasks.py`. GPU tasks (flip/remix/song) need a
+GPU-enabled worker — see the commented `deploy:` block in `docker-compose.yml`.

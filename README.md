@@ -69,7 +69,8 @@ Pack built: packs/DustyCratesVol1  (212 samples)   Zip: packs/DustyCratesVol1.zi
 32. [Engine choice: Stable Audio 3 vs ACE-Step 1.5](#32-engines)
 33. [Serverless API (RunPod) — host the toolkit as an endpoint](#33-serverless)
 34. [Pod workflow — SSH, SCP & cloning the repo to a pod](#34-pod-workflow)
-35. [License & notice](#35-license)
+35. [SaaS server — job queue, REST API & Stripe billing](#35-saas)
+36. [License & notice](#36-license)
 
 > **How to read this:** every feature section follows the same shape — a plain-English **What it is**, a **Demo** gif, the **Setup & run** steps, and **Optional / good-to-have** extras. Demos live in `docs/gifs/` (placeholders — record them from the dashboard). Anything needing a GPU shows the **cloud pod** path first.
 
@@ -796,6 +797,8 @@ Lock a whole pack series to one key + BPM so every volume inter-combines; `verif
 4. Dry-run the check first (flag, don't move): `python scripts/ecosystem_pack.py verify --dir processed --key "F minor" --bpm 90 --report-only`
 5. Build a multi-volume series: lock Vol 1–4 to the same key/BPM so every melodic loop in Vol 3 plays over every drum loop in Vol 1.
 
+> **Run-time notes for these tools.** Most Creative-Lab scripts (and dashboard tabs) are **one-and-done** — they run, write output, and exit. Three behave differently: `push_generation_server.py` (a generation **server**) and `call_response.py` (a folder **watcher**) are **long-running** — they stay up and keep streaming logs until you stop them (Ctrl-C on the CLI, or stop the job in the dashboard), so don't wait for an "exit code" line. And `ableton_bridge.py` needs **Ableton Live already open** with its OSC / Remote-Script listener active on the configured host/port (default `127.0.0.1:11000`); with Live closed it can't connect.
+
 <a name="25-genre-expansion"></a>
 ## 25. Genre expansion: rock/metal & dubstep/DnB
 
@@ -1349,7 +1352,94 @@ pod is terminated.
 
 ---
 
-<a name="35-license"></a>
-## 35. License & notice
+<a name="35-saas"></a>
+## 35. SaaS server — job queue, REST API & Stripe billing
+
+**What it is.** The pieces that turn Beat Toolkit from scripts into a **product**:
+an authenticated **REST API**, a Redis-backed **job queue** with scalable
+workers, per-job credit **metering**, and **Stripe** subscription billing. Lives
+in [`server/`](server); one `docker compose up` runs the whole stack.
+
+```
+client ──HTTPS──> FastAPI (api) ──enqueue──> Redis ──> Worker(s) ──> scripts/*
+                    │  API keys · credit metering          beat/tag/flip/remix/song
+                    └── Stripe checkout + webhooks → grants monthly credits
+   SQLModel DB: users · api keys · jobs · credit ledger   results on a shared volume
+```
+
+**▶ Demo — spin it up, sign up, run a paid job, download the result**
+
+```console
+$ cp server/.env.example server/.env      # add Stripe keys + price map
+$ docker compose up --build               # api :8000, worker, redis
+api-1     | Uvicorn running on http://0.0.0.0:8000
+worker-1  | *** Listening on beat-jobs...
+
+$ curl -s -X POST localhost:8000/v1/signup -H 'content-type: application/json' \
+    -d '{"email":"you@example.com"}'
+{"user_id":"a1b2","api_key":"bt_9f...","credits":10,"note":"store this key now..."}
+
+$ KEY=bt_9f...
+$ curl -s -X POST localhost:8000/v1/jobs -H "authorization: Bearer $KEY" \
+    -H 'content-type: application/json' -d '{"task":"beat","params":{"style":"trap","bpm":140}}'
+{"id":"3c4d","status":"queued","cost":1}
+$ curl -s localhost:8000/v1/jobs/3c4d -H "authorization: Bearer $KEY"
+{"id":"3c4d","task":"beat","status":"completed","cost":1,"result":{...}}
+$ curl -s localhost:8000/v1/jobs/3c4d/result -H "authorization: Bearer $KEY" -o trap.wav
+```
+
+### What's in the box
+
+The API (`server/app.py`) exposes signup + API-key auth (`Authorization: Bearer
+bt_…`), job submit/list/get, a binary result download, account/usage, a Stripe
+checkout endpoint, and a Stripe webhook. Jobs are enqueued to **Redis/RQ**
+(`server/queue.py`) and run by one or more **workers** (`server/worker.py` →
+`server/tasks.py`), which invoke the same `scripts/` you run by hand. State
+(users, API keys, jobs, a credit ledger) is persisted with **SQLModel** —
+SQLite by default, point `DATABASE_URL` at Postgres for production.
+
+### Credits & metering
+
+Every task has a credit cost; submitting **reserves** credits up front and the
+worker **refunds** them if the job fails. Costs (edit `TASK_COSTS` in
+`server/tasks.py`):
+
+| task | credits | runs |
+| --- | --- | --- |
+| `beat` | 1 | `beat_builder.py` |
+| `tag` | 1 | `auto_tag.py` (heuristic engine) |
+| `flip` | 2 | `audio2audio.py` |
+| `remix` | 3 | `remix.py` |
+| `song` | 5 | (wire to `song_generate.py`) |
+
+### Stripe billing
+
+1. Create your products/prices in Stripe, then map each price id to a plan +
+   monthly credit grant in the `STRIPE_PRICES` env (JSON).
+2. Set `STRIPE_SECRET_KEY`; expose `POST /v1/webhooks/stripe` and put its signing
+   secret in `STRIPE_WEBHOOK_SECRET`. Locally: `stripe listen --forward-to localhost:8000/v1/webhooks/stripe`.
+3. `POST /v1/billing/checkout {price_id}` returns a Checkout URL.
+   `checkout.session.completed` / `invoice.paid` grant credits;
+   `customer.subscription.deleted` downgrades to free.
+
+### Five ways to ship it
+
+1. **Public API product** — sell metered access; users hit `/v1/jobs` with their key.
+2. **Web app backend** — your site's "Generate" button calls the API and polls for the wav.
+3. **Discord/Telegram bot** — bot forwards prompts to `/v1/jobs`, posts the result.
+4. **Internal batch farm** — `docker compose up --scale worker=8` to fan out a pack run.
+5. **Tiered plans** — free/creator/pro via Stripe prices → different monthly credit grants.
+
+*Optional / good-to-have:* run the API on a small always-on box and the **workers
+on GPU pods** (§34) pointed at the same Redis + results volume; GPU tasks
+(flip/remix/song) need a GPU-enabled worker — see the commented `deploy:` block
+in `docker-compose.yml`. Put the API behind a reverse proxy with TLS, set
+`ALLOW_SIGNUP=false` once you add your own onboarding, and move `DATABASE_URL` to
+Postgres. Full details + curl tour in [`server/README.md`](server/README.md).
+
+---
+
+<a name="36-license"></a>
+## 36. License & notice
 
 Fine-tunes/runs Stability AI models (Stable Audio Open 1.0 / Stable Audio 3) under the **Stability AI Community License** (free commercial use under US$1M annual revenue; enterprise above — https://stability.ai/license). Full songs with vocals use **HeartMuLa** (Apache-2.0). Model weights are **not** included. **Only train on audio you own or that is explicitly cleared for ML training.** See §6.

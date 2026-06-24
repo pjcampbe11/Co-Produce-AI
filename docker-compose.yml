@@ -1,0 +1,27 @@
+# Beat Toolkit SaaS - API + worker + Redis. `docker compose up --build`
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+
+  api:
+    build: { context: ., dockerfile: server/Dockerfile }
+    env_file: server/.env
+    depends_on: [redis]
+    ports: ["8000:8000"]
+    volumes: ["beatdata:/data"]
+    restart: unless-stopped
+
+  worker:
+    build: { context: ., dockerfile: server/Dockerfile }
+    env_file: server/.env
+    depends_on: [redis]
+    # one worker; scale with: docker compose up --scale worker=3
+    command: ["python", "-m", "server.worker"]
+    volumes: ["beatdata:/data"]
+    restart: unless-stopped
+    # For GPU jobs (generation/flip), give the worker a GPU:
+    # deploy: { resources: { reservations: { devices: [{ capabilities: ["gpu"] }] } } }
+
+volumes:
+  beatdata:
