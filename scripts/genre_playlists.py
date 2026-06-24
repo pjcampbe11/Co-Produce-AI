@@ -7,6 +7,8 @@ relevant **playlists** from:
   * Spotify     - live search via the Web API (Client Credentials; no login).
   * YouTube     - live search via the Data API if YOUTUBE_API_KEY is set,
                   otherwise a ready-to-click YouTube playlist search URL.
+  * Apple Music - live search via the Apple Music API if APPLE_MUSIC_TOKEN is
+                  set, otherwise an Apple Music playlist search URL.
   * SoundCloud  - SoundCloud's API is closed to new apps, so this emits the
                   genre Charts URL + a "sets" (playlist) search URL.
 
@@ -17,6 +19,7 @@ Auth (all optional except Spotify for live Spotify results)
 -----------------------------------------------------------
   SPOTIFY_CLIENT_ID / SPOTIFY_CLIENT_SECRET   developer.spotify.com (free)
   YOUTUBE_API_KEY                             console.cloud.google.com (YouTube Data API v3)
+  APPLE_MUSIC_TOKEN                           Apple Developer JWT (MusicKit) - optional
 
 Examples
 --------
@@ -35,6 +38,7 @@ import urllib.request
 SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token"
 SPOTIFY_API = "https://api.spotify.com/v1"
 YT_API = "https://www.googleapis.com/youtube/v3/search"
+APPLE_API = "https://api.music.apple.com/v1/catalog/us/search"
 
 # repo genre -> {search terms, SoundCloud charts genre slug}
 GENRES = {
@@ -107,6 +111,26 @@ def youtube_search_url(terms):
             + urllib.parse.quote(f"{terms} playlist") + "&sp=EgIQAw%253D%253D")  # sp filter = playlists
 
 
+# ---------- Apple Music ----------
+def apple_music_playlists(token, terms, limit):
+    """Live Apple Music catalog playlist search (needs a developer JWT token)."""
+    q = urllib.parse.quote(terms)
+    url = f"{APPLE_API}?types=playlists&limit={min(limit,25)}&term={q}"
+    out = _get(url, headers={"Authorization": f"Bearer {token}"})
+    data = (out.get("results") or {}).get("playlists", {}).get("data", [])
+    res = []
+    for p in data:
+        a = p.get("attributes", {})
+        res.append({"name": a.get("name", ""),
+                    "owner": a.get("curatorName", ""),
+                    "url": a.get("url", "")})
+    return res[:limit]
+
+
+def apple_search_url(terms):
+    return "https://music.apple.com/us/search?term=" + urllib.parse.quote(f"{terms} playlist")
+
+
 # ---------- SoundCloud (no open API -> link out) ----------
 def soundcloud_links(terms, sc_slug):
     return {
@@ -115,7 +139,7 @@ def soundcloud_links(terms, sc_slug):
     }
 
 
-def gather(genre, args, sp_token, yt_key):
+def gather(genre, args, sp_token, yt_key, am_token):
     cfg = GENRES[genre]
     block = {"genre": genre, "spotify": [], "youtube": [], "youtube_search": None,
              "soundcloud": soundcloud_links(cfg["q"], cfg["sc"])}
@@ -131,6 +155,14 @@ def gather(genre, args, sp_token, yt_key):
             block["youtube_error"] = str(e)
     if not block["youtube"]:
         block["youtube_search"] = youtube_search_url(cfg["q"])
+    block["apple"], block["apple_search"] = [], None
+    if am_token:
+        try:
+            block["apple"] = apple_music_playlists(am_token, cfg["q"], args.limit)
+        except Exception as e:
+            block["apple_error"] = str(e)
+    if not block["apple"]:
+        block["apple_search"] = apple_search_url(cfg["q"])
     return block
 
 
@@ -151,6 +183,12 @@ def render_md(blocks):
                 out.append(f"- [{p['name']}]({p['url']}) — {p['owner']}")
         else:
             out.append(f"- [Search YouTube playlists]({b['youtube_search']})")
+        out.append("\n**Apple Music**")
+        if b["apple"]:
+            for p in b["apple"]:
+                out.append(f"- [{p['name']}]({p['url']}) — {p['owner']}")
+        else:
+            out.append(f"- [Search Apple Music]({b['apple_search']})")
         out.append("\n**SoundCloud**")
         out.append(f"- [Genre charts]({b['soundcloud']['charts']})")
         out.append(f"- [Playlist (sets) search]({b['soundcloud']['sets_search']})")
@@ -174,6 +212,7 @@ def main():
 
     cid, secret = os.environ.get("SPOTIFY_CLIENT_ID", ""), os.environ.get("SPOTIFY_CLIENT_SECRET", "")
     yt_key = os.environ.get("YOUTUBE_API_KEY", "")
+    am_token = os.environ.get("APPLE_MUSIC_TOKEN", "")
     sp_token = ""
     if cid and secret:
         try:
@@ -183,7 +222,7 @@ def main():
     else:
         print("[info] no SPOTIFY_CLIENT_ID/SECRET set - Spotify results skipped (YouTube/SoundCloud links still work)", file=sys.stderr)
 
-    blocks = [gather(g, args, sp_token, yt_key) for g in genres]
+    blocks = [gather(g, args, sp_token, yt_key, am_token) for g in genres]
     text = json.dumps(blocks, indent=2) if args.format == "json" else render_md(blocks)
     if args.out:
         open(args.out, "w", encoding="utf-8").write(text)

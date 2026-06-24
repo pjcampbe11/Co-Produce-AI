@@ -26,6 +26,7 @@ Genres: `hiphop`, `boom_bap`, `trap`, `drill`, `lofi`, `rock`, `metal`,
 | --- | --- |
 | **Spotify** | live Web API search (set `SPOTIFY_CLIENT_ID` + `SPOTIFY_CLIENT_SECRET`) — names, owners, track counts, URLs |
 | **YouTube** | live Data API search if `YOUTUBE_API_KEY` is set; otherwise a ready-to-click playlist search link |
+| **Apple Music** | live catalog search if `APPLE_MUSIC_TOKEN` (developer JWT) is set; otherwise an Apple Music search link |
 | **SoundCloud** | genre **Charts** URL + a "sets" (playlist) search URL (SoundCloud's API is closed to new apps) |
 
 It degrades gracefully: with **no keys at all** you still get working YouTube and
@@ -35,6 +36,7 @@ SoundCloud links; add the Spotify keys for live, ranked Spotify playlists.
 
 - Spotify: create an app at developer.spotify.com → copy Client ID/Secret (Client Credentials flow, no user login).
 - YouTube: console.cloud.google.com → enable "YouTube Data API v3" → make an API key.
+- Apple Music: developer.apple.com → a MusicKit developer token (JWT). Optional; without it you get a search link.
 
 ```powershell
 $env:SPOTIFY_CLIENT_ID="xxx"; $env:SPOTIFY_CLIENT_SECRET="yyy"; $env:YOUTUBE_API_KEY="zzz"

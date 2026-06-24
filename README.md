@@ -1649,9 +1649,10 @@ The cheat sheets ([`cheatsheets/README.md`](cheatsheets/README.md)):
 
 `genre_playlists.py` returns top playlists for a genre from **Spotify** (live Web
 API), **YouTube** (Data API if `YOUTUBE_API_KEY` is set, else a playlist-search
-link), and **SoundCloud** (genre charts + sets-search links, since its API is
-closed). It degrades gracefully — with no keys you still get working YouTube/
-SoundCloud links; add Spotify keys for live, ranked results.
+link), **Apple Music** (catalog search if `APPLE_MUSIC_TOKEN` is set, else a
+search link), and **SoundCloud** (genre charts + sets-search links, since its API
+is closed). It degrades gracefully — with no keys you still get working YouTube/
+Apple Music/SoundCloud links; add Spotify keys for live, ranked results.
 
 **▶ Demo —**
 
@@ -1662,6 +1663,8 @@ $ python scripts/genre_playlists.py -g dnb
 - [Drum & Bass Fix](https://open.spotify.com/playlist/...) — Spotify (120 tracks)
 **YouTube**
 - [Liquid DnB Mix 2026](https://www.youtube.com/playlist?list=...) — channel
+**Apple Music**
+- [Search Apple Music](https://music.apple.com/us/search?term=drum%20and%20bass%20playlist)
 **SoundCloud**
 - [Genre charts](https://soundcloud.com/charts/top?genre=drumbass&country=US)
 - [Playlist (sets) search](https://soundcloud.com/search/sets?q=drum%20and%20bass)
