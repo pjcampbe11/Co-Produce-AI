@@ -67,6 +67,11 @@ def _req(url, headers=None, data=None, method="GET"):
             if e.code == 429 and attempt == 0:
                 time.sleep(int(e.headers.get("Retry-After", "2")) + 1)
                 continue
+            try:
+                body = e.read().decode()[:400]
+            except Exception:
+                body = ""
+            e.spotify_body = body  # attach so callers can show Spotify's message
             raise
 
 
@@ -104,13 +109,19 @@ def fetch_playlist(token, pid):
         try:
             page = _req(url, headers=h)
         except urllib.error.HTTPError as e:
-            if e.code in (403, 404):
+            body = getattr(e, "spotify_body", "")
+            if e.code in (401, 403, 404):
                 sys.exit(
                     f"\nSpotify returned {e.code} for this playlist's items.\n"
-                    "  - Client Credentials can't read Spotify-owned EDITORIAL/ALGORITHMIC playlists\n"
-                    "    (only your own / regular public ones). Duplicate it to your account and use that URL.\n"
-                    "  - If it IS your public playlist, make sure it's set to public, and that your\n"
-                    "    Spotify app has 'Web API' enabled (developer.spotify.com -> your app -> Settings).\n")
+                    f"  Spotify says: {body or '(no body)'}\n\n"
+                    "  Most likely causes (Spotify's 2024-2026 API lockdown):\n"
+                    "  - This is a Spotify-owned EDITORIAL/ALGORITHMIC playlist - app-only\n"
+                    "    (Client Credentials) tokens can no longer read its items. Duplicate it to\n"
+                    "    your own account (open in Spotify -> ... -> Add to playlist -> New playlist),\n"
+                    "    make the copy public, and use THAT url.\n"
+                    "  - Or the playlist is private. Set it public.\n"
+                    "  - 401 specifically = token rejected for this endpoint; a regular public playlist\n"
+                    "    you own should work with the same keys.\n")
             raise
         items += page.get("items", [])
         url = page.get("next")
