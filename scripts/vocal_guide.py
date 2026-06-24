@@ -94,7 +94,12 @@ def main():
     ap.add_argument("--lyrics", required=True, help="Lyrics .txt (one line per bar-phrase)")
     ap.add_argument("--style", choices=["rap", "sung"], default="rap")
     ap.add_argument("--bars-per-line", type=int, default=1, help="How many bars each lyric line spans")
-    ap.add_argument("--out", required=True, help="Output prefix (writes <out>.mid + <out>_lyrics.txt)")
+    ap.add_argument("--out", required=True, help="Output prefix (writes <out>.mid + <out>_lyrics.txt [+ expression])")
+    ap.add_argument("--energy", type=float, default=0.7, help="base vocal power 0-1 (ACE power envelope)")
+    ap.add_argument("--breathiness", type=float, default=0.25, help="base breathiness 0-1 (ACE breathiness envelope)")
+    ap.add_argument("--no-expression", dest="expression", action="store_false",
+                    help="skip the ACE expression CC lanes + sidecar JSON")
+    ap.set_defaults(expression=True)
     args = ap.parse_args()
 
     bpm, key = args.bpm, args.key
@@ -116,6 +121,7 @@ def main():
     swing = int(step * 0.12)
 
     out_syllables = []
+    events = []  # (abs_on_tick, dur, note, is_line_end, pos)
     t_cursor = 0
     for li, line in enumerate(lyric_lines):
         sylls = syllabify_line(line)
@@ -138,13 +144,54 @@ def main():
             track.append(mido.Message("note_on", note=note, velocity=90, time=max(0, on - last_tick)))
             track.append(mido.Message("note_off", note=note, velocity=0, time=dur))
             last_tick = on + dur
+            events.append((on, dur, note, i == len(sylls) - 1, pos))
         t_cursor = line_start + slots * step
+
+    # --- ACE Studio expression: power (CC11) + breathiness (CC74) + pitch inflection ---
+    # ACE Studio shapes vocals with power/breathiness/pitch-curve envelopes. We export
+    # those as a CC lane (for DAW/ACE Bridge) and a sidecar JSON (per-note intent).
+    if args.expression:
+        cc = mido.MidiTrack(); mid.tracks.append(cc)
+        base_pow = max(0, min(127, int(args.energy * 110)))
+        base_breath = max(0, min(127, int(args.breathiness * 110)))
+        msgs = []  # (abs_tick, Message)
+        expr_notes = []
+        for (on, dur, note, line_end, pos) in events:
+            # accent the downbeats; lift power on the every-4th flow accent
+            accent = 22 if pos % 16 == 0 else (12 if pos % 4 == 0 else 0)
+            power = max(0, min(127, base_pow + accent))
+            # breathier at phrase ends (natural exhale)
+            breath = max(0, min(127, base_breath + (35 if line_end else 0)))
+            # rap: slight downward inflection landing the line; sung: flat (melody carries it)
+            bend = -1800 if (line_end and args.style == "rap") else 0
+            msgs.append((on, mido.Message("control_change", control=11, value=power, time=0)))
+            msgs.append((on, mido.Message("control_change", control=74, value=breath, time=0)))
+            if bend:
+                msgs.append((on + dur // 2, mido.Message("pitchwheel", pitch=bend, time=0)))
+                msgs.append((on + dur, mido.Message("pitchwheel", pitch=0, time=0)))
+            expr_notes.append({"tick": on, "dur": dur, "note": note,
+                               "power": power, "breathiness": breath, "pitch_bend": bend,
+                               "line_end": line_end})
+        msgs.sort(key=lambda m: m[0])
+        prev = 0
+        for abs_t, m in msgs:
+            m.time = max(0, abs_t - prev); prev = abs_t
+            cc.append(m)
+        expr = {"bpm": int(bpm), "key": key or "A minor", "style": args.style,
+                "ticks_per_beat": tpb,
+                "envelopes": {"power": "CC11", "breathiness": "CC74", "pitch": "pitchwheel"},
+                "ace_studio_note": "Import the .mid; CC11=power, CC74=breathiness, pitchwheel=inflection. "
+                                   "ACE Bridge can apply <out>_expression.json directly.",
+                "notes": expr_notes}
+        Path(args.out + "_expression.json").write_text(json.dumps(expr, indent=2), encoding="utf-8")
 
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     mid.save(args.out + ".mid")
     Path(args.out + "_lyrics.txt").write_text("\n".join(out_syllables), encoding="utf-8")
     print(f"Wrote {args.out}.mid  ({int(bpm)} BPM, key {key or 'A minor'}, style {args.style})")
     print(f"Wrote {args.out}_lyrics.txt  ({len(lyric_lines)} lines)")
+    if args.expression:
+        print(f"Wrote {args.out}_expression.json  (ACE power/breathiness/pitch envelopes)")
     print("\nIn ACE Studio: New track -> import the .mid -> paste lyrics onto the notes "
           "-> pick a Rap/sung voice -> render. Then in Ableton, ACE Bridge plays it "
           "tempo-synced over your beat.")
