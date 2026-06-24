@@ -629,6 +629,7 @@ def build_ui():
                     with gr.Row():
                         api_port = gr.Number(value=8000, label="API port", scale=1)
                         with gr.Column(scale=3):
+                            b_redis = gr.Button("\U0001F7E2  Start Redis (docker)", variant="primary")
                             b_api = gr.Button("\u25B6  Start API (uvicorn)", variant="primary")
                             b_worker = gr.Button("\u25B6  Start worker (both lanes)", variant="primary")
                             b_tests = gr.Button("\u25B6  Run server tests (pytest)")
@@ -636,6 +637,8 @@ def build_ui():
                             b_pricing = gr.Button("\U0001F310  Print pricing URL")
                     srv_log = gr.Textbox(label="Server log", lines=20, max_lines=20,
                                          autoscroll=True, elem_classes=["logbox"])
+                    b_redis.click(lambda: (yield from run_cmd(
+                        ["docker", "compose", "up", "-d", "redis"])), None, srv_log)
                     b_api.click(lambda port: (yield from run_cmd(
                         [py, "-m", "uvicorn", "server.app:app", "--host", "127.0.0.1",
                          "--port", str(int(port or 8000))])), api_port, srv_log)
