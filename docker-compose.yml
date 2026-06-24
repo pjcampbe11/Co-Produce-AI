@@ -1,4 +1,5 @@
-# Beat Toolkit SaaS - API + worker + Redis. `docker compose up --build`
+# Beat Toolkit SaaS - API + worker + Redis.  `docker compose up --build`
+# For a real GPU worker, add the override:  docker compose -f docker-compose.yml -f docker-compose.gpu.yml up --build
 services:
   redis:
     image: redis:7-alpine
@@ -12,16 +13,16 @@ services:
     volumes: ["beatdata:/data"]
     restart: unless-stopped
 
+  # Dev worker: consumes BOTH lanes (CPU + GPU). In production, restrict this to
+  # the CPU lane and run a GPU worker via docker-compose.gpu.yml.
   worker:
     build: { context: ., dockerfile: server/Dockerfile }
     env_file: server/.env
     depends_on: [redis]
-    # one worker; scale with: docker compose up --scale worker=3
     command: ["python", "-m", "server.worker"]
     volumes: ["beatdata:/data"]
     restart: unless-stopped
-    # For GPU jobs (generation/flip), give the worker a GPU:
-    # deploy: { resources: { reservations: { devices: [{ capabilities: ["gpu"] }] } } }
+    # scale with: docker compose up --scale worker=3
 
 volumes:
   beatdata:

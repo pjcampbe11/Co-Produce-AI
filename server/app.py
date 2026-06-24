@@ -15,8 +15,9 @@ Endpoints:
 import json
 import os
 
-from fastapi import Depends, FastAPI, HTTPException, Request
+from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from sqlmodel import select
 
@@ -24,10 +25,19 @@ from .auth import current_user, generate_key
 from .billing import create_checkout, handle_webhook
 from .config import settings
 from .db import ApiKey, Job, User, CreditLedger, get_session, init_db, _now
-from .queue import job_queue
+from .queue import queue_for
 from .tasks import TASK_COSTS
 
 app = FastAPI(title="Beat Toolkit API", version="1.0")
+
+# Static pricing/marketing page at /pricing (and assets under /static).
+_static_dir = os.path.join(os.path.dirname(__file__), "static")
+app.mount("/static", StaticFiles(directory=_static_dir, html=True), name="static")
+
+
+@app.get("/pricing")
+def pricing():
+    return FileResponse(os.path.join(_static_dir, "pricing.html"))
 
 
 @app.on_event("startup")
@@ -47,9 +57,11 @@ class SignupIn(BaseModel):
 
 
 @app.post("/v1/signup")
-def signup(body: SignupIn) -> dict:
-    if not settings.ALLOW_SIGNUP:
-        raise HTTPException(403, "signup disabled")
+def signup(body: SignupIn, x_admin_token: str = Header(default="")) -> dict:
+    # Allow if public signup is on, OR an admin presents the configured token.
+    admin_ok = bool(settings.ADMIN_TOKEN) and x_admin_token == settings.ADMIN_TOKEN
+    if not settings.ALLOW_SIGNUP and not admin_ok:
+        raise HTTPException(403, "signup disabled (set ALLOW_SIGNUP or send X-Admin-Token)")
     with get_session() as s:
         if s.exec(select(User).where(User.email == body.email)).first():
             raise HTTPException(409, "email already registered")
@@ -107,7 +119,7 @@ def submit_job(body: JobIn, user: User = Depends(current_user)) -> dict:
                   params_json=json.dumps(body.params), cost=cost, status="queued")
         s.add(job); s.commit()
         job_id = job.id
-    job_queue.enqueue("server.tasks.run_job", job_id)
+    queue_for(body.task).enqueue("server.tasks.run_job", job_id)
     return {"id": job_id, "status": "queued", "cost": cost}
 
 

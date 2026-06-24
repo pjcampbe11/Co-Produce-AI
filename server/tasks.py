@@ -10,6 +10,9 @@ import tempfile
 from .config import settings
 from .db import Job, get_session, _now
 
+# Tasks that require a GPU (routed to the GPU queue / GPU workers).
+GPU_TASKS = {"flip", "remix", "song"}
+
 # Credit cost per task (also used by the API to meter/charge).
 TASK_COSTS = {
     "beat": 1,

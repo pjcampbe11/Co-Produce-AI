@@ -1,0 +1,26 @@
+# GPU override. Use with:
+#   docker compose -f docker-compose.yml -f docker-compose.gpu.yml up --build
+# Requires the NVIDIA Container Toolkit on the host.
+services:
+  # restrict the default worker to CPU tasks (beat/tag)
+  worker:
+    environment:
+      WORKER_QUEUES: beat-cpu
+
+  # dedicated GPU worker for flip/remix/song
+  worker-gpu:
+    build: { context: ., dockerfile: server/Dockerfile }
+    env_file: server/.env
+    depends_on: [redis]
+    command: ["python", "-m", "server.worker"]
+    environment:
+      WORKER_QUEUES: beat-gpu
+    volumes: ["beatdata:/data"]
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: ["gpu"]

@@ -1430,12 +1430,38 @@ worker **refunds** them if the job fails. Costs (edit `TASK_COSTS` in
 4. **Internal batch farm** — `docker compose up --scale worker=8` to fan out a pack run.
 5. **Tiered plans** — free/creator/pro via Stripe prices → different monthly credit grants.
 
-*Optional / good-to-have:* run the API on a small always-on box and the **workers
-on GPU pods** (§34) pointed at the same Redis + results volume; GPU tasks
-(flip/remix/song) need a GPU-enabled worker — see the commented `deploy:` block
-in `docker-compose.yml`. Put the API behind a reverse proxy with TLS, set
-`ALLOW_SIGNUP=false` once you add your own onboarding, and move `DATABASE_URL` to
-Postgres. Full details + curl tour in [`server/README.md`](server/README.md).
+### GPU vs CPU workers
+
+Jobs route to two lanes: CPU tasks (`beat`, `tag`) → `beat-cpu`, GPU tasks
+(`flip`, `remix`, `song`) → `beat-gpu`. A worker consumes whatever `WORKER_QUEUES`
+lists (blank = both, the dev default). For production, run CPU workers on a cheap
+box and GPU workers on GPU hosts/pods (§34) against the same Redis + results
+volume. The included GPU override wires a dedicated NVIDIA worker:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.gpu.yml up --build
+```
+
+### Locking down signup
+
+`/v1/signup` is open by default for self-hosting. Before exposing publicly, set
+`ALLOW_SIGNUP=false` and (optionally) an `ADMIN_TOKEN` — then accounts can only be
+minted by sending `X-Admin-Token: <token>`. Verified: signup returns **403**
+without the token and **200** with it.
+
+### Pricing page & client
+
+A ready static **pricing page** is served at **`/pricing`** (Bears-themed, calls
+`/v1/billing/checkout` for the plan you pick). A copy-paste **Python client** at
+[`clients/python/`](clients/python) does the whole loop:
+
+```bash
+python clients/python/beat_client.py --base-url http://localhost:8000     --signup you@example.com --task beat --param style=trap --param bpm=140 --out trap.wav
+```
+
+*Optional / good-to-have:* put the API behind a reverse proxy with TLS, move
+`DATABASE_URL` to Postgres, and scale workers per lane independently. Full details
++ curl tour in [`server/README.md`](server/README.md).
 
 ---
 

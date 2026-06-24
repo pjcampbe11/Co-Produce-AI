@@ -17,9 +17,20 @@ client ──HTTPS──> FastAPI (api)  ──enqueue──> Redis ──> Work
 
 ```bash
 cp server/.env.example server/.env     # fill in Stripe keys + price map
-docker compose up --build              # api :8000, worker, redis
+docker compose up --build              # api :8000, worker (both lanes), redis
 docker compose up --scale worker=3     # more throughput
+
+# dedicated GPU worker for flip/remix/song (needs NVIDIA Container Toolkit):
+docker compose -f docker-compose.yml -f docker-compose.gpu.yml up --build
 ```
+
+**Queues / GPU:** CPU tasks (`beat`,`tag`) use `beat-cpu`; GPU tasks
+(`flip`,`remix`,`song`) use `beat-gpu`. A worker consumes `WORKER_QUEUES`
+(blank = both). Run CPU workers cheap and GPU workers on GPU hosts.
+
+**Signup lockdown:** set `ALLOW_SIGNUP=false` in production; mint accounts with
+`X-Admin-Token: $ADMIN_TOKEN`. A static **pricing page** is at `/pricing`, and a
+ready **Python client** lives in `../clients/python/`.
 
 ## Quick API tour
 

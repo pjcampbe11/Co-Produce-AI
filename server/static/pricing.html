@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Beat Toolkit — Pricing</title>
+<style>
+  :root{--navy:#0B162A;--card:#0F2038;--line:#1D3357;--orange:#C83803;--orange2:#FF8A3D;--ink:#EAF0F7;--sub:#9FB3C8}
+  *{box-sizing:border-box} body{margin:0;background:var(--navy);color:var(--ink);
+    font-family:Inter,system-ui,sans-serif;padding:40px 16px}
+  h1{text-align:center;margin:0 0 6px;font-size:30px} p.sub{text-align:center;color:var(--sub);margin:0 0 28px}
+  .grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));max-width:980px;margin:0 auto}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;display:flex;flex-direction:column}
+  .card.feat{border-color:var(--orange);box-shadow:0 0 0 1px var(--orange)}
+  .name{font-weight:800;font-size:18px;color:var(--orange2)} .price{font-size:34px;font-weight:800;margin:10px 0}
+  .price small{font-size:14px;color:var(--sub);font-weight:500} ul{list-style:none;padding:0;margin:10px 0 20px;color:var(--sub)}
+  li{padding:6px 0;border-bottom:1px solid var(--line)} li b{color:var(--ink)}
+  button{margin-top:auto;background:var(--orange);color:#fff;border:0;border-radius:10px;padding:12px;font-weight:700;cursor:pointer}
+  button:hover{background:#E2540F} .key{max-width:980px;margin:22px auto 0;text-align:center;color:var(--sub);font-size:13px}
+  input{background:#13243F;border:1px solid #26405F;color:var(--ink);border-radius:8px;padding:8px;width:320px;max-width:80%}
+  #msg{max-width:980px;margin:14px auto 0;text-align:center;min-height:20px}
+</style></head>
+<body>
+  <h1>🎹 Beat Toolkit <span style="color:var(--orange2)">Plans</span></h1>
+  <p class="sub">Pay only for what you generate. Credits never expire within an active plan.</p>
+  <div class="grid">
+    <div class="card">
+      <div class="name">Free</div><div class="price">$0</div>
+      <ul><li><b>10</b> credits to start</li><li>Beat &amp; tag tasks</li><li>Community support</li></ul>
+      <button onclick="alert('Just sign up via the API to get your free credits.')">Start free</button>
+    </div>
+    <div class="card feat">
+      <div class="name">Creator</div><div class="price">$19<small>/mo</small></div>
+      <ul><li><b>500</b> credits / month</li><li>All tasks incl. flip &amp; remix</li><li>Email support</li></ul>
+      <button onclick="checkout('price_creator_monthly')">Choose Creator</button>
+    </div>
+    <div class="card">
+      <div class="name">Pro</div><div class="price">$79<small>/mo</small></div>
+      <ul><li><b>3000</b> credits / month</li><li>All tasks incl. full songs</li><li>Priority queue</li></ul>
+      <button onclick="checkout('price_pro_monthly')">Choose Pro</button>
+    </div>
+  </div>
+  <div class="key">Your API key: <input id="key" placeholder="bt_..."> (from <code>POST /v1/signup</code>)</div>
+  <div id="msg"></div>
+<script>
+async function checkout(priceId){
+  const key=document.getElementById('key').value.trim();
+  const msg=document.getElementById('msg');
+  if(!key){msg.textContent='Enter your API key first.';return;}
+  msg.textContent='Creating checkout…';
+  try{
+    const r=await fetch('/v1/billing/checkout',{method:'POST',
+      headers:{'authorization':'Bearer '+key,'content-type':'application/json'},
+      body:JSON.stringify({price_id:priceId})});
+    const d=await r.json();
+    if(d.url){window.location=d.url;} else {msg.textContent=d.detail||'Checkout failed (is Stripe configured?).';}
+  }catch(e){msg.textContent='Error: '+e;}
+}
+</script>
+</body></html>
