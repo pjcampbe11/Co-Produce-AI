@@ -1,7 +1,7 @@
-<h1 align="center">🎛️ Co-Producer AI</h1>
+<h1 align="center">🎛️ Co-Produce AI</h1>
 <p align="center"><b>Turn your beats, lyrics, and samples into a co-producer that sounds like you.</b><br>
 An end-to-end studio that learns <i>your</i> beats, lyrics, and library — then organizes, analyzes, generates, remixes, and packages hip-hop, rock/metal, dubstep, and DnB from raw crate to finished, rights-traced product.</p>
-<p align="center"><a href="https://github.com/pjcampbe11/Co-Producer-AI/actions/workflows/ci.yml"><img src="https://github.com/pjcampbe11/Co-Producer-AI/actions/workflows/ci.yml/badge.svg" alt="CI"></a></p>
+<p align="center"><a href="https://github.com/pjcampbe11/Co-Produce-AI/actions/workflows/ci.yml"><img src="https://github.com/pjcampbe11/Co-Produce-AI/actions/workflows/ci.yml/badge.svg" alt="CI"></a></p>
 
 **▶ Demo — organize → tag → train → generate, end to end**
 ```console
@@ -21,7 +21,7 @@ Pack built: packs/DustyCratesVol1  (212 samples)   Zip: packs/DustyCratesVol1.zi
 
 ### Getting started
 
-1. [What is Co-Producer AI?](#1-what-is-co-producer-ai)
+1. [What is Co-Produce AI?](#1-what-is-co-produce-ai)
 2. [How it all fits together](#2-how-it-all-fits-together)
 3. [Quick start](#3-quick-start)
 4. [Install & setup](#4-install--setup)
@@ -80,8 +80,8 @@ Pack built: packs/DustyCratesVol1  (212 samples)   Zip: packs/DustyCratesVol1.zi
 
 ---
 
-<a name="1-what-is-co-producer-ai"></a>
-## 1. What is Co-Producer AI?
+<a name="1-what-is-co-produce-ai"></a>
+## 1. What is Co-Produce AI?
 
 **What it is.** A complete, self-hosted music-production AI suite built around one idea: *your* catalog is the moat. Instead of a generic model, you fine-tune on your own sounds and lyrics so the output sounds like **you**. It spans the whole journey — cleaning and labeling a messy sample library, analyzing and tagging every file, fine-tuning open audio models, generating one-shots/loops/beats/full songs, remixing across genres, writing lyrics in your voice, rendering through your real VST plugins, and shipping provenance-verified sample packs.
 
@@ -118,8 +118,8 @@ Each box is a script (and a dashboard tab). You can run the whole chain or any s
 ## 3. Quick start
 
 ```powershell
-git clone https://github.com/pjcampbe11/Co-Producer-AI.git
-cd Co-Producer-AI
+git clone https://github.com/pjcampbe11/Co-Produce-AI.git
+cd Co-Produce-AI
 pip install -r requirements.txt
 python dashboard.py          # web UI for everything, or use the CLIs below
 ```
@@ -1011,7 +1011,7 @@ What the examples do: `generate` reuses your existing `prompts/pack_plan.*.json`
 **Serverless endpoint** instead wraps one toolkit job (generate a beat, tag a
 file, flip a sample) behind an HTTPS URL that **auto-scales to zero** — you pay
 only for the seconds a request actually runs, with no idle GPU bill. This is how
-you'd turn Co-Producer AI into a service (a website "generate" button, a Discord
+you'd turn Co-Produce AI into a service (a website "generate" button, a Discord
 bot, a batch tagger) instead of a thing you SSH into.
 
 Use it when you want on-demand, pay-per-request inference. Keep using a normal
@@ -1058,7 +1058,7 @@ output. Drop this at `serverless/handler.py` — it routes one `task` field to t
 toolkit scripts you already have:
 
 ```python
-# serverless/handler.py  -  wraps Co-Producer AI scripts as a RunPod handler
+# serverless/handler.py  -  wraps Co-Produce AI scripts as a RunPod handler
 import base64, subprocess, tempfile, os, runpod
 
 def _wav_b64(path):
@@ -1124,8 +1124,8 @@ CMD ["python", "-u", "handler.py"]
 **3. Build & push to a registry** (Docker Hub here; must be a linux/amd64 image):
 
 ```powershell
-docker build --platform linux/amd64 -t YOUR_DOCKERHUB_USER/co-producer-ai-sls:latest -f serverless/Dockerfile .
-docker push YOUR_DOCKERHUB_USER/co-producer-ai-sls:latest
+docker build --platform linux/amd64 -t YOUR_DOCKERHUB_USER/co-produce-ai-sls:latest -f serverless/Dockerfile .
+docker push YOUR_DOCKERHUB_USER/co-produce-ai-sls:latest
 ```
 
 *No Docker locally?* Skip steps 2–3 and use RunPod's **GitHub integration** —
@@ -1222,16 +1222,16 @@ $ # connect (copy the exact command from the pod's Connect tab -> "SSH over expo
 $ ssh root@213.173.108.12 -p 17445 -i $env:USERPROFILE\.ssh\id_ed25519
 root@gpu-pod:/workspace#
 
-root@gpu-pod:/workspace# git clone https://github.com/pjcampbe11/Co-Producer-AI.git
-Cloning into 'Co-Producer-AI'... done.
-root@gpu-pod:/workspace# pip install -q -r Co-Producer-AI/requirements.txt
+root@gpu-pod:/workspace# git clone https://github.com/pjcampbe11/Co-Produce-AI.git
+Cloning into 'Co-Produce-AI'... done.
+root@gpu-pod:/workspace# pip install -q -r Co-Produce-AI/requirements.txt
 
 $ # (new local terminal) push beats up to the pod's /workspace
 $ scp -P 17445 -i $env:USERPROFILE\.ssh\id_ed25519 -r "F:\RAP_ARCHIVES\raw_beats" root@213.173.108.12:/workspace/
 Death Wish_instrumental.mp3              100%  6MB   5.9MB/s   00:01
 ...
 
-root@gpu-pod:/workspace# cd Co-Producer-AI/scripts && python auto_tag.py --stems-dir /workspace/raw_beats --source beat --engine qwen3-omni --resume
+root@gpu-pod:/workspace# cd Co-Produce-AI/scripts && python auto_tag.py --stems-dir /workspace/raw_beats --source beat --engine qwen3-omni --resume
 
 $ # pull the tagged sidecars back down
 $ scp -P 17445 -i $env:USERPROFILE\.ssh\id_ed25519 -r root@213.173.108.12:/workspace/raw_beats "F:\RAP_ARCHIVES\raw_beats_tagged"
@@ -1279,8 +1279,8 @@ The pod has its own disk, so pull the toolkit directly on it:
 
 ```bash
 cd /workspace
-git clone https://github.com/pjcampbe11/Co-Producer-AI.git
-pip install -r Co-Producer-AI/requirements.txt
+git clone https://github.com/pjcampbe11/Co-Produce-AI.git
+pip install -r Co-Produce-AI/requirements.txt
 ```
 
 Because the repo is **private**, the clone will prompt for a GitHub username +
@@ -1288,7 +1288,7 @@ Because the repo is **private**, the clone will prompt for a GitHub username +
 prefix the token in the URL for that one command (then clear your shell history):
 
 ```bash
-git clone https://USERNAME:YOUR_PAT@github.com/pjcampbe11/Co-Producer-AI.git
+git clone https://USERNAME:YOUR_PAT@github.com/pjcampbe11/Co-Produce-AI.git
 ```
 
 Clone onto the **network volume** (mounted at `/workspace` when you attach it to
@@ -1300,17 +1300,17 @@ Skip the manual clone/install: paste this on a fresh pod to pull the repo onto
 the network volume and install everything in one go ([`cloud/pod_bootstrap.sh`](cloud/pod_bootstrap.sh)):
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/pjcampbe11/Co-Producer-AI/main/cloud/pod_bootstrap.sh | bash
+curl -fsSL https://raw.githubusercontent.com/pjcampbe11/Co-Produce-AI/main/cloud/pod_bootstrap.sh | bash
 ```
 
 Private repo (prompts otherwise) — pass a token, which the script clears from the
 environment after cloning:
 
 ```bash
-GH_TOKEN=YOUR_PAT bash -c 'curl -fsSL https://raw.githubusercontent.com/pjcampbe11/Co-Producer-AI/main/cloud/pod_bootstrap.sh | bash'
+GH_TOKEN=YOUR_PAT bash -c 'curl -fsSL https://raw.githubusercontent.com/pjcampbe11/Co-Produce-AI/main/cloud/pod_bootstrap.sh | bash'
 ```
 
-It clones to `/workspace/Co-Producer-AI` (falls back to `$HOME` if no volume),
+It clones to `/workspace/Co-Produce-AI` (falls back to `$HOME` if no volume),
 installs `requirements.txt`, routes HF/torch caches to the volume so future pods
 skip re-downloads, and prints the exact tag/enrich/caption commands to run next.
 Re-running it just pulls latest and reinstalls (idempotent).
@@ -1334,7 +1334,7 @@ scp -P <SSH_PORT> -i $env:USERPROFILE\.ssh\id_ed25519 -r "F:\RAP_ARCHIVES\raw_be
 scp -P <SSH_PORT> -i $env:USERPROFILE\.ssh\id_ed25519 root@<POD_IP>:/workspace/out/beat.wav .
 
 # an entire results folder
-scp -P <SSH_PORT> -i $env:USERPROFILE\.ssh\id_ed25519 -r root@<POD_IP>:/workspace/Co-Producer-AI/out "F:\RAP_ARCHIVES\out"
+scp -P <SSH_PORT> -i $env:USERPROFILE\.ssh\id_ed25519 -r root@<POD_IP>:/workspace/Co-Produce-AI/out "F:\RAP_ARCHIVES\out"
 ```
 
 ### 5. Or use the S3 network volume (no pod needed to stage data)
@@ -1368,7 +1368,7 @@ pod is terminated.
 <a name="35-saas"></a>
 ## 35. SaaS server — job queue, REST API & Stripe billing
 
-**What it is.** The pieces that turn Co-Producer AI from scripts into a **product**:
+**What it is.** The pieces that turn Co-Produce AI from scripts into a **product**:
 an authenticated **REST API**, a Redis-backed **job queue** with scalable
 workers, per-job credit **metering**, and **Stripe** subscription billing. Lives
 in [`server/`](server); one `docker compose up` runs the whole stack.
@@ -1489,7 +1489,7 @@ for and which feature needs it — plus the one habit that keeps it all tidy: a
 
 ### Make a venv first
 
-A venv keeps Co-Producer AI's (many) packages from colliding with other Python on
+A venv keeps Co-Produce AI's (many) packages from colliding with other Python on
 your machine. Do this once, in the repo folder:
 
 ```powershell

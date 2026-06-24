@@ -1,4 +1,4 @@
-# server/ — Co-Producer AI SaaS backend
+# server/ — Co-Produce AI SaaS backend
 
 Turns the toolkit into a multi-tenant service: an authenticated REST API, a
 Redis-backed **job queue** with scalable workers, credit **metering**, and

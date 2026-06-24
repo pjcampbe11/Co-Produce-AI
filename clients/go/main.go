@@ -1,8 +1,8 @@
-// Co-Producer AI - Go client for a RunPod Serverless endpoint.
+// Co-Produce AI - Go client for a RunPod Serverless endpoint.
 //
 // Operator notes
 // --------------
-// Submits a job to your Co-Producer AI serverless endpoint (see README section
+// Submits a job to your Co-Produce AI serverless endpoint (see README section
 // 33), polls until it finishes, and - if the handler returns base64 audio
 // (wav_b64) - decodes it straight to a .wav on disk. Works for all three
 // handler tasks via -task:

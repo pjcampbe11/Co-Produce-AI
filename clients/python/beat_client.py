@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""End-to-end Python client for the Co-Producer AI SaaS API.
+"""End-to-end Python client for the Co-Produce AI SaaS API.
 
 Does the full loop: (optionally) sign up for an API key, submit a job, poll
 until it completes, and download the resulting audio.

@@ -1,4 +1,4 @@
-# clients/go — typed Go client for the Co-Producer AI serverless endpoint
+# clients/go — typed Go client for the Co-Produce AI serverless endpoint
 
 Submits a job to your RunPod Serverless endpoint (see
 [README §33](../../README.md#33-serverless)), polls until it's done, and decodes
