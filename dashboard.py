@@ -114,6 +114,13 @@ TOOLS = [
         F("--limit", "Limit (0 = all)", "num", 0),
         F("--out", "Save report to file", "text"),
     ]),
+    ("\U0001F3A7 Genre playlists", "genre_playlists.py", [
+        F("--genre", "Genre (or 'all')", "choice", "hiphop",
+          ["hiphop", "boom_bap", "trap", "drill", "lofi", "rock", "metal", "rockmetal", "dubstep", "dnb", "all"]),
+        F("--limit", "Results per platform", "num", 5),
+        F("--format", "Format", "choice", "md", ["md", "json"]),
+        F("--out", "Save to file", "text"),
+    ]),
     ("Build captions", "build_captions.py", [
         F("--beats", "Beats folder", "dir"),
         F("--reports", "Reports folder (optional)", "dir"),
@@ -509,7 +516,7 @@ def build_ui():
         # group tools into sections (by script name); leftovers -> "More"
         SECTIONS = [
             ("\U0001F4E5 Prep & Analyze", ["organize_soundbank.py", "mp3_to_wav.py", "remove_vocals.py", "deep_listen.py",
-                                           "auto_tag.py", "genius_lookup.py", "playlist_meta.py", "build_captions.py",
+                                           "auto_tag.py", "genius_lookup.py", "playlist_meta.py", "genre_playlists.py", "build_captions.py",
                                            "prepare_dataset.py", "validate_dataset.py"]),
             ("\U0001F9E0 Train & Generate", ["sa3_workflow.py", "ace_step_workflow.py", "generate.py", "audio2audio.py", "song_generate.py"]),
             ("\U0001F941 Beats & Sound", ["beat_builder.py", "vst_instrument.py", "vst_chain.py"]),

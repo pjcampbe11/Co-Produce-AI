@@ -79,7 +79,8 @@ Pack built: packs/DustyCratesVol1  (212 samples)   Zip: packs/DustyCratesVol1.zi
 36. [Requirements & dependencies (with venv setup)](#36-requirements)
 37. [Spotify playlist metadata extractor](#37-playlist-meta)
 38. [Hip-hop beats inspired by (playlist)](#38-inspired)
-39. [License & notice](#39-license)
+39. [Cheat sheets & genre playlist finder](#39-cheatsheets)
+40. [License & notice](#40-license)
 
 > **How to read this:** every feature section follows the same shape — a plain-English **What it is**, a **Demo** gif, the **Setup & run** steps, and **Optional / good-to-have** extras. Demos live in `docs/gifs/` (placeholders — record them from the dashboard). Anything needing a GPU shows the **cloud pod** path first.
 
@@ -145,7 +146,7 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-Optional features pull extra packages — each section lists them, and §39 breaks down every line of `requirements.txt` (what it is and which feature needs it).
+Optional features pull extra packages — each section lists them, and §40 breaks down every line of `requirements.txt` (what it is and which feature needs it).
 
 **ffmpeg** is needed for MP3/M4A decoding (yt-dlp, librosa fallback): `winget install ffmpeg`.
 
@@ -1630,7 +1631,58 @@ newest-first; `playlist_meta.py` already defaults its report to newest-added fir
 
 ---
 
-<a name="39-license"></a>
-## 39. License & notice
+<a name="39-cheatsheets"></a>
+## 39. Cheat sheets & genre playlist finder
+
+**What it is.** One-page quick references in [`cheatsheets/`](cheatsheets), plus a
+tool that finds the **best reference playlists per genre** across Spotify,
+YouTube, and SoundCloud.
+
+The cheat sheets ([`cheatsheets/README.md`](cheatsheets/README.md)):
+
+- [`cli-quickref.md`](cheatsheets/cli-quickref.md) — every script + its key flags
+- [`pipeline.md`](cheatsheets/pipeline.md) — the crate-to-pack flow, copy-paste
+- [`saas-and-cloud.md`](cheatsheets/saas-and-cloud.md) — API/queue/Stripe + pods/SCP/S3
+- [`best-songs-by-genre.md`](cheatsheets/best-songs-by-genre.md) — the playlist finder below
+
+### Genre playlist finder
+
+`genre_playlists.py` returns top playlists for a genre from **Spotify** (live Web
+API), **YouTube** (Data API if `YOUTUBE_API_KEY` is set, else a playlist-search
+link), and **SoundCloud** (genre charts + sets-search links, since its API is
+closed). It degrades gracefully — with no keys you still get working YouTube/
+SoundCloud links; add Spotify keys for live, ranked results.
+
+**▶ Demo —**
+
+```console
+$ python scripts/genre_playlists.py -g dnb
+## dnb
+**Spotify**
+- [Drum & Bass Fix](https://open.spotify.com/playlist/...) — Spotify (120 tracks)
+**YouTube**
+- [Liquid DnB Mix 2026](https://www.youtube.com/playlist?list=...) — channel
+**SoundCloud**
+- [Genre charts](https://soundcloud.com/charts/top?genre=drumbass&country=US)
+- [Playlist (sets) search](https://soundcloud.com/search/sets?q=drum%20and%20bass)
+```
+
+```powershell
+$env:SPOTIFY_CLIENT_ID="xxx"; $env:SPOTIFY_CLIENT_SECRET="yyy"   # optional: $env:YOUTUBE_API_KEY="zzz"
+python scripts/genre_playlists.py -g all --limit 8 --format md --out playlists.md
+```
+
+Genres: `hiphop`, `boom_bap`, `trap`, `drill`, `lofi`, `rock`, `metal`,
+`rockmetal`, `dubstep`, `dnb`, or `all`. Reachable in the dashboard under
+**Prep & Analyze → Genre playlists**. Feed the Spotify hits into `playlist_meta.py`
+(§37) to pull full metadata.
+
+*Optional / good-to-have:* for **reference listening only** — don't train a
+sellable model on copyrighted tracks (see §6). `--format json` for tooling.
+
+---
+
+<a name="40-license"></a>
+## 40. License & notice
 
 Fine-tunes/runs Stability AI models (Stable Audio Open 1.0 / Stable Audio 3) under the **Stability AI Community License** (free commercial use under US$1M annual revenue; enterprise above — https://stability.ai/license). Full songs with vocals use **HeartMuLa** (Apache-2.0). Model weights are **not** included. **Only train on audio you own or that is explicitly cleared for ML training.** See §6.
