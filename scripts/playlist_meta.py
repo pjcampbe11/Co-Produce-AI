@@ -54,8 +54,11 @@ KEYS = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 
 
 def _req(url, headers=None, data=None, method="GET"):
-    """Minimal JSON HTTP with one polite 429 retry. Returns parsed JSON."""
-    r = urllib.request.Request(url, data=data, headers=headers or {}, method=method)
+    """Minimal JSON HTTP with one polite 429 retry. Returns parsed JSON.
+    Raises urllib.error.HTTPError (with .read() body) on non-retryable errors."""
+    hdr = {"User-Agent": "Co-Produce-AI/1.0 (+https://coproduceai.com)"}
+    hdr.update(headers or {})
+    r = urllib.request.Request(url, data=data, headers=hdr, method=method)
     for attempt in range(2):
         try:
             with urllib.request.urlopen(r, timeout=30) as resp:
@@ -94,10 +97,21 @@ def fetch_playlist(token, pid):
     fields = ("items(added_at,added_by(id),track(name,id,popularity,duration_ms,explicit,"
               "external_ids(isrc),external_urls(spotify),artists(name,id),"
               "album(name,release_date))),next")
-    url = f"{SPOTIFY_API}/playlists/{pid}/tracks?limit=100&fields={urllib.parse.quote(fields)}"
+    # Spotify deprecated the /tracks alias - use /items (same response shape).
+    url = f"{SPOTIFY_API}/playlists/{pid}/items?limit=100&fields={urllib.parse.quote(fields)}"
     items = []
     while url:
-        page = _req(url, headers=h)
+        try:
+            page = _req(url, headers=h)
+        except urllib.error.HTTPError as e:
+            if e.code in (403, 404):
+                sys.exit(
+                    f"\nSpotify returned {e.code} for this playlist's items.\n"
+                    "  - Client Credentials can't read Spotify-owned EDITORIAL/ALGORITHMIC playlists\n"
+                    "    (only your own / regular public ones). Duplicate it to your account and use that URL.\n"
+                    "  - If it IS your public playlist, make sure it's set to public, and that your\n"
+                    "    Spotify app has 'Web API' enabled (developer.spotify.com -> your app -> Settings).\n")
+            raise
         items += page.get("items", [])
         url = page.get("next")
     return meta, items
@@ -110,7 +124,15 @@ def fetch_audio_features(token, track_ids):
         chunk = [t for t in track_ids[i:i + 100] if t]
         if not chunk:
             continue
-        out = _req(f"{SPOTIFY_API}/audio-features?ids={','.join(chunk)}", headers=h)
+        try:
+            out = _req(f"{SPOTIFY_API}/audio-features?ids={','.join(chunk)}", headers=h)
+        except urllib.error.HTTPError as e:
+            if e.code == 403:
+                print("[warn] Spotify audio-features is deprecated for apps created after "
+                      "2024-11-27 (403) - continuing WITHOUT BPM/key. Remove --audio-features "
+                      "to silence this.", file=sys.stderr)
+                return {}
+            raise
         for f in out.get("audio_features", []) or []:
             if f:
                 feats[f["id"]] = f

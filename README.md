@@ -1617,6 +1617,13 @@ macOS/Linux: `export SPOTIFY_CLIENT_ID=... SPOTIFY_CLIENT_SECRET=...`. To persis
 on Windows, use `setx SPOTIFY_CLIENT_ID "..."` (new terminal required). Full
 per-service key steps are in [`cheatsheets/api-keys.md`](cheatsheets/api-keys.md).
 
+> **Spotify API caveats (2024–2026 changes).** `--audio-features` (BPM/key/energy)
+> was **deprecated for apps created after 2024-11-27** — on a new app it returns
+> 403, so the tool now warns and continues without those columns. And Client
+> Credentials can't read Spotify-owned **editorial/algorithmic** playlists — use
+> your own (or any regular public) playlist; the tool prints a clear message if a
+> playlist isn't accessible.
+
 Five ways to use it:
 
 1. **Newest-added report** (default): `-pl <url>` → markdown, newest first.
