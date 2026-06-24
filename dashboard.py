@@ -462,14 +462,14 @@ label span {font-weight:600 !important;}
 
 HEADER = """
 <div id="hdr">
-  <h1>\U0001F3B9 Co-Produce AI <span class="accent">/ Studio Dashboard</span></h1>
+  <h1>\U0001F3B9 Co-Producer AI <span class="accent">/ Studio Dashboard</span></h1>
   <p>Train your own hip-hop model and run the full pipeline \u2014 organize \u00B7 separate \u00B7 analyze \u00B7 tag \u00B7 caption \u00B7 prepare \u00B7 train \u00B7 generate \u00B7 process \u00B7 pack. Each tab runs a step and streams its log live.</p>
 </div>
 """
 
 
 def build_ui():
-    with gr.Blocks(title="Co-Produce AI \u2014 Dashboard", theme=THEME, css=CSS) as app:
+    with gr.Blocks(title="Co-Producer AI \u2014 Dashboard", theme=THEME, css=CSS) as app:
         gr.HTML(HEADER)
         with gr.Tab("\u2699\uFE0F  Settings"):
             gr.Markdown("### Environment\nPoint the dashboard at your Python and scripts folder.")
@@ -566,7 +566,7 @@ def build_ui():
                 "README \u00A733 (Serverless) and \u00A734 (Pod workflow); quick values in `cloud/connect.md`.\n\n"
                 "**One-shot pod setup** (paste in the pod's SSH session):\n"
                 "```bash\n"
-                "curl -fsSL https://raw.githubusercontent.com/pjcampbe11/Co-Produce-AI/main/cloud/pod_bootstrap.sh | bash\n"
+                "curl -fsSL https://raw.githubusercontent.com/pjcampbe11/Co-Producer-AI/main/cloud/pod_bootstrap.sh | bash\n"
                 "# private repo: GH_TOKEN=YOUR_PAT bash -c 'curl -fsSL .../pod_bootstrap.sh | bash'\n"
                 "```\n\n"
                 "**SCP files to/from a pod** (local terminal):\n"

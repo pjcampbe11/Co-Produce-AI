@@ -1,4 +1,4 @@
-# Co-Produce AI - RunPod Serverless worker image.
+# Co-Producer AI - RunPod Serverless worker image.
 # GPU base (CUDA 12.1) because generation/flip tasks need it; the heuristic
 # tagger runs fine here too. Build for linux/amd64 (RunPod requirement).
 FROM runpod/base:0.6.2-cuda12.1.0

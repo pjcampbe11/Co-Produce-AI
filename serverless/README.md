@@ -1,4 +1,4 @@
-# serverless/ — host Co-Produce AI as a RunPod endpoint
+# serverless/ — host Co-Producer AI as a RunPod endpoint
 
 See the main [README section 33](../README.md#33-serverless) for the full guide.
 

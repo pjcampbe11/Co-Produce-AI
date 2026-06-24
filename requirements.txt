@@ -1,5 +1,5 @@
 # ============================================================
-# Co-Produce AI - Python dependencies
+# Co-Producer AI - Python dependencies
 # ------------------------------------------------------------
 # FIRST, make a virtual environment so this stays isolated:
 #     python -m venv .venv

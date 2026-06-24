@@ -1,6 +1,6 @@
 # clients/python — API example (signup → submit → download)
 
-A single-file client for the Co-Produce AI SaaS API ([README §35](../../README.md#35-saas)).
+A single-file client for the Co-Producer AI SaaS API ([README §35](../../README.md#35-saas)).
 
 ```bash
 pip install -r requirements.txt
