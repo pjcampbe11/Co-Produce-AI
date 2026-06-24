@@ -429,6 +429,9 @@ def main():
                          "build_captions.py needs (bpm/key/kind/sound events/vibe). "
                          "Skips the heavy technical/spectral/timeline + .md.")
     args = ap.parse_args()
+    # laion_clap re-parses sys.argv when it loads; scrub our flags so it
+    # doesn't abort with its own training-argparse usage.
+    sys.argv = sys.argv[:1]
     p = Path(args.input)
     files = [p] if p.is_file() else sorted(x for x in p.rglob("*") if x.suffix.lower() in AUDIO_EXTS)
     if not files:

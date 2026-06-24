@@ -151,6 +151,9 @@ def main():
                     help="After organizing, run CLAP zero-shot tagging (pip install laion-clap). "
                          "Writes <file>.tags.json read by prepare_dataset.py")
     args = ap.parse_args()
+    # laion_clap re-parses sys.argv when it loads; scrub our flags so it
+    # doesn't abort with its own training-argparse usage.
+    sys.argv = sys.argv[:1]
 
     in_root, out_root = Path(args.input), Path(args.output)
     if not in_root.is_dir():

@@ -23,6 +23,7 @@ checkpoint (train.py --pretrained_ckpt_path your_last_unwrapped.ckpt).
 #   - score then promote: keepers become the next fine-tune round's dataset (taste distillation).
 # ---------------------------------------------------------------------------
 import argparse
+import sys
 import csv
 import json
 import shutil
@@ -126,6 +127,9 @@ def main():
     p.add_argument("--base-prompt", default="hip hop")
     p.set_defaults(fn=cmd_promote)
     args = ap.parse_args()
+    # laion_clap re-parses sys.argv when it loads; scrub our flags so it
+    # doesn't abort with its own training-argparse usage.
+    sys.argv = sys.argv[:1]
     args.fn(args)
 
 

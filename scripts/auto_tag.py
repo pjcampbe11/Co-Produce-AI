@@ -393,6 +393,9 @@ def main():
     ap.add_argument("--shuffle", action="store_true", help="Random selection order, so each --limit batch is a random sample of what's left")
     ap.add_argument("--seed", type=int, default=-1, help="Seed for --shuffle (default: truly random each run)")
     args = ap.parse_args()
+    # laion_clap re-parses sys.argv when it loads; scrub our flags so it
+    # doesn't abort with its own training-argparse usage.
+    sys.argv = sys.argv[:1]
 
     # resolve engine
     engine = args.engine
