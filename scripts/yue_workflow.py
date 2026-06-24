@@ -41,7 +41,16 @@ def main():
     ap.add_argument("--max-tokens", type=int, default=3000, help="max new tokens for stage-1")
     ap.add_argument("--out", default="songs", help="output folder")
     ap.add_argument("--python", default=sys.executable, help="python to run YuE with")
+    ap.add_argument("--install", action="store_true", help="auto-install missing deps (pip/git) then run")
+    ap.add_argument("--skip-check", action="store_true", help="skip the engine readiness preflight")
     args = ap.parse_args()
+
+    if not args.skip_check:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import engine_doctor
+        if not engine_doctor.preflight('yue', install=args.install, yue=args.yue):
+            sys.exit("[yue] deps not ready. Re-run with --install to auto-fix, "
+                     "or see cloud/yue_setup.sh. (--skip-check to bypass.)")
 
     yue = os.path.abspath(os.path.expanduser(args.yue))
     infer = os.path.join(yue, "inference", "infer.py")

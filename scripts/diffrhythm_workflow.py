@@ -35,7 +35,16 @@ def main():
     ap.add_argument("--out", default="drafts", help="output folder")
     ap.add_argument("--chunked", action="store_true", help="chunked decoding (lower VRAM)")
     ap.add_argument("--python", default=sys.executable)
+    ap.add_argument("--install", action="store_true", help="auto-install missing deps (pip/git) then run")
+    ap.add_argument("--skip-check", action="store_true", help="skip the engine readiness preflight")
     args = ap.parse_args()
+
+    if not args.skip_check:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import engine_doctor
+        if not engine_doctor.preflight('diffrhythm', install=args.install, diffrhythm=args.diffrhythm):
+            sys.exit("[diffrhythm] deps not ready. Re-run with --install to auto-fix, "
+                     "or see cloud/diffrhythm_setup.sh. (--skip-check to bypass.)")
 
     dr = os.path.abspath(os.path.expanduser(args.diffrhythm))
     # DiffRhythm's entry script has moved across versions; probe common locations.

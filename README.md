@@ -1822,7 +1822,9 @@ naturally. Clone your own voice in ACE Studio once and reuse it across tracks.
 
 Check readiness anytime with `python scripts/engine_doctor.py` (green/red per
 engine; no models loaded) — the dashboard's **🩺 Engine status** tab shows the
-same. 
+same. The YuE/DiffRhythm/MusicGen workflows also **preflight automatically** and
+refuse to start if deps are missing; add `--install` to auto-fix (pip/git) or
+`--skip-check` to bypass. 
 
 *Optional / good-to-have:* `yue` wants a 16–24 GB GPU; use `diffrhythm` for fast
 drafts then re-render the keeper in `yue`. `musicgen-melody` is the only engine

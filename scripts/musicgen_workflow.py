@@ -35,7 +35,16 @@ def main():
     ap.add_argument("--count", type=int, default=4, help="how many clips")
     ap.add_argument("--out", default="musicgen_out", help="output folder")
     ap.add_argument("--cfg", type=float, default=3.0, help="classifier-free guidance scale")
+    ap.add_argument("--install", action="store_true", help="auto-install missing deps (pip/git) then run")
+    ap.add_argument("--skip-check", action="store_true", help="skip the engine readiness preflight")
     args = ap.parse_args()
+
+    if not args.skip_check:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import engine_doctor
+        if not engine_doctor.preflight('musicgen', install=args.install, ):
+            sys.exit("[musicgen] deps not ready. Re-run with --install to auto-fix, "
+                     "or see cloud/musicgen_setup.sh. (--skip-check to bypass.)")
 
     try:
         import torch  # noqa

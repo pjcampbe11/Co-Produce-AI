@@ -74,6 +74,83 @@ def check(args):
     return {"torch": torch, "engines": rows}
 
 
+REPOS = {
+    "yue": "https://github.com/multimodal-art-projection/YuE.git",
+    "diffrhythm": "https://github.com/ASLP-lab/DiffRhythm.git",
+    "heartmula": "https://github.com/HeartMuLa/heartlib.git",
+    "sat": "https://github.com/Stability-AI/stable-audio-tools.git",
+}
+
+
+def _pip(*pkgs):
+    return [sys.executable, "-m", "pip", "install", "-q", *pkgs]
+
+
+def install_engine(engine, paths=None):
+    """Best-effort, cross-platform dependency install for one engine.
+    Uses pip / git only (works on Windows + Linux). Returns True if it ran."""
+    import subprocess
+    paths = paths or {}
+    steps = []
+    if engine == "musicgen":
+        steps = [_pip("audiocraft", "torch", "torchaudio")]
+    elif engine in ("sao", "sa3"):
+        if not os.path.isdir("stable-audio-tools"):
+            steps.append(["git", "clone", REPOS["sat"]])
+        steps.append(_pip("-e", "./stable-audio-tools"))
+        if engine == "sa3":
+            print("[install] sa3 LoRA also needs stable-audio-3 (uv sync --extra lora) - see cloud/sa3_setup.sh", file=sys.stderr)
+    elif engine in ("yue", "diffrhythm"):
+        default = {"yue": "YuE", "diffrhythm": "DiffRhythm"}[engine]
+        path = os.path.expanduser(paths.get(engine) or os.path.join(os.getcwd(), default))
+        if not os.path.exists(path):
+            steps.append(["git", "clone", REPOS[engine], path])
+        steps.append(_pip("-r", os.path.join(path, "requirements.txt")))
+    elif engine == "heartmula":
+        if not os.path.isdir("heartlib"):
+            steps.append(["git", "clone", REPOS["heartmula"]])
+        steps.append(_pip("-e", "./heartlib"))
+    elif engine == "ace-step":
+        print("[install] ace-step runs as a REST server - start it with cloud/ace_step_setup.sh "
+              "(can't auto-start a server safely).", file=sys.stderr)
+        return False
+    else:
+        return False
+    for cmd in steps:
+        print("$ " + " ".join(cmd), file=sys.stderr)
+        subprocess.run(cmd)
+    return True
+
+
+def _ns(**paths):
+    return argparse.Namespace(
+        ace_host=paths.get("ace_host", os.environ.get("ACESTEP_HOST", "http://localhost:8001")),
+        yue=paths.get("yue", os.environ.get("YUE_REPO", "")),
+        diffrhythm=paths.get("diffrhythm", os.environ.get("DIFFRHYTHM_REPO", "")),
+        heartlib=paths.get("heartlib", os.environ.get("HEARTLIB_REPO", "")))
+
+
+def preflight(engine, install=False, **paths):
+    """Used by each workflow at startup. Returns True if the engine is ready;
+    if not and install=True, attempts the install and re-checks."""
+    res = check(_ns(**paths))
+    row = next((r for r in res["engines"] if r["engine"] == engine), None)
+    if row and row["ready"]:
+        return True
+    detail = row["detail"] if row else "unknown engine"
+    print(f"[{engine}] NOT READY: {detail}", file=sys.stderr)
+    if install:
+        print(f"[{engine}] attempting auto-install (pip/git)...", file=sys.stderr)
+        install_engine(engine, paths)
+        res = check(_ns(**paths))
+        row = next((r for r in res["engines"] if r["engine"] == engine), None)
+        if row and row["ready"]:
+            print(f"[{engine}] ready after install.", file=sys.stderr)
+            return True
+        print(f"[{engine}] STILL not ready: {row['detail'] if row else '?'}", file=sys.stderr)
+    return False
+
+
 def main():
     ap = argparse.ArgumentParser(description="Readiness check for each generation engine.")
     ap.add_argument("--json", action="store_true", help="machine-readable output (for the dashboard)")
@@ -81,7 +158,13 @@ def main():
     ap.add_argument("--yue", default=os.environ.get("YUE_REPO", ""))
     ap.add_argument("--diffrhythm", default=os.environ.get("DIFFRHYTHM_REPO", ""))
     ap.add_argument("--heartlib", default=os.environ.get("HEARTLIB_REPO", ""))
+    ap.add_argument("--install", metavar="ENGINE", help="auto-install one engine's deps (pip/git) then re-check")
     args = ap.parse_args()
+
+    if args.install:
+        ok = preflight(args.install, install=True, ace_host=args.ace_host,
+                       yue=args.yue, diffrhythm=args.diffrhythm, heartlib=args.heartlib)
+        sys.exit(0 if ok else 1)
 
     res = check(args)
     if args.json:

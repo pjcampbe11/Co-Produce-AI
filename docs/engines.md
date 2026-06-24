@@ -66,3 +66,17 @@ python scripts/engine_doctor.py --json     # machine-readable (dashboard uses th
 
 It only probes imports/paths/REST — no models loaded, no GPU touched. The
 dashboard's **🩺 Engine status** tab renders the same check as green/red dots.
+
+### Preflight + auto-install
+
+The YuE / DiffRhythm / MusicGen workflows **self-check before running** and refuse
+to start if their deps are missing, printing the exact fix. Add `--install` to
+auto-install (pip/git, cross-platform) and continue, or `--skip-check` to bypass:
+
+```bash
+python scripts/musicgen_workflow.py --prompt "boom bap, 90 bpm" --install
+python scripts/engine_doctor.py --install yue --yue ~/YuE   # install one engine directly
+```
+
+Auto-install covers musicgen (pip), yue/diffrhythm/heartmula/sao (git clone + pip).
+ace-step is a REST server — start it with `cloud/ace_step_setup.sh` (not auto-started).

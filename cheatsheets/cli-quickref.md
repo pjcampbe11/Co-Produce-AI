@@ -32,7 +32,7 @@ All scripts are in `scripts/`. Run `python scripts/<name>.py --help` for full fl
 | `diffrhythm_workflow.py` | fast lyrics \u2192 song (DiffRhythm) | `--diffrhythm --lyrics --prompt` |
 | `musicgen_workflow.py` | prompt (+melody) \u2192 instrumental | `--prompt --melody --model` |
 | `generate_engine.py` | **unified router** for all engines | `--engine <name> --list` |
-| `engine_doctor.py` | green/red readiness check per engine | `--json` |
+| `engine_doctor.py` | readiness check + auto-install per engine | `--json --install <engine>` |
 
 ## Creative Lab
 `microvariants.py` · `groove_dna.py` · `flip_lineage.py` · `destroy_heal.py` ·
