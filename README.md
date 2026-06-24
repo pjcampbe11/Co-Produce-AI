@@ -1589,13 +1589,26 @@ $ python scripts/playlist_meta.py -pl https://open.spotify.com/playlist/7MNBsBwg
 
 ### Setup & run
 
-Create a Spotify app at developer.spotify.com (no user login needed — public
-reads use the **Client Credentials** flow) and set the two env vars:
+Create a Spotify app to get the two keys (free, no user login — public reads use
+the **Client Credentials** flow). Step by step:
+
+1. Go to <https://developer.spotify.com/dashboard> and log in with any Spotify account.
+2. Click **Create app**.
+3. Fill in: **App name** and **App description** (anything, e.g. "Co-Produce AI"); for **Redirect URI** enter `http://127.0.0.1:8888/callback` (required even though Client Credentials never uses it).
+4. Under **Which API/SDKs are you planning to use?** tick **Web API**.
+5. Accept the terms and click **Save**.
+6. Open the app → **Settings**. Copy the **Client ID**, then click **View client secret** and copy that too.
+
+Then set the two env vars and run (the keys stay in your shell, never in the repo):
 
 ```powershell
-$env:SPOTIFY_CLIENT_ID="xxx"; $env:SPOTIFY_CLIENT_SECRET="yyy"
+$env:SPOTIFY_CLIENT_ID="paste_client_id"; $env:SPOTIFY_CLIENT_SECRET="paste_client_secret"
 python scripts/playlist_meta.py -pl <url> --audio-features --format md --out playlist.md
 ```
+
+macOS/Linux: `export SPOTIFY_CLIENT_ID=... SPOTIFY_CLIENT_SECRET=...`. To persist
+on Windows, use `setx SPOTIFY_CLIENT_ID "..."` (new terminal required). Full
+per-service key steps are in [`cheatsheets/api-keys.md`](cheatsheets/api-keys.md).
 
 Five ways to use it:
 
