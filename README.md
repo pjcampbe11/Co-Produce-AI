@@ -71,7 +71,8 @@ Pack built: packs/DustyCratesVol1  (212 samples)   Zip: packs/DustyCratesVol1.zi
 33. [Serverless API (RunPod) — host the toolkit as an endpoint](#33-serverless)
 34. [Pod workflow — SSH, SCP & cloning the repo to a pod](#34-pod-workflow)
 35. [SaaS server — job queue, REST API & Stripe billing](#35-saas)
-36. [License & notice](#36-license)
+36. [Requirements & dependencies (with venv setup)](#36-requirements)
+37. [License & notice](#37-license)
 
 > **How to read this:** every feature section follows the same shape — a plain-English **What it is**, a **Demo** gif, the **Setup & run** steps, and **Optional / good-to-have** extras. Demos live in `docs/gifs/` (placeholders — record them from the dashboard). Anything needing a GPU shows the **cloud pod** path first.
 
@@ -129,7 +130,15 @@ python scripts/beat_builder.py --library "F:/SoundBankAI" --style boom_bap --bpm
 <a name="4-install--setup"></a>
 ## 4. Install & setup
 
-**Local (CPU-light steps):** Python 3.10+ recommended (3.9 works with caveats). `pip install -r requirements.txt`. Optional features pull extra packages — each section lists them.
+**Local (CPU-light steps):** Python 3.10+ recommended (3.9 works with caveats). **Make a virtual environment first** so the toolkit's packages stay isolated from system Python:
+
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1        # macOS/Linux: source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+Optional features pull extra packages — each section lists them, and §37 breaks down every line of `requirements.txt` (what it is and which feature needs it).
 
 **ffmpeg** is needed for MP3/M4A decoding (yt-dlp, librosa fallback): `winget install ffmpeg`.
 
@@ -1468,7 +1477,80 @@ python clients/python/beat_client.py --base-url http://localhost:8000     --sign
 
 ---
 
-<a name="36-license"></a>
-## 36. License & notice
+<a name="36-requirements"></a>
+## 36. Requirements & dependencies (with venv setup)
+
+**What it is.** A plain-English map of `requirements.txt` — what every package is
+for and which feature needs it — plus the one habit that keeps it all tidy: a
+**virtual environment**.
+
+### Make a venv first
+
+A venv keeps Beat Toolkit's (many) packages from colliding with other Python on
+your machine. Do this once, in the repo folder:
+
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1          # macOS/Linux: source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+You'll see `(.venv)` in your prompt when it's active. Re-activate it each new
+terminal. To leave: `deactivate`. (`.venv/` is git-ignored.)
+
+### Core — always installed
+
+| Package | What it's for |
+| --- | --- |
+| `numpy` | array/DSP math used everywhere |
+| `librosa` | audio loading, tempo/key detection, spectral features |
+| `soundfile` | read/write WAV/FLAC |
+| `pyloudnorm` | LUFS loudness normalization (deep_listen, postprocess) |
+| `tqdm` | progress bars |
+| `requests` | HTTP — Genius API, ACE-Step REST, Ollama, the API client |
+| `mido` | MIDI export (beat builder, vocal guide, Ableton bridge) |
+| `gradio` | the local dashboard UI (bundles `gradio_client`) |
+
+### Models & audio processing — per feature
+
+| Package | Feature / scripts |
+| --- | --- |
+| `torch`, `torchaudio` | model runtime + audio tensors (generate, flip, remix, SA3/SAO) — match your CUDA build at pytorch.org |
+| `einops` | tensor reshaping inside the audio models |
+| `pedalboard` | headless VST3 hosting (vst_chain, vst_instrument, destroy_heal) |
+| `python-osc` | OSC to Ableton Live / Push (ableton_bridge, push_generation_server) |
+| `audio-separator[gpu]` | BS-RoFormer vocal/stem separation (remove_vocals); use `[cpu]` if no GPU |
+| `demucs` | fallback 4-stem separator |
+| `onnxruntime` | optional GPU/CPU capability check for the roformer path |
+| `transformers`, `accelerate` | Qwen2-Audio / Qwen3-Omni captioners (auto_tag `--engine qwen*`) |
+| `laion-clap` | zero-shot audio↔text tagging (auto_tag `--engine clap`, curation, vibe) |
+| `panns-inference` | AudioSet sound-event tagging (deep_listen) |
+| `beat-this` | SOTA beat tracking (groove_dna, deep_listen) |
+| `wandb`, `huggingface_hub` | training monitoring + model download/auth (cloud GPU) |
+
+### SaaS server — optional (`server/`)
+
+`fastapi`, `uvicorn[standard]`, `sqlmodel`, `pydantic` (API), `redis` + `rq` (job
+queue + rate limiter), `stripe` (billing), `python-multipart` (forms), and
+`pytest` + `fakeredis` + `httpx` (tests). These also live in
+`server/requirements.txt` — the Docker image installs only those. `runpod` powers
+the optional `serverless/handler.py`.
+
+### Not on PyPI — install from source
+
+A few engines aren't pip-installable and are set up on the GPU box (commands are
+in `requirements.txt`'s footer and the linked sections): **stable-audio-tools**
+(SAO fine-tune), **stable-audio-3** (LoRA path, §32), **heartlib** (full songs,
+§20), **Ollama** (lyric model, §22), and **AbletonOSC** (in Live, §19). The Go API
+client (`clients/go`) needs the Go toolchain, not pip.
+
+*Optional / good-to-have:* you rarely need *everything* — install Core, then add
+the block for whatever you're doing (e.g. just `audio-separator` for batch vocal
+removal). On a fresh GPU pod, `cloud/pod_bootstrap.sh` installs it all for you.
+
+---
+
+<a name="37-license"></a>
+## 37. License & notice
 
 Fine-tunes/runs Stability AI models (Stable Audio Open 1.0 / Stable Audio 3) under the **Stability AI Community License** (free commercial use under US$1M annual revenue; enterprise above — https://stability.ai/license). Full songs with vocals use **HeartMuLa** (Apache-2.0). Model weights are **not** included. **Only train on audio you own or that is explicitly cleared for ML training.** See §6.
