@@ -178,7 +178,7 @@ def fetch_playlist(token, pid):
     # Spotify deprecated the /tracks alias - use /items. We DON'T pass a fields
     # projection here: with a user token the projected response was dropping the
     # nested track object, so we fetch full items and pick fields in build_rows.
-    url = f"{SPOTIFY_API}/playlists/{pid}/items?limit=100&market=from_token"
+    url = f"{SPOTIFY_API}/playlists/{pid}/items?limit=100"
     items = []
     while url:
         try:
@@ -367,6 +367,12 @@ def main():
         feats = fetch_audio_features(token, [((it.get('track') or {}).get('id')) for it in items])
 
     rows = build_rows(items, feats, args)
+    if items and not rows:
+        first = items[0]
+        sys.stderr.write(f"[debug] {len(items)} items but 0 parsed rows.\n")
+        sys.stderr.write(f"[debug] item[0] type={type(first).__name__} "
+                         f"keys={list(first.keys()) if isinstance(first, dict) else 'n/a'}\n")
+        sys.stderr.write("[debug] item[0] sample:\n" + json.dumps(first)[:700] + "\n")
 
     if args.samples or args.whosampled:
         gtok = os.environ.get("GENIUS_TOKEN", "")
