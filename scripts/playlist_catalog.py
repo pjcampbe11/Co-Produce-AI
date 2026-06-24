@@ -20,6 +20,15 @@ Usage
   python scripts/playlist_catalog.py --json playlist_full.json --out catalog --resume
   python scripts/playlist_catalog.py --json playlist_full.json --out catalog --limit 50
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Builds a per-song REFERENCE catalog from a playlist_meta JSON: metadata + the Genius
+#   - page URL only - NEVER lyric text (copyrighted; the Genius API doesn't serve it).
+#   - Reuses genius_lookup's search/clean/details helpers. --resume is idempotent;
+#   - INDEX.md is rebuilt from the per-song files every run.
+#   - Targets Python 3.11; pure-Python, deps via requirements.txt.
+# ---------------------------------------------------------------------------
 import argparse
 import json
 import os

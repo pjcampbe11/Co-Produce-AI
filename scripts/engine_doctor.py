@@ -11,6 +11,16 @@ Usage:
     python engine_doctor.py --json          # machine-readable (used by the dashboard)
     python engine_doctor.py --yue ~/YuE --diffrhythm ~/DiffRhythm --ace-host http://localhost:8001
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Pure-stdlib readiness checker - probes imports / repo paths / a REST ping only;
+#   - it NEVER imports torch-heavy modules, loads a model, or touches a GPU.
+#   - preflight() is the gate each engine workflow calls at startup; install_engine()
+#   - does cross-platform (pip/git) auto-fixes. ace-step is a REST server, so it can't
+#   - be auto-started - we print the cloud/ace_step_setup.sh instruction instead.
+#   - Targets Python 3.11; pure-Python, deps via requirements.txt.
+# ---------------------------------------------------------------------------
 import argparse
 import importlib.util
 import json

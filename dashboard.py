@@ -23,7 +23,7 @@ from pathlib import Path
 
 import gradio as gr
 
-# --- Fix a known gradio_client bug on Python 3.9: schema fields that are bool
+# --- (legacy) Python 3.9 gradio_client shim; harmless no-op on 3.11+: bool schema fields
 # (e.g. additionalProperties: true) crash get_type with
 # "TypeError: argument of type 'bool' is not iterable". Guard both functions. ---
 try:

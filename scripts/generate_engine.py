@@ -28,6 +28,15 @@ Usage
   python generate_engine.py --engine yue   --yue ~/YuE --lyrics verse.txt --genre "hip hop, 90 bpm" --out songs
   python generate_engine.py --list
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Thin, transparent router: it PRINTS then RUNS the underlying workflow command so
+#   - you always see exactly what executed. Only --engine/--list/--python are parsed here;
+#   - every other flag passes straight through to the chosen engine's script unchanged.
+#   - Add a new engine by adding one row to the ENGINES dict.
+#   - Targets Python 3.11; pure-Python, deps via requirements.txt.
+# ---------------------------------------------------------------------------
 import argparse
 import subprocess
 import sys

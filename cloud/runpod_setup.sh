@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Run this ON the cloud GPU instance (RunPod / Lambda / Vast.ai, Ubuntu + CUDA image).
-# Tested target: 1x A100 80GB or A6000 48GB. PyTorch >= 2.3, Python 3.10+.
+# Tested target: 1x A100 80GB or A6000 48GB. PyTorch >= 2.3, Python 3.11.
 set -euo pipefail
 
 cd /workspace

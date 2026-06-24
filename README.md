@@ -139,7 +139,7 @@ python scripts/beat_builder.py --library "F:/SoundBankAI" --style boom_bap --bpm
 <a name="4-install--setup"></a>
 ## 4. Install & setup
 
-**Local (CPU-light steps):** Python 3.10+ recommended (3.9 works with caveats). **Make a virtual environment first** so the toolkit's packages stay isolated from system Python:
+**Local (CPU-light steps):** **Python 3.11 required** — 3.9 is no longer supported (`thinc`/`spaCy` and parts of the audio stack dropped it). **Make a virtual environment first** so the toolkit's packages stay isolated from system Python:
 
 ```powershell
 python -m venv .venv

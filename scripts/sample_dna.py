@@ -20,6 +20,15 @@ Usage
   # then generate from it:
   python scripts/sa3_workflow.py plan --plan prompts/sample_dna.json --out generated
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Uses ONLY factual sample credits (who sampled what) from the catalog to infer a vibe,
+#   - then emits ORIGINAL generation prompts in that tradition - it never reproduces the
+#   - sampled works. --flips/--flip-input can also drive audio2audio.py to render fresh
+#   - chops from YOUR source audio in the detected era's texture.
+#   - Targets Python 3.11; pure-Python, deps via requirements.txt.
+# ---------------------------------------------------------------------------
 import argparse
 import json
 import os

@@ -27,6 +27,15 @@ Examples
   python genre_playlists.py --genre dnb --limit 8 --format md --out dnb_playlists.md
   python genre_playlists.py -g all --format json --out playlists.json
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Spotify uses the (app-only) Client Credentials flow for playlist SEARCH (still
+#   - allowed, unlike reading a specific playlist's items). YouTube/Apple Music use their
+#   - APIs when keys are set, else emit ready search links. SoundCloud's API is closed to
+#   - new apps -> charts + sets-search links only. Degrades gracefully with zero keys.
+#   - Targets Python 3.11; pure-Python, deps via requirements.txt.
+# ---------------------------------------------------------------------------
 import argparse
 import base64
 import json

@@ -35,6 +35,15 @@ Examples
   # CSV for a spreadsheet
   python playlist_meta.py -pl <url> -f csv -o playlist.csv
 """
+
+# ---------------------------------------------------------------------------
+# Operator notes (the non-obvious bits):
+#   - Spotify now requires a USER token to read playlist items (run once with --login;
+#   - Authorization Code flow, refresh token cached). The /items endpoint nests the track
+#   - under the 'item' key (not 'track'). audio-features is deprecated for apps created
+#   - after 2024-11-27 -> --audio-features warns and continues instead of crashing.
+#   - Targets Python 3.11; pure-Python, deps via requirements.txt.
+# ---------------------------------------------------------------------------
 import argparse
 import base64
 import csv
