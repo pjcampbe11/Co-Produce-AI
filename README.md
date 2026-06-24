@@ -913,7 +913,7 @@ Reference/listening only (lossy source; rights caveats apply — don't train a s
 <a name="30-business"></a>
 ## 30. Business & learning path
 
-**Packaging as a service:** the toolkit is ~80% of a SaaS backend (add a job queue + API + Stripe). Differentiators vs Splice/Waves ILLUGEN/Loudly: hip-hop depth, **private models trained on a customer's own sounds**, **provenance certificates**, and groove-level control.
+**Packaging as a service:** the SaaS backend now ships — an authenticated REST API, a Redis/RQ **job queue** with CPU/GPU worker lanes, credit **metering**, **Stripe** billing, a pricing page, rate limiting, and a tested, CI-gated, Docker-compose deployment (see §35 and [`server/`](server); go-live steps in [`DEPLOY.md`](DEPLOY.md)). What's left to launch is operational, not code: managed Postgres + Redis, TLS, your own auth/onboarding, and live Stripe products. Differentiators vs Splice / Waves / Loudly: hip-hop depth, **private models trained on a customer's own sounds**, **provenance certificates**, and groove-level control.
 **Products:** (1) provenance-verified ecosystem pack line; (2) "your sound as a model" private fine-tunes (SA3 LoRA collapses the unit cost); (3) groove-DNA template packs.
 **Learning path (O'Reilly):** Géron *Hands-On ML* → *Programming PyTorch* (audio ch.) → Foster *Generative Deep Learning* → HF *Hands-On Generative AI* → *Think DSP*. Free: HF Audio Course, "The Sound of AI." Study repos: stable-audio-tools, stable-audio-3, audiocraft, demucs, pedalboard, librosa, CLAP, AbletonOSC.
 *(Not financial/legal advice — verify license thresholds and trademarks before commercializing.)*
