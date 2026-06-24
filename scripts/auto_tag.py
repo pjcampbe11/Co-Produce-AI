@@ -110,12 +110,36 @@ _ENGINE = {}
 
 def _load_qwen(model_id):
     import torch
-    from transformers import AutoProcessor, AutoModelForCausalLM
-    proc = AutoProcessor.from_pretrained(model_id, trust_remote_code=True)
-    model = AutoModelForCausalLM.from_pretrained(
-        model_id, trust_remote_code=True, torch_dtype="auto",
-        device_map="cuda" if torch.cuda.is_available() else "cpu")
-    return proc, model
+    import transformers as tf
+    proc = tf.AutoProcessor.from_pretrained(model_id, trust_remote_code=True)
+    dev = "cuda" if torch.cuda.is_available() else "cpu"
+    # Qwen audio models are CONDITIONAL-GENERATION (multimodal), not plain causal
+    # LMs - AutoModelForCausalLM rejects their config. Pick the right class, with
+    # graceful fallbacks across transformers versions.
+    candidates = []
+    mid = model_id.lower()
+    if "qwen3-omni" in mid:
+        candidates = ["Qwen3OmniMoeForConditionalGeneration",
+                      "Qwen3OmniForConditionalGeneration",
+                      "AutoModelForImageTextToText"]
+    elif "qwen2-audio" in mid or "qwen2.5-omni" in mid or "qwen2-omni" in mid:
+        candidates = ["Qwen2AudioForConditionalGeneration",
+                      "Qwen2_5OmniForConditionalGeneration",
+                      "AutoModelForImageTextToText"]
+    candidates += ["AutoModelForCausalLM", "AutoModel"]
+    last = None
+    for name in candidates:
+        cls = getattr(tf, name, None)
+        if cls is None:
+            continue
+        try:
+            model = cls.from_pretrained(model_id, trust_remote_code=True,
+                                        torch_dtype="auto", device_map=dev)
+            return proc, model
+        except Exception as e:  # wrong class for this config / not available -> try next
+            last = e
+            continue
+    raise RuntimeError(f"could not load {model_id} with any known class: {last}")
 
 def caption_qwen(audio_path, engine):
     """Free-form caption via a Qwen audio LLM. Returns raw text."""
@@ -132,8 +156,21 @@ def caption_qwen(audio_path, engine):
     text = proc.apply_chat_template(conv, add_generation_prompt=True, tokenize=False)
     inputs = proc(text=text, audios=[audio], sampling_rate=sr, return_tensors="pt")
     inputs = {k: v.to(model.device) for k, v in inputs.items()}
-    out = model.generate(**inputs, max_new_tokens=256)
-    return proc.batch_decode(out, skip_special_tokens=True)[0]
+    gen_kwargs = {"max_new_tokens": 256}
+    try:
+        out = model.generate(**inputs, return_audio=False, **gen_kwargs)  # omni: text only
+    except TypeError:
+        out = model.generate(**inputs, **gen_kwargs)
+    if isinstance(out, (tuple, list)):
+        out = out[0]                       # (text_ids, audio) -> text_ids
+    # strip the prompt tokens so we decode only the new caption
+    try:
+        in_len = inputs["input_ids"].shape[1]
+        out = out[:, in_len:]
+    except Exception:
+        pass
+    dec = proc.batch_decode(out, skip_special_tokens=True)
+    return dec[0] if dec else ""
 
 def tags_from_caption(caption):
     m = re.search(r"TAGS:\s*(.+)", caption, re.IGNORECASE | re.DOTALL)
