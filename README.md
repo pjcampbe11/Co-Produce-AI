@@ -941,6 +941,7 @@ Reference/listening only (lossy source; rights caveats apply — don't train a s
 | Script | Does |
 |---|---|
 | `organize_soundbank.py` | classify/sort a messy library into tag folders |
+| `mp3_to_wav.py` | batch MP3/M4A → WAV converter |
 | `remove_vocals.py` | batch vocal removal (BS-RoFormer/Demucs) |
 | `deep_listen.py` | full technical/musical/sound-event/vibe analysis |
 | `auto_tag.py` | open-vocab mood/vibe tags (audio LLM / CLAP) |
@@ -949,21 +950,25 @@ Reference/listening only (lossy source; rights caveats apply — don't train a s
 | `prepare_dataset.py` / `validate_dataset.py` | dataset prep + preflight checks |
 | `sa3_workflow.py` | SA3 prepare/plan/flip/fill/extend/song (LoRA) |
 | `generate.py` | SAO batch generation from a pack plan |
+| `ace_step_workflow.py` | ACE-Step 1.5 engine (REST): generate/song/cover/train |
 | `audio2audio.py` | flip a sound (a2a) |
 | `remix.py` | genre transform / mashup |
 | `beat_builder.py` | beats from your samples + MIDI |
+| `sample_chop.py` | chop a sample → 5 MPC/Push variations (10 producer styles) |
 | `vst_instrument.py` / `vst_chain.py` | render MIDI through synths / process through effects |
 | `plugin_scan.py` | catalog installed VST3/VST2 |
-| `vocal_guide.py` | beat-aligned flow MIDI + lyrics for ACE Studio |
+| `vocal_guide.py` | beat-aligned flow MIDI + lyrics + expression for ACE Studio |
+| `ableton_bridge.py` | fire clips / control Ableton Live via OSC (AbletonOSC) |
 | `song_generate.py` | full songs w/ vocals (HeartMuLa) |
 | `lyric_analyze.py` / `lyric_generate.py` / `lyric_to_beat.py` | your-voice lyric model + beat bridge |
 | `postprocess.py` / `build_pack.py` / `provenance.py` | finish, package, certify |
+| `playlist_meta.py` `genre_playlists.py` `playlist_catalog.py` `sample_dna.py` | Spotify playlist metadata, per-genre playlist finder, song catalog (Genius links, no lyrics), sample-lineage→prompts (§37–§39) |
 | `microvariants.py` `groove_dna.py` `flip_lineage.py` `destroy_heal.py` `ab_models.py` `curation_loop.py` `push_generation_server.py` `call_response.py` `ecosystem_pack.py` | Creative Techniques Lab (§24) |
 | `sat_common.py` `lyric_common.py` `custom_metadata.py` | shared helpers |
 
 `requirements.txt` lists core + per-feature optional deps. `cloud/` has pod setup scripts; `configs/` has dataset/VST-chain configs; `prompts/` has pack plans + example lyrics.
 
-- **Engines/router:** `generate_engine.py` (unified `--engine`), `yue_workflow.py`, `diffrhythm_workflow.py`, `musicgen_workflow.py` — see §40 and `docs/engines.md`.
+- **Engines/router:** `generate_engine.py` (unified `--engine`), `yue_workflow.py`, `diffrhythm_workflow.py`, `musicgen_workflow.py`, `ace_step_workflow.py`, and `engine_doctor.py` (readiness/auto-install) — see §40 and `docs/engines.md`.
 
 <a name="32-engines"></a>
 ## 32. Engine choice: Stable Audio 3 vs ACE-Step 1.5
