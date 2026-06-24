@@ -1,4 +1,4 @@
-"""RunPod Serverless handler for CoProduce AI.
+"""RunPod Serverless handler for Co-Produce AI.
 
 Operator notes
 --------------

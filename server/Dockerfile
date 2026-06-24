@@ -1,4 +1,4 @@
-# CoProduce AI SaaS image - serves the API and runs as the worker (same image).
+# Co-Produce AI SaaS image - serves the API and runs as the worker (same image).
 FROM python:3.11-slim
 WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg \

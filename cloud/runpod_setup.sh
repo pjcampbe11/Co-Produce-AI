@@ -20,7 +20,7 @@ hf download stabilityai/stable-audio-open-1.0 model.ckpt model_config.json --loc
 
 # 3. Your data (upload from your machine first, e.g.:
 #    runpodctl send / scp -r dataset/ root@<pod-ip>:/workspace/dataset/
-#    and the toolkit:        scp -r CoProduceAI/ root@<pod-ip>:/workspace/toolkit/ )
+#    and the toolkit:        scp -r Co-Produce-AI/ root@<pod-ip>:/workspace/toolkit/ )
 echo "Expect dataset at /workspace/dataset and toolkit at /workspace/toolkit"
 
 # 4. Launch training (see README step 5 for flag explanations)

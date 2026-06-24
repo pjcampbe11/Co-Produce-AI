@@ -1,4 +1,4 @@
-"""CoProduce AI SaaS API (FastAPI).
+"""Co-Produce AI SaaS API (FastAPI).
 
 Endpoints:
   POST /v1/signup                 -> create account + first API key (dev/self-host)
@@ -29,7 +29,7 @@ from .jobqueue import queue_for
 from . import ratelimit
 from .tasks import TASK_COSTS
 
-app = FastAPI(title="CoProduce AI API", version="1.0")
+app = FastAPI(title="Co-Produce AI API", version="1.0")
 
 # Static pricing/marketing page at /pricing (and assets under /static).
 _static_dir = os.path.join(os.path.dirname(__file__), "static")
