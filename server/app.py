@@ -25,7 +25,8 @@ from .auth import current_user, generate_key
 from .billing import create_checkout, handle_webhook
 from .config import settings
 from .db import ApiKey, Job, User, CreditLedger, get_session, init_db, _now
-from .queue import queue_for
+from .jobqueue import queue_for
+from . import ratelimit
 from .tasks import TASK_COSTS
 
 app = FastAPI(title="Beat Toolkit API", version="1.0")
@@ -57,8 +58,10 @@ class SignupIn(BaseModel):
 
 
 @app.post("/v1/signup")
-def signup(body: SignupIn, x_admin_token: str = Header(default="")) -> dict:
+def signup(body: SignupIn, request: Request, x_admin_token: str = Header(default="")) -> dict:
     # Allow if public signup is on, OR an admin presents the configured token.
+    ratelimit.check(f"signup:{request.client.host if request.client else 'anon'}",
+                    settings.SIGNUP_LIMIT_PER_MIN)
     admin_ok = bool(settings.ADMIN_TOKEN) and x_admin_token == settings.ADMIN_TOKEN
     if not settings.ALLOW_SIGNUP and not admin_ok:
         raise HTTPException(403, "signup disabled (set ALLOW_SIGNUP or send X-Admin-Token)")
@@ -105,6 +108,7 @@ def _job_dict(j: Job) -> dict:
 
 @app.post("/v1/jobs")
 def submit_job(body: JobIn, user: User = Depends(current_user)) -> dict:
+    ratelimit.check(f"jobs:{user.id}", settings.RATE_LIMIT_PER_MIN)
     if body.task not in TASK_COSTS:
         raise HTTPException(400, f"unknown task; valid: {sorted(TASK_COSTS)}")
     cost = TASK_COSTS[body.task]

@@ -74,3 +74,20 @@ curl -s -X POST localhost:8000/v1/billing/checkout -H "authorization: Bearer $KE
 
 Edit `TASK_COSTS` in `server/tasks.py`. GPU tasks (flip/remix/song) need a
 GPU-enabled worker — see the commented `deploy:` block in `docker-compose.yml`.
+
+## Rate limiting
+
+Per-API-key on job submit (`RATE_LIMIT_PER_MIN`, default 60) and per-IP on signup
+(`SIGNUP_LIMIT_PER_MIN`, default 5), via a Redis fixed-window limiter that fails
+open if Redis blinks. Over the limit returns **429**. Set either to `0` to disable.
+
+## Tests
+
+```bash
+pip install -r server/requirements.txt   # includes pytest + fakeredis
+cd server && pytest                       # 11 tests, no Redis/Stripe needed
+```
+
+Covers signup + admin-token lockdown, auth, credit metering (402), CPU/GPU queue
+routing, the pricing page, and rate-limit 429 — all with fakeredis and a stubbed
+queue, so it runs anywhere.

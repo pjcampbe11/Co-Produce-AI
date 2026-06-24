@@ -1459,6 +1459,8 @@ A ready static **pricing page** is served at **`/pricing`** (Bears-themed, calls
 python clients/python/beat_client.py --base-url http://localhost:8000     --signup you@example.com --task beat --param style=trap --param bpm=140 --out trap.wav
 ```
 
+**Rate limiting & tests.** The API rate-limits per key on job submit (`RATE_LIMIT_PER_MIN`) and per IP on signup (`SIGNUP_LIMIT_PER_MIN`) via Redis, returning **429** over the limit. A pytest suite (`server/tests/`, **11 tests**, fakeredis + stubbed queue — no infra needed) covers signup/lockdown, auth, credit metering, CPU/GPU routing, the pricing page, and rate limiting: `cd server && pytest`.
+
 *Optional / good-to-have:* put the API behind a reverse proxy with TLS, move
 `DATABASE_URL` to Postgres, and scale workers per lane independently. Full details
 + curl tour in [`server/README.md`](server/README.md).

@@ -27,6 +27,10 @@ class Settings:
     ADMIN_TOKEN = os.getenv("ADMIN_TOKEN", "")
     FREE_CREDITS = int(os.getenv("FREE_CREDITS", "10"))  # granted on signup
 
+    # Rate limiting (requests/min). 0 disables. Per-API-key for jobs, per-IP for signup.
+    RATE_LIMIT_PER_MIN = int(os.getenv("RATE_LIMIT_PER_MIN", "60"))
+    SIGNUP_LIMIT_PER_MIN = int(os.getenv("SIGNUP_LIMIT_PER_MIN", "5"))
+
     # Stripe
     STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY", "")
     STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET", "")
