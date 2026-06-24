@@ -637,8 +637,24 @@ def build_ui():
                             b_pricing = gr.Button("\U0001F310  Print pricing URL")
                     srv_log = gr.Textbox(label="Server log", lines=20, max_lines=20,
                                          autoscroll=True, elem_classes=["logbox"])
-                    b_redis.click(lambda: (yield from run_cmd(
-                        ["docker", "compose", "up", "-d", "redis"])), None, srv_log)
+                    def _start_redis():
+                        # Prefer Docker; fall back to a native redis-server if Docker
+                        # isn't available but redis-server is on PATH.
+                        import shutil
+                        if shutil.which("docker"):
+                            yield from run_cmd(["docker", "compose", "up", "-d", "redis"])
+                            return
+                        if shutil.which("redis-server"):
+                            yield ("Docker not found - starting native redis-server "
+                                   "(leave this job running).\n\n")
+                            yield from run_cmd(["redis-server", "--port", "6379"])
+                            return
+                        yield ("Neither Docker nor redis-server found.\n"
+                               "Install Docker Desktop, or a native Redis:\n"
+                               "  Windows: use Docker, WSL, or Memurai (memurai.com)\n"
+                               "  macOS:   brew install redis && redis-server\n"
+                               "  Linux:   sudo apt-get install -y redis-server\n")
+                    b_redis.click(_start_redis, None, srv_log)
                     b_api.click(lambda port: (yield from run_cmd(
                         [py, "-m", "uvicorn", "server.app:app", "--host", "127.0.0.1",
                          "--port", str(int(port or 8000))])), api_port, srv_log)
