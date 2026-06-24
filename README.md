@@ -1614,8 +1614,21 @@ python scripts/playlist_meta.py -pl <url> --audio-features --format md --out pla
 ```
 
 macOS/Linux: `export SPOTIFY_CLIENT_ID=... SPOTIFY_CLIENT_SECRET=...`. To persist
-on Windows, use `setx SPOTIFY_CLIENT_ID "..."` (new terminal required). Full
-per-service key steps are in [`cheatsheets/api-keys.md`](cheatsheets/api-keys.md).
+on Windows, use `setx SPOTIFY_CLIENT_ID "..."` (new terminal required).
+
+**One-time browser login.** As of 2025–2026, Spotify requires a **user token** to
+read any playlist's tracks (app-only Client Credentials returns
+`401 "Valid user authentication required"`). So:
+
+- In your app's **Settings → Redirect URIs**, add exactly `http://127.0.0.1:8888/callback` and Save (this is required by the OAuth flow).
+- Run once with `--login`; a browser opens, you approve, and a refresh token is cached (`~/.coproduce_ai_spotify.json`). Future runs reuse it automatically.
+
+```powershell
+python scripts/playlist_meta.py -pl <url> --login        # first time only
+python scripts/playlist_meta.py -pl <url> -f md -o playlist.md   # subsequent runs
+```
+
+Full per-service key steps are in [`cheatsheets/api-keys.md`](cheatsheets/api-keys.md).
 
 > **Spotify API caveats (2024–2026 changes).** `--audio-features` (BPM/key/energy)
 > was **deprecated for apps created after 2024-11-27** — on a new app it returns

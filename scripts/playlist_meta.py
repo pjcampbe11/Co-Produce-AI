@@ -49,6 +49,9 @@ import urllib.request
 SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token"
 SPOTIFY_API = "https://api.spotify.com/v1"
 GENIUS_API = "https://api.genius.com"
+SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize"
+DEFAULT_REDIRECT = "http://127.0.0.1:8888/callback"
+TOKEN_CACHE = os.path.join(os.path.expanduser("~"), ".coproduce_ai_spotify.json")
 
 KEYS = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 
@@ -93,6 +96,79 @@ def spotify_token(cid, secret):
         "Authorization": f"Basic {auth}",
         "Content-Type": "application/x-www-form-urlencoded"}, data=body, method="POST")
     return out["access_token"]
+
+
+def _basic(cid, secret):
+    return base64.b64encode(f"{cid}:{secret}".encode()).decode()
+
+
+def _token_post(data, cid, secret):
+    body = urllib.parse.urlencode(data).encode()
+    return _req(SPOTIFY_TOKEN_URL, method="POST", data=body,
+                headers={"Authorization": f"Basic {_basic(cid, secret)}",
+                         "Content-Type": "application/x-www-form-urlencoded"})
+
+
+def user_login(cid, secret, redirect):
+    """One-time browser authorization (Authorization Code flow). Spotify now
+    requires a USER token to read playlist items. Caches the refresh token."""
+    import http.server
+    import webbrowser
+    scope = "playlist-read-private playlist-read-collaborative"
+    auth_url = SPOTIFY_AUTH_URL + "?" + urllib.parse.urlencode(
+        {"client_id": cid, "response_type": "code", "redirect_uri": redirect, "scope": scope})
+    pr = urllib.parse.urlparse(redirect)
+    holder = {}
+
+    class H(http.server.BaseHTTPRequestHandler):
+        def do_GET(self):
+            holder["code"] = urllib.parse.parse_qs(
+                urllib.parse.urlparse(self.path).query).get("code", [None])[0]
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html")
+            self.end_headers()
+            self.wfile.write(b"<html><body><h2>Co-Produce AI - authorized.</h2>"
+                             b"<p>You can close this tab.</p></body></html>")
+
+        def log_message(self, *a):
+            pass
+
+    httpd = http.server.HTTPServer((pr.hostname, pr.port or 8888), H)
+    sys.stderr.write("[login] opening your browser to authorize Spotify...\n")
+    sys.stderr.write("  if it does not open, paste this URL:\n  " + auth_url + "\n")
+    webbrowser.open(auth_url)
+    httpd.handle_request()
+    httpd.server_close()
+    code = holder.get("code")
+    if not code:
+        sys.exit("login failed: no authorization code received from Spotify.")
+    tok = _token_post({"grant_type": "authorization_code", "code": code,
+                       "redirect_uri": redirect}, cid, secret)
+    try:
+        json.dump({"refresh_token": tok.get("refresh_token")}, open(TOKEN_CACHE, "w"))
+    except Exception:
+        pass
+    sys.stderr.write("[login] success - refresh token cached at " + TOKEN_CACHE + "\n")
+    return tok["access_token"]
+
+
+def user_token(cid, secret, redirect, force=False):
+    """Return a user access token: refresh the cached one, else run the login."""
+    rt = ""
+    if not force:
+        try:
+            rt = json.load(open(TOKEN_CACHE)).get("refresh_token", "")
+        except Exception:
+            rt = ""
+    if not rt:
+        return user_login(cid, secret, redirect)
+    try:
+        tok = _token_post({"grant_type": "refresh_token", "refresh_token": rt}, cid, secret)
+        if tok.get("refresh_token"):
+            json.dump({"refresh_token": tok["refresh_token"]}, open(TOKEN_CACHE, "w"))
+        return tok["access_token"]
+    except Exception:
+        return user_login(cid, secret, redirect)
 
 
 def fetch_playlist(token, pid):
@@ -268,13 +344,17 @@ def main():
     ap.add_argument("--whosampled", action="store_true", help="Also query WhoSampled via RapidAPI (needs RAPIDAPI_KEY)")
     ap.add_argument("--client-id", default=os.environ.get("SPOTIFY_CLIENT_ID", ""))
     ap.add_argument("--client-secret", default=os.environ.get("SPOTIFY_CLIENT_SECRET", ""))
+    ap.add_argument("--login", action="store_true",
+                    help="(re)authorize via browser - required once; Spotify now needs a user token")
+    ap.add_argument("--redirect-uri", default=os.environ.get("SPOTIFY_REDIRECT_URI", DEFAULT_REDIRECT),
+                    help="must match a Redirect URI registered on your Spotify app")
     args = ap.parse_args()
 
     if not args.client_id or not args.client_secret:
         sys.exit("Set SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET (developer.spotify.com -> create app).")
 
     pid = playlist_id(args.playlist)
-    token = spotify_token(args.client_id, args.client_secret)
+    token = user_token(args.client_id, args.client_secret, args.redirect_uri, force=args.login)
     meta, items = fetch_playlist(token, pid)
     print(f"[playlist_meta] '{meta.get('name')}' - {len(items)} tracks", file=sys.stderr)
 

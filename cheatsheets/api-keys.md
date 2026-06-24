@@ -9,10 +9,13 @@ never in the repo. Windows: `$env:NAME="value"` (this shell) or
 2. **Create app**. Name + description = anything. **Redirect URI** = `http://127.0.0.1:8888/callback` (required, unused by Client Credentials).
 3. Tick **Web API**, accept terms, **Save**.
 4. Open app → **Settings** → copy **Client ID** and **View client secret**.
+5. Under **Redirect URIs** add `http://127.0.0.1:8888/callback` → Save.
 
 ```
 SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET
 ```
+
+Spotify now requires a **user token** to read playlist tracks, so run `playlist_meta.py ... --login` once (opens a browser; caches a refresh token).
 
 ## Genius  (genius_lookup.py, playlist_meta.py --samples) — free
 1. <https://genius.com/api-clients> → **New API Client**.
