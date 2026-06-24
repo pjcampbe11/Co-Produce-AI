@@ -77,9 +77,33 @@ def main():
                     rec["genius_title"] = hit.get("full_title", "")
                     det = gl.song_details(args.token, hit["id"])
                     rec["producer"] = ", ".join(p.get("name", "") for p in det.get("producer_artists", []))
+                    rec["writers"] = ", ".join(w.get("name", "") for w in det.get("writer_artists", []))
+                    rec["featured"] = ", ".join(f.get("name", "") for f in det.get("featured_artists", []))
                     rd = det.get("release_date_for_display") or det.get("release_date", "")
                     if rd:
                         rec["release_date"] = rd
+                    # label (from custom_performances when present)
+                    for perf in det.get("custom_performances", []):
+                        if "label" in (perf.get("label", "") or "").lower():
+                            rec["label"] = ", ".join(a.get("name", "") for a in perf.get("artists", []))
+                    # sample / interpolation lineage (legitimately API-provided)
+                    samples, sampled_in, interps = [], [], []
+                    for rel in det.get("song_relationships", []):
+                        names = [f"{x.get('primary_artist',{}).get('name','?')} - {x.get('title','?')}"
+                                 for x in rel.get("songs", [])]
+                        rt = rel.get("relationship_type")
+                        if rt == "samples":
+                            samples += names
+                        elif rt == "sampled_in":
+                            sampled_in += names
+                        elif rt == "interpolates":
+                            interps += names
+                    if samples:
+                        rec["samples"] = samples
+                    if interps:
+                        rec["interpolates"] = interps
+                    if sampled_in:
+                        rec["sampled_in"] = sampled_in
                     rec["lyrics_note"] = "Lyrics are copyrighted - read them at genius_url. Not stored here."
                 else:
                     rec["genius_url"] = ""
@@ -100,7 +124,8 @@ def main():
     files = sorted(f for f in os.listdir(args.out) if f.endswith(".json"))
     lines = [f"# Song catalog ({len(files)} songs)\n",
              "_Metadata + Genius links only. Lyrics are copyrighted and live on Genius._\n",
-             "| Song | Album | Year | Producer | Lyrics |", "|---|---|---|---|---|"]
+             "| Song | Album | Year | Producer | Writers | Samples | Lyrics |",
+             "|---|---|---|---|---|---|---|"]
     for f in files:
         try:
             r = json.load(open(os.path.join(args.out, f), encoding="utf-8"))
@@ -109,7 +134,9 @@ def main():
         yr = (r.get("release_date", "") or "")[:4]
         link = f"[Genius]({r['genius_url']})" if r.get("genius_url") else "—"
         title = f"{r.get('artists','')} — {r.get('title','')}".replace("|", "/")
-        lines.append(f"| {title} | {r.get('album','').replace('|','/')} | {yr} | {r.get('producer','').replace('|','/')} | {link} |")
+        smp = str(len(r.get("samples", [])) + len(r.get("interpolates", []))) if (r.get("samples") or r.get("interpolates")) else "—"
+        lines.append(f"| {title} | {r.get('album','').replace('|','/')} | {yr} | "
+                     f"{r.get('producer','').replace('|','/')} | {r.get('writers','').replace('|','/')} | {smp} | {link} |")
     open(os.path.join(args.out, "INDEX.md"), "w", encoding="utf-8").write("\n".join(lines) + "\n")
     print(f"wrote {os.path.join(args.out, 'INDEX.md')} ({len(files)} songs)")
 
