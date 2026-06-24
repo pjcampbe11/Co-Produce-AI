@@ -16,7 +16,7 @@ All scripts are in `scripts/`. Run `python scripts/<name>.py --help` for full fl
 | `playlist_meta.py` | Spotify playlist metadata | `-pl --audio-features --samples -f md\|json\|csv` |
 | `genre_playlists.py` | best playlists per genre | `-g <genre>\|all --limit -f md\|json` |
 | `playlist_catalog.py` | per-song catalog (metadata + Genius link, no lyrics) | `--json --out --resume` |
-| `sample_dna.py` | catalog sample lineage \u2192 original beat prompts | `--catalog --bpm --key --out` |
+| `sample_dna.py` | sample lineage \u2192 original prompts + audio2audio flips | `--catalog --out --flips --flip-input` |
 
 ## Generate & transform
 | Script | Does | Key flags |

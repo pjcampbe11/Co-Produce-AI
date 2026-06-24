@@ -1714,6 +1714,16 @@ python scripts/sa3_workflow.py plan --plan prompts/sample_dna.json --out generat
 That's the legal, creative core of Co-Produce AI: learn the *tradition* from real
 credits, then make something new in it — never reproduce the source works.
 
+`sample_dna.py` can also seed **audio-to-audio flips** in the detected era's
+texture — give it `--flips N` to write era-textured flip prompts, and add
+`--flip-input <your_chop.wav>` to render them through `audio2audio.py`:
+
+```powershell
+python scripts/sample_dna.py --catalog catalog --flips 8 --bpm 90 --key "F minor" --flip-input mychop.wav --out-dir flips
+```
+
+Each flip is an original chop (e.g. "dusty 70s soul chop, chopped and re-looped, 90 BPM") derived from *your* source sound — not the sampled records.
+
 ### Genre playlist finder
 
 `genre_playlists.py` returns top playlists for a genre from **Spotify** (live Web

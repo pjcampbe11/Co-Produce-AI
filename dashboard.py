@@ -293,6 +293,12 @@ TOOLS = [
         F("--key", "Key e.g. F minor", "text"),
         F("--out", "Write pack plan JSON", "text", "prompts/sample_dna.json"),
         F("--report", "Print lineage summary", "bool", True),
+        F("--flips", "N flip prompts (0=off)", "num", 0),
+        F("--flip-input", "Source WAV to flip (optional)", "text"),
+        F("--strength", "Flip strength 0-1", "num", 0.55),
+        F("--variations", "Variations per flip", "num", 2),
+        F("--out-dir", "Flips output dir", "text", "flips"),
+        F("--pretrained", "HF model for flips", "text", "stabilityai/stable-audio-open-1.0"),
     ]),
     ("\U0001F9EA Micro-variants", "microvariants.py", [
         F("--input", "Source wav", "file"),

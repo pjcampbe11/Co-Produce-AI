@@ -38,6 +38,14 @@ ERA_VIBES = {
 }
 
 
+# Chop techniques layered onto the era vibe to suggest FRESH flips (original output).
+CHOP_MOVES = [
+    "chopped and re-looped", "pitched-up chipmunk-soul", "half-time and filtered",
+    "time-stretched and warped", "reversed-tail swell", "vinyl-crackle one-bar loop",
+    "sliced into stabs", "low-passed and dusty",
+]
+
+
 def _decade(date_str):
     m = re.search(r"(19|20)\d{2}", date_str or "")
     if not m:
@@ -112,6 +120,40 @@ def build_plan(stats, args):
     }
 
 
+def build_flip_prompts(stats, args):
+    """N original flip prompts in the catalog's dominant-era texture."""
+    era = (stats["decades"].most_common(1)[0][0] if stats["decades"] else "1990s")
+    vibe = ERA_VIBES.get(era, ERA_VIBES["1990s"])
+    keyp = f", key of {args.key}" if args.key else ""
+    out = []
+    for i in range(args.flips):
+        move = CHOP_MOVES[i % len(CHOP_MOVES)]
+        out.append({
+            "name": f"flip_{i+1:02d}_{move.split()[0]}",
+            "prompt": f"hip hop sample flip, {vibe}, {move}, {args.bpm} BPM{keyp}, original chop",
+            "strength": args.strength,
+        })
+    return out, era
+
+
+def run_flips(prompts, args):
+    """Drive audio2audio.py once per flip prompt on --flip-input (subprocess)."""
+    import subprocess
+    here = os.path.dirname(os.path.abspath(__file__))
+    a2a = os.path.join(here, "audio2audio.py")
+    model_args = []
+    if args.model_config and args.ckpt:
+        model_args = ["--model-config", args.model_config, "--ckpt", args.ckpt]
+    elif args.pretrained:
+        model_args = ["--pretrained", args.pretrained]
+    for fp in prompts:
+        cmd = [sys.executable, a2a, "--input", args.flip_input, "--prompt", fp["prompt"],
+               "--strength", str(fp["strength"]), "--variations", str(args.variations),
+               "--out", os.path.join(args.out_dir, fp["name"])] + model_args
+        print("$ " + " ".join(cmd))
+        subprocess.run(cmd, check=False)
+
+
 def main():
     ap = argparse.ArgumentParser(description="Distill catalog sample lineage into original beat prompts.")
     ap.add_argument("--catalog", default="catalog", help="folder of playlist_catalog.py JSON files")
@@ -120,6 +162,16 @@ def main():
     ap.add_argument("--key", default="")
     ap.add_argument("--out", help="write a pack-plan JSON here (feeds generate.py / sa3_workflow.py)")
     ap.add_argument("--report", action="store_true", help="print the lineage summary")
+    # --- flip seeding (audio2audio) ---
+    ap.add_argument("--flips", type=int, default=0, help="generate N era-textured flip prompts")
+    ap.add_argument("--flips-out", default="prompts/sample_dna_flips.json", help="where to write the flip prompts")
+    ap.add_argument("--flip-input", help="a source WAV - if set, runs audio2audio.py for each flip prompt")
+    ap.add_argument("--strength", type=float, default=0.55, help="audio2audio strength 0-1")
+    ap.add_argument("--variations", type=int, default=2, help="audio2audio variations per flip")
+    ap.add_argument("--out-dir", default="flips", help="output dir for generated flips")
+    ap.add_argument("--pretrained", default="stabilityai/stable-audio-open-1.0", help="HF model for flips")
+    ap.add_argument("--model-config", default="", help="your model_config.json (with --ckpt)")
+    ap.add_argument("--ckpt", default="", help="your ckpt (with --model-config)")
     args = ap.parse_args()
 
     if not os.path.isdir(args.catalog):
@@ -141,6 +193,20 @@ def main():
         json.dump(plan, open(args.out, "w", encoding="utf-8"), indent=2, ensure_ascii=False)
         print(f"\nwrote pack plan -> {args.out}  (generate with: "
               f"python scripts/sa3_workflow.py plan --plan {args.out} --out generated)")
+
+    if args.flips:
+        flips, era = build_flip_prompts(stats, args)
+        os.makedirs(os.path.dirname(args.flips_out) or ".", exist_ok=True)
+        json.dump({"era": era, "flips": flips}, open(args.flips_out, "w", encoding="utf-8"),
+                  indent=2, ensure_ascii=False)
+        print(f"\nwrote {len(flips)} flip prompts ({era} texture) -> {args.flips_out}")
+        if args.flip_input:
+            os.makedirs(args.out_dir, exist_ok=True)
+            run_flips(flips, args)
+        else:
+            print("  add --flip-input <source.wav> to render these as audio2audio flips, e.g.:")
+            print(f"  python scripts/sample_dna.py --catalog {args.catalog} --flips {args.flips} "
+                  f"--flip-input mychop.wav --out-dir flips")
 
 
 if __name__ == "__main__":
