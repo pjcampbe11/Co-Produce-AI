@@ -1820,6 +1820,10 @@ power (CC11), breathiness (CC74), and pitch inflection — as MIDI CC lanes plus
 `<out>_expression.json` the ACE Bridge applies per note, so AI vocals sit far more
 naturally. Clone your own voice in ACE Studio once and reuse it across tracks.
 
+Check readiness anytime with `python scripts/engine_doctor.py` (green/red per
+engine; no models loaded) — the dashboard's **🩺 Engine status** tab shows the
+same. 
+
 *Optional / good-to-have:* `yue` wants a 16–24 GB GPU; use `diffrhythm` for fast
 drafts then re-render the keeper in `yue`. `musicgen-melody` is the only engine
 that conditions on a hummed/played melody. All engines are reachable in the

@@ -639,6 +639,36 @@ def build_ui():
                 "_GPU tip: run **this dashboard** on a pod to drive its GPU from the same UI; expose port 7860._"
             )
 
+        with gr.Tab("\U0001FA7A  Engine status"):
+            gr.Markdown("#### Engine readiness\nChecks each generation engine's deps/repo "
+                        "(no models loaded). Green = ready to run, red = needs setup. "
+                        "Pass repo paths via env (YUE_REPO, DIFFRHYTHM_REPO) or the scripts.")
+            est_btn = gr.Button("\U0001F501  Check engines", variant="primary")
+            est_html = gr.HTML()
+            def _engine_status():
+                import subprocess as _sp, json as _json
+                try:
+                    out = _sp.run([CONFIG["python"], str(SCRIPTS / "engine_doctor.py"), "--json"],
+                                  capture_output=True, text=True, cwd=str(ROOT), timeout=30)
+                    data = _json.loads(out.stdout)
+                except Exception as e:
+                    return f"<p style='color:#E24B4A'>doctor failed: {e}</p>"
+                rows = ""
+                for r in data.get("engines", []):
+                    color = "#22C55E" if r["ready"] else "#E24B4A"
+                    dot = "\u25CF"
+                    rows += (f"<tr><td style='padding:6px 10px;color:{color};font-size:16px'>{dot}</td>"
+                             f"<td style='padding:6px 10px;font-weight:600'>{r['engine']}</td>"
+                             f"<td style='padding:6px 10px;color:#9FB3C8'>{r['kind']}</td>"
+                             f"<td style='padding:6px 10px;color:#9FB3C8'>{r['detail']}</td></tr>")
+                torch = "yes" if data.get("torch") else "<span style='color:#E24B4A'>NO</span>"
+                return (f"<p style='color:#9FB3C8'>torch available: {torch}</p>"
+                        f"<table style='border-collapse:collapse;width:100%'>"
+                        f"<tr style='color:#FF8A3D'><th></th><th style='text-align:left;padding:6px 10px'>engine</th>"
+                        f"<th style='text-align:left;padding:6px 10px'>kind</th>"
+                        f"<th style='text-align:left;padding:6px 10px'>status</th></tr>{rows}</table>")
+            est_btn.click(_engine_status, None, est_html)
+
         with gr.Tab("\U0001F3B6  Inspiration"):
             gr.Markdown("#### Hip-hop beats inspired by\nThe reference playlist this "
                         "toolkit is tuned against. Use **Prep & Analyze \u2192 Spotify playlist "

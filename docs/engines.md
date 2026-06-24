@@ -54,3 +54,15 @@ python scripts/generate_engine.py --engine yue --yue ~/YuE --lyrics verse.txt --
 
 Cloud setup: `cloud/yue_setup.sh`, `cloud/diffrhythm_setup.sh`, `cloud/musicgen_setup.sh`
 (and the existing `cloud/ace_step_setup.sh`, `cloud/sa3_setup.sh`, `cloud/heartmula_setup.sh`).
+
+## Readiness check
+
+Before a run, see what's actually installed:
+
+```bash
+python scripts/engine_doctor.py            # green/red table per engine
+python scripts/engine_doctor.py --json     # machine-readable (dashboard uses this)
+```
+
+It only probes imports/paths/REST — no models loaded, no GPU touched. The
+dashboard's **🩺 Engine status** tab renders the same check as green/red dots.
