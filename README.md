@@ -1637,6 +1637,13 @@ Full per-service key steps are in [`cheatsheets/api-keys.md`](cheatsheets/api-ke
 > your own (or any regular public) playlist; the tool prints a clear message if a
 > playlist isn't accessible.
 
+Build a per-song **reference catalog** (metadata + Genius links, no lyrics) from
+a JSON export with [`scripts/playlist_catalog.py`](scripts/playlist_catalog.py):
+`python scripts/playlist_catalog.py --json playlist_full.json --out catalog --resume`
+→ writes one file per song + `catalog/INDEX.md`. It does **not** store lyrics
+(copyrighted; the Genius API doesn't serve them) — train lyric models on your own
+words (§22).
+
 Five ways to use it:
 
 1. **Newest-added report** (default): `-pl <url>` → markdown, newest first.
