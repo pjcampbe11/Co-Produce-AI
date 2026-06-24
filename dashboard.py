@@ -4,8 +4,9 @@ dashboard.py  -  Local web dashboard for the whole toolkit (Gradio).
 
 One control panel for every stage: organize -> separate -> analyze -> tag ->
 caption -> prepare -> validate -> train -> generate -> post -> pack -> provenance,
-plus beat builder, full songs, VST chains, and an audio auditioner. Each tool
-gets a form; Run launches the script as a job and streams its live log; results
+plus beat builder, full songs, VST chains, a Creative Lab, an audio auditioner,
+a Cloud/Deploy reference, and a Server/API tab that can launch the SaaS API,
+worker, tests, and drive the API client. Each tool streams its live log; results
 can be browsed and played back.
 
 Run:
@@ -380,6 +381,28 @@ def run_tool(spec_fields, script, *values):
     yield log[-12000:] + f"\n\n=== exit code {proc.returncode} ==="
 
 
+def run_cmd(cmd, cwd=None, env_extra=None):
+    """Stream an arbitrary command (used by the Server / API tab for uvicorn,
+    the worker, pytest, docker compose, and the Python API client)."""
+    import os as _os
+    env = dict(_os.environ)
+    if env_extra:
+        env.update({k: str(v) for k, v in env_extra.items() if v not in (None, "")})
+    log = "$ " + " ".join(cmd) + "\n\n"
+    yield log
+    try:
+        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                text=True, bufsize=1, cwd=cwd or str(ROOT), env=env)
+    except Exception as e:
+        yield log + f"\nFAILED TO START: {e}"
+        return
+    for line in iter(proc.stdout.readline, ""):
+        log += line
+        yield log[-12000:]
+    proc.wait()
+    yield log[-12000:] + f"\n\n=== exit code {proc.returncode} ==="
+
+
 THEME = gr.themes.Base(
     primary_hue=gr.themes.colors.orange,
     secondary_hue=gr.themes.colors.blue,
@@ -593,6 +616,70 @@ def build_ui():
                     fields += [{"flag": "--pretrained", "kind": "text"}]; vals += [mid]
                 yield from run_tool(fields, "remix.py", *vals)
             rbtn.click(_remix, [listing, rgenre, rmode, rmodel, rout], rlog)
+        with gr.Tab("\U0001F6F0\uFE0F  Server / API"):
+            gr.Markdown(
+                "#### SaaS server & API\n"
+                "Launch and exercise the [`server/`](server) stack (REST API + job queue + "
+                "Stripe). The API/worker need **Redis** running (`docker compose up redis`, or "
+                "full stack `docker compose up --build`). Buttons stream live logs; long-running "
+                "ones (API, worker) keep running until you stop the job.")
+            py = CONFIG["python"]
+            with gr.Tabs():
+                with gr.Tab("Run / manage"):
+                    with gr.Row():
+                        api_port = gr.Number(value=8000, label="API port", scale=1)
+                        with gr.Column(scale=3):
+                            b_api = gr.Button("\u25B6  Start API (uvicorn)", variant="primary")
+                            b_worker = gr.Button("\u25B6  Start worker (both lanes)", variant="primary")
+                            b_tests = gr.Button("\u25B6  Run server tests (pytest)")
+                            b_compose = gr.Button("\u25B6  docker compose up --build (full stack)")
+                            b_pricing = gr.Button("\U0001F310  Print pricing URL")
+                    srv_log = gr.Textbox(label="Server log", lines=20, max_lines=20,
+                                         autoscroll=True, elem_classes=["logbox"])
+                    b_api.click(lambda port: (yield from run_cmd(
+                        [py, "-m", "uvicorn", "server.app:app", "--host", "127.0.0.1",
+                         "--port", str(int(port or 8000))])), api_port, srv_log)
+                    b_worker.click(lambda: (yield from run_cmd([py, "-m", "server.worker"])),
+                                   None, srv_log)
+                    b_tests.click(lambda: (yield from run_cmd([py, "-m", "pytest", "-q"],
+                                  cwd=str(ROOT / "server"))), None, srv_log)
+                    b_compose.click(lambda: (yield from run_cmd(["docker", "compose", "up", "--build"])),
+                                    None, srv_log)
+                    b_pricing.click(lambda port: f"Pricing page: http://127.0.0.1:{int(port or 8000)}/pricing",
+                                    api_port, srv_log)
+
+                with gr.Tab("API client (signup \u2192 submit \u2192 download)"):
+                    gr.Markdown("Drives `clients/python/beat_client.py` against a running API.")
+                    with gr.Row():
+                        base = gr.Textbox("http://127.0.0.1:8000", label="Base URL")
+                        akey = gr.Textbox("", label="API key (bt_...) - or use Signup email")
+                        signup = gr.Textbox("", label="Signup email (mints a key)")
+                    with gr.Row():
+                        ctask = gr.Dropdown(["beat", "tag", "flip", "remix", "song"], value="beat", label="Task")
+                        cparams = gr.Textbox("style=trap, bpm=140", label="Params (k=v, comma-sep)")
+                        cout = gr.Textbox("out.wav", label="Save audio to")
+                    admin = gr.Textbox("", label="Admin token (if signup is locked)")
+                    cbtn = gr.Button("\u25B6  Run API job", variant="primary")
+                    clog = gr.Textbox(label="Client log", lines=16, elem_classes=["logbox"])
+                    def _client(base_url, key, email, task, params, out, admin_tok):
+                        cmd = [py, str(ROOT / "clients" / "python" / "beat_client.py"),
+                               "--base-url", base_url, "--task", task]
+                        if key.strip():
+                            cmd += ["--key", key.strip()]
+                        elif email.strip():
+                            cmd += ["--signup", email.strip()]
+                        else:
+                            yield "Provide an API key or a signup email."; return
+                        if admin_tok.strip():
+                            cmd += ["--admin-token", admin_tok.strip()]
+                        for kv in [x.strip() for x in params.split(",") if x.strip()]:
+                            cmd += ["--param", kv.replace(" ", "")]
+                        if out.strip():
+                            cmd += ["--out", out.strip()]
+                        yield from run_cmd(cmd)
+                    cbtn.click(_client, [base, akey, signup, ctask, cparams, cout, admin],
+                               clog)
+
     return app
 
 

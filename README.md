@@ -848,7 +848,7 @@ Then build genre packs from the matching plans: `prompts/pack_plan.rock_metal.js
 <a name="26-dashboard"></a>
 ## 26. Dashboard (web UI)
 
-**What it is.** A local Gradio control panel for the whole suite — a tab per stage grouped into sections (Prep & Analyze · Train & Generate · Beats & Sound · Remix · Lyrics · Finish · Plugins), each with live streaming logs, plus an Audition tab with playback and a remix-the-selected-file panel, a **🧪 Creative Lab** tab (micro-variants, groove DNA, flip lineage, destroy & heal, A/B models, call & response, ecosystem packs, curation loop, Push server, Ableton bridge), and a **Cloud / Deploy** reference tab. Every runnable script in `scripts/` is reachable from the UI. Bears-themed (navy/orange).
+**What it is.** A local Gradio control panel for the whole suite — a tab per stage grouped into sections (Prep & Analyze · Train & Generate · Beats & Sound · Remix · Lyrics · Finish · Plugins), each with live streaming logs, plus an Audition tab with playback and a remix-the-selected-file panel, a **🧪 Creative Lab** tab (micro-variants, groove DNA, flip lineage, destroy & heal, A/B models, call & response, ecosystem packs, curation loop, Push server, Ableton bridge), a **Cloud / Deploy** reference tab, and a **🛰️ Server / API** tab that launches the SaaS API/worker, runs the test suite, and drives the API client (signup→submit→download). Every runnable script in `scripts/` is reachable from the UI. Bears-themed (navy/orange).
 
 Prep & Analyze covers the full tagging/caption pipeline including **Genius metadata** (`genius_lookup.py`) and the auto-tagger's new **`heuristic`** engine (local DSP — no model, GPU, or network), alongside `qwen3-omni`/`qwen2-audio`/`clap`. The **Cloud / Deploy** tab has copy-paste commands for the one-shot pod bootstrap, SCP, the S3 volume, and the serverless endpoint + Go client (mirrors §33–§34).
 
@@ -857,7 +857,8 @@ Prep & Analyze covers the full tagging/caption pipeline including **Genius metad
 $ python dashboard.py
 Running on local URL:  http://127.0.0.1:7860
 # Tabs: ⚙️ Settings · 📥 Prep & Analyze · 🧠 Train & Generate · 🥁 Beats & Sound
-#       · 🧪 Creative Lab · 🔁 Remix · ✍️ Lyrics · 📦 Finish · 🔌 Plugins · ☁️ Cloud/Deploy · 🎧 Audition
+#       · 🧪 Creative Lab · 🔁 Remix · ✍️ Lyrics · 📦 Finish · 🔌 Plugins
+#       · ☁️ Cloud/Deploy · 🛰️ Server/API · 🎧 Audition
 # Each tool form streams its live log on the right; Audition plays + remixes results.
 ```
 
