@@ -175,11 +175,10 @@ def fetch_playlist(token, pid):
     h = {"Authorization": f"Bearer {token}"}
     meta = _req(f"{SPOTIFY_API}/playlists/{pid}"
                 "?fields=name,description,followers(total),owner(display_name),external_urls(spotify)", headers=h)
-    fields = ("items(added_at,added_by(id),track(name,id,popularity,duration_ms,explicit,"
-              "external_ids(isrc),external_urls(spotify),artists(name,id),"
-              "album(name,release_date))),next")
-    # Spotify deprecated the /tracks alias - use /items (same response shape).
-    url = f"{SPOTIFY_API}/playlists/{pid}/items?limit=100&fields={urllib.parse.quote(fields)}"
+    # Spotify deprecated the /tracks alias - use /items. We DON'T pass a fields
+    # projection here: with a user token the projected response was dropping the
+    # nested track object, so we fetch full items and pick fields in build_rows.
+    url = f"{SPOTIFY_API}/playlists/{pid}/items?limit=100&market=from_token"
     items = []
     while url:
         try:
@@ -263,8 +262,13 @@ def whosampled_rapidapi(artist, title, key):
 def build_rows(items, feats, args):
     rows = []
     for it in items:
-        t = it.get("track") or {}
-        if not t:
+        if not isinstance(it, dict):
+            continue
+        t = it.get("track")
+        if t is None and "name" in it and "artists" in it:
+            t = it                      # some responses return the track directly
+        t = t or {}
+        if not t or t.get("type") == "episode":
             continue
         af = feats.get(t.get("id"), {}) if feats else {}
         rows.append({
