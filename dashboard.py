@@ -286,6 +286,14 @@ TOOLS = [
         F("--lazy-load", "Lazy load (low VRAM)", "bool", True),
     ]),
     # ---- Creative Lab: advanced/experimental generators ----
+    ("\U0001F9EC Sample DNA", "sample_dna.py", [
+        F("--catalog", "Catalog folder", "text", "catalog"),
+        F("--pack-name", "Pack name", "text", "Crate DNA Vol 1"),
+        F("--bpm", "BPM", "num", 90),
+        F("--key", "Key e.g. F minor", "text"),
+        F("--out", "Write pack plan JSON", "text", "prompts/sample_dna.json"),
+        F("--report", "Print lineage summary", "bool", True),
+    ]),
     ("\U0001F9EA Micro-variants", "microvariants.py", [
         F("--input", "Source wav", "file"),
         F("--prompt", "Prompt", "text"),
@@ -527,7 +535,7 @@ def build_ui():
                                            "prepare_dataset.py", "validate_dataset.py"]),
             ("\U0001F9E0 Train & Generate", ["sa3_workflow.py", "ace_step_workflow.py", "generate.py", "audio2audio.py", "song_generate.py"]),
             ("\U0001F941 Beats & Sound", ["beat_builder.py", "vst_instrument.py", "vst_chain.py"]),
-            ("\U0001F9EA Creative Lab", ["microvariants.py", "groove_dna.py", "flip_lineage.py", "destroy_heal.py",
+            ("\U0001F9EA Creative Lab", ["sample_dna.py", "microvariants.py", "groove_dna.py", "flip_lineage.py", "destroy_heal.py",
                                            "ab_models.py", "call_response.py", "ecosystem_pack.py", "curation_loop.py",
                                            "push_generation_server.py", "ableton_bridge.py"]),
             ("\U0001F501 Remix", ["remix.py"]),

@@ -1692,6 +1692,28 @@ The cheat sheets ([`cheatsheets/README.md`](cheatsheets/README.md)):
 - [`saas-and-cloud.md`](cheatsheets/saas-and-cloud.md) — API/queue/Stripe + pods/SCP/S3
 - [`best-songs-by-genre.md`](cheatsheets/best-songs-by-genre.md) — the playlist finder below
 
+### Song catalog & Sample DNA
+
+`playlist_catalog.py` turns a `playlist_meta.py` JSON export into a per-song
+**reference catalog** ([`catalog/`](catalog)) — producer, writers, featured,
+label, year, ISRC, Spotify + **Genius links**, and full **sample/interpolation
+lineage** — all from the Genius API. It stores **no lyrics** (copyrighted; the API
+doesn't serve them — read them via the Genius link).
+
+`sample_dna.py` then distills that lineage — which source artists/eras the catalog
+flips — into **original** pack-plan prompts you can generate from. It copies
+nothing; it uses the factual sampling tradition to craft fresh prompts like
+"dusty 70s soul chop, warm Rhodes, vinyl crackle, boom-bap drums":
+
+```powershell
+python scripts/playlist_catalog.py --json playlist_full.json --out catalog --resume
+python scripts/sample_dna.py --catalog catalog --pack-name "Crate DNA Vol 1" --bpm 90 --key "F minor" --out prompts/sample_dna.json
+python scripts/sa3_workflow.py plan --plan prompts/sample_dna.json --out generated
+```
+
+That's the legal, creative core of Co-Produce AI: learn the *tradition* from real
+credits, then make something new in it — never reproduce the source works.
+
 ### Genre playlist finder
 
 `genre_playlists.py` returns top playlists for a genre from **Spotify** (live Web
