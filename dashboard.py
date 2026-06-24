@@ -90,10 +90,18 @@ TOOLS = [
         F("--stems-dir", "Stems folder (*_instrumental)", "dir"),
         F("--full-root", "Full-songs folder (optional)", "dir"),
         F("--source", "Source", "choice", "beat", ["full", "vocals", "beat", "all"]),
-        F("--engine", "Engine", "choice", "auto", ["auto", "qwen3-omni", "qwen2-audio", "clap"]),
+        F("--engine", "Engine", "choice", "auto", ["auto", "heuristic", "qwen3-omni", "qwen2-audio", "clap"], info="heuristic = local DSP, no model/GPU"),
         F("--limit", "Limit (0 = all)", "num", 0),
         F("--shuffle", "Random selection order", "bool", True),
         F("--resume", "Resume", "bool", True),
+    ]),
+    ("Genius metadata", "genius_lookup.py", [
+        F("--beats", "Beats folder", "dir"),
+        F("--token", "Genius API token (or GENIUS_TOKEN env)", "text"),
+        F("--min-score", "Min match score 0-1", "num", 0.5),
+        F("--delay", "Seconds between API calls", "num", 0.5),
+        F("--limit", "Limit (0 = all)", "num", 0),
+        F("--resume", "Resume (skip enriched)", "bool", True),
     ]),
     ("Build captions", "build_captions.py", [
         F("--beats", "Beats folder", "dir"),
@@ -426,6 +434,32 @@ def build_ui():
             chosen_path = gr.Textbox(label="Selected plugin path (copy this)")
             reload_btn.click(_load_cat, None, pick)
             pick.change(lambda s: s.split("::")[-1].strip() if s and "::" in s else "", pick, chosen_path)
+
+        with gr.Tab("\u2601\uFE0F  Cloud / Deploy"):
+            gr.Markdown(
+                "#### Cloud / Deploy\n"
+                "Reference for running on RunPod and serving the toolkit. Full guides: "
+                "README \u00A733 (Serverless) and \u00A734 (Pod workflow); quick values in `cloud/connect.md`.\n\n"
+                "**One-shot pod setup** (paste in the pod's SSH session):\n"
+                "```bash\n"
+                "curl -fsSL https://raw.githubusercontent.com/pjcampbe11/Beat-Toolkit/main/cloud/pod_bootstrap.sh | bash\n"
+                "# private repo: GH_TOKEN=YOUR_PAT bash -c 'curl -fsSL .../pod_bootstrap.sh | bash'\n"
+                "```\n\n"
+                "**SCP files to/from a pod** (local terminal):\n"
+                "```powershell\n"
+                "scp -P <PORT> -i $env:USERPROFILE\\.ssh\\id_ed25519 -r \"F:\\RAP_ARCHIVES\\raw_beats\" root@<POD_IP>:/workspace/\n"
+                "scp -P <PORT> -i $env:USERPROFILE\\.ssh\\id_ed25519 -r root@<POD_IP>:/workspace/out \"F:\\out\"\n"
+                "```\n\n"
+                "**S3 network volume** (upload once, mount on any pod):\n"
+                "```powershell\n"
+                "aws s3 cp \"F:\\RAP_ARCHIVES\\raw_beats\" s3://d39orqnjjh/raw_beats/ --recursive --profile runpod --region eu-ro-1 --endpoint-url https://s3api-eu-ro-1.runpod.io --checksum-algorithm CRC32\n"
+                "```\n\n"
+                "**Serverless endpoint** \u2014 wrap a toolkit task behind an autoscaling HTTPS URL "
+                "(`serverless/handler.py` + `serverless/Dockerfile`). Call it from Go with `clients/go` "
+                "(`go run . -task beat -style trap -bpm 140 -out trap.wav`). Set `RUNPOD_API_KEY` "
+                "(console \u2192 Settings \u2192 API Keys) and `ENDPOINT_ID` (console \u2192 Serverless \u2192 your endpoint).\n\n"
+                "_GPU tip: run **this dashboard** on a pod to drive its GPU from the same UI; expose port 7860._"
+            )
 
         with gr.Tab("\U0001F3A7  Audition"):
             gr.Markdown("#### Audition + Remix\nList audio, click a file to play \u2014 then remix it into another genre.")

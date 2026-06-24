@@ -835,14 +835,16 @@ Then build genre packs from the matching plans: `prompts/pack_plan.rock_metal.js
 <a name="26-dashboard"></a>
 ## 26. Dashboard (web UI)
 
-**What it is.** A local Gradio control panel for the whole suite — a tab per stage grouped into sections (Prep & Analyze · Train & Generate · Beats & Sound · Remix · Lyrics · Finish · Plugins), each with live streaming logs, plus an Audition tab with playback and a remix-the-selected-file panel. Bears-themed (navy/orange).
+**What it is.** A local Gradio control panel for the whole suite — a tab per stage grouped into sections (Prep & Analyze · Train & Generate · Beats & Sound · Remix · Lyrics · Finish · Plugins), each with live streaming logs, plus an Audition tab with playback and a remix-the-selected-file panel, and a **Cloud / Deploy** reference tab. Bears-themed (navy/orange).
+
+Prep & Analyze covers the full tagging/caption pipeline including **Genius metadata** (`genius_lookup.py`) and the auto-tagger's new **`heuristic`** engine (local DSP — no model, GPU, or network), alongside `qwen3-omni`/`qwen2-audio`/`clap`. The **Cloud / Deploy** tab has copy-paste commands for the one-shot pod bootstrap, SCP, the S3 volume, and the serverless endpoint + Go client (mirrors §33–§34).
 
 **▶ Demo — clicking through sections, running a job, auditioning the result**
 ```console
 $ python dashboard.py
 Running on local URL:  http://127.0.0.1:7860
 # Tabs: ⚙️ Settings · 📥 Prep & Analyze · 🧠 Train & Generate · 🥁 Beats & Sound
-#       · 🔁 Remix · ✍️ Lyrics · 📦 Finish · 🔌 Plugins · 🎧 Audition
+#       · 🔁 Remix · ✍️ Lyrics · 📦 Finish · 🔌 Plugins · ☁️ Cloud/Deploy · 🎧 Audition
 # Each tool form streams its live log on the right; Audition plays + remixes results.
 ```
 
