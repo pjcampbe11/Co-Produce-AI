@@ -31,6 +31,7 @@ the produced .safetensors. Outputs still flow into postprocess.py -> 05.
 # ---------------------------------------------------------------------------
 import argparse
 import json
+import os
 import shutil
 from pathlib import Path
 
@@ -79,10 +80,18 @@ def cmd_prepare(args):
             continue
         dst.mkdir(parents=True, exist_ok=True)
         flat = "__".join(wav.relative_to(src).parts)
-        shutil.copy2(wav, dst / flat)
-        (dst / flat).with_suffix(".txt").write_text(prompt, encoding="utf-8")
+        target = dst / flat
+        if not target.exists():
+            if getattr(args, "copy", False):
+                shutil.copy2(wav, target)            # duplicates audio (2x disk)
+            else:
+                os.symlink(os.path.abspath(wav), target)  # no duplication (default)
+        target.with_suffix(".txt").write_text(prompt, encoding="utf-8")
         n += 1
-    print(f"{n} clips staged in {dst} (audio + .txt captions).")
+        if getattr(args, "limit", 0) and n >= args.limit:
+            break
+    how = "copied" if getattr(args, "copy", False) else "symlinked"
+    print(f"{n} clips staged in {dst} ({how} audio + .txt captions).")
     print("NOTE: confirm the caption format your SA3 version expects with")
     print("  uv run python scripts/train_lora.py --help   (run inside the SA3 repo)")
     print("Then train:  uv run python scripts/train_lora.py --model medium-base \\")
@@ -156,6 +165,8 @@ def main():
     p = sub.add_parser("prepare")
     p.add_argument("--dataset", required=True)
     p.add_argument("--data-dir", required=True)
+    p.add_argument("--copy", action="store_true", help="copy audio instead of symlinking (uses 2x disk)")
+    p.add_argument("--limit", type=int, default=0, help="stage only the first N clips (subset)")
     p.set_defaults(fn=cmd_prepare)
 
     p = sub.add_parser("plan")
