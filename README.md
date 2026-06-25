@@ -387,7 +387,7 @@ python scripts/validate_dataset.py --dataset "F:/dataset_beats"
 
 **▶ Demo — dataset → LoRA, demo audio improving over steps (on a pod)**
 ```console
-$ uv run python scripts/train_lora.py --model medium-base --data_dir sa3_beats --rank 16 --steps 2500 --output_dir lora_beats
+$ uv run python scripts/train_lora.py --model medium-base --data_dir sa3_beats --rank 16 --steps 2500 --save_dir lora_beats
 step  500/2500 | loss 0.182 | demo audio -> lora_beats/demos/step500.wav
 step 1500/2500 | loss 0.121 | demo audio -> lora_beats/demos/step1500.wav
 step 2500/2500 | loss 0.098 | saved lora_beats/lora_step2500.safetensors
@@ -400,7 +400,7 @@ step 2500/2500 | loss 0.098 | saved lora_beats/lora_step2500.safetensors
 # on the pod (after cloud/sa3_setup.sh)
 python /workspace/toolkit/scripts/sa3_workflow.py prepare --dataset /workspace/dataset_beats --data-dir /workspace/sa3_beats
 cd /workspace/stable-audio-3 && uv run python scripts/train_lora.py --model medium-base \
-  --data_dir /workspace/sa3_beats --rank 16 --adapter_type dora-rows --steps 2500 --exclude seconds_total --output_dir /workspace/lora_beats
+  --data_dir /workspace/sa3_beats --rank 16 --adapter_type dora-rows --steps 2500 --exclude seconds_total --save_dir /workspace/lora_beats
 runpodctl send /workspace/lora_beats/lora_step2500.safetensors   # receive on your PC
 ```
 Watch the trainer's demo audio; **stop when it sounds like your aesthetic but not like specific files** (overfitting). ~2000–3000 steps is a good range for this size.
