@@ -31,18 +31,25 @@ def main():
     ap.add_argument("--dataset", required=True)
     ap.add_argument("--min-seconds", type=float, default=0.05)
     ap.add_argument("--max-seconds", type=float, default=47.0)
+    ap.add_argument("--quick", action="store_true", help="header-only (skip full audio read / clip+silence check) - fast")
     args = ap.parse_args()
 
     root = Path(args.dataset)
     wavs = sorted(root.rglob("*.wav"))
     if not wavs:
         sys.exit("No WAVs found.")
+    print(f"Validating {len(wavs)} WAVs in {root} ..."          + ("  (--quick: header-only)" if args.quick else "  (reading audio; ~minutes for thousands of files)"), flush=True)
 
     errors, warnings = [], []
     kinds, durations = Counter(), []
     with_bpm = with_key = 0
 
-    for wav in wavs:
+    try:
+        from tqdm import tqdm as _tqdm
+        _it = _tqdm(wavs, unit="file")
+    except Exception:
+        _it = wavs
+    for wav in _it:
         try:
             info = sf.info(str(wav))
         except Exception as e:
@@ -59,12 +66,13 @@ def main():
         if dur > args.max_seconds:
             errors.append(f"{wav}: too long ({dur:.2f}s) - exceeds model window")
 
-        y, _ = sf.read(str(wav))
-        peak = float(np.abs(y).max()) if y.size else 0.0
-        if peak >= 0.999:
-            warnings.append(f"{wav}: possible clipping (peak {peak:.3f})")
-        if peak < 1e-4:
-            errors.append(f"{wav}: silent")
+        if not args.quick:
+            y, _ = sf.read(str(wav))
+            peak = float(np.abs(y).max()) if y.size else 0.0
+            if peak >= 0.999:
+                warnings.append(f"{wav}: possible clipping (peak {peak:.3f})")
+            if peak < 1e-4:
+                errors.append(f"{wav}: silent")
 
         sidecar = wav.with_suffix(".json")
         if not sidecar.exists():
