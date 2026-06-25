@@ -10,7 +10,12 @@ export PATH="$HOME/.local/bin:$PATH"
 git clone https://github.com/Stability-AI/stable-audio-3
 cd stable-audio-3
 uv sync --extra lora
-uv pip install matplotlib   # train_lora imports it (aeiou spectrogram); not in the lock
+# Training-only deps the SA3 'lora' extra doesn't fully declare (install each so
+# one bad name can't block the rest). flash_attn is intentionally skipped - it
+# self-disables and isn't needed for LoRA (and is painful to build on Blackwell).
+for p in matplotlib wandb pytorch-lightning auraloss ema-pytorch prefigure pandas torchmetrics aeiou scipy; do
+  uv pip install "$p" || echo "[sa3] skip $p"
+done
 
 # --- GPU compatibility --------------------------------------------------------
 # Blackwell GPUs (B200 / RTX 50xx, compute sm_100) need a CUDA 12.8 torch build;
