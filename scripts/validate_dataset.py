@@ -32,6 +32,7 @@ def main():
     ap.add_argument("--min-seconds", type=float, default=0.05)
     ap.add_argument("--max-seconds", type=float, default=47.0)
     ap.add_argument("--quick", action="store_true", help="header-only (skip full audio read / clip+silence check) - fast")
+    ap.add_argument("--prune", action="store_true", help="DELETE silent / too-short clips (and their .json) instead of erroring")
     args = ap.parse_args()
 
     root = Path(args.dataset)
@@ -40,9 +41,15 @@ def main():
         sys.exit("No WAVs found.")
     print(f"Validating {len(wavs)} WAVs in {root} ..."          + ("  (--quick: header-only)" if args.quick else "  (reading audio; ~minutes for thousands of files)"), flush=True)
 
-    errors, warnings = [], []
+    errors, warnings, pruned = [], [], []
     kinds, durations = Counter(), []
     with_bpm = with_key = 0
+    def _drop(w, why):
+        pruned.append(f"{w.name}: {why}")
+        try:
+            w.unlink(missing_ok=True); w.with_suffix(".json").unlink(missing_ok=True)
+        except Exception:
+            pass
 
     try:
         from tqdm import tqdm as _tqdm
@@ -62,7 +69,9 @@ def main():
         dur = info.frames / info.samplerate
         durations.append(dur)
         if dur < args.min_seconds:
-            errors.append(f"{wav}: too short ({dur:.2f}s)")
+            (_drop(wav, f"too short {dur:.2f}s") if args.prune else errors.append(f"{wav}: too short ({dur:.2f}s)"))
+            if args.prune:
+                continue
         if dur > args.max_seconds:
             errors.append(f"{wav}: too long ({dur:.2f}s) - exceeds model window")
 
@@ -72,6 +81,8 @@ def main():
             if peak >= 0.999:
                 warnings.append(f"{wav}: possible clipping (peak {peak:.3f})")
             if peak < 1e-4:
+                if args.prune:
+                    _drop(wav, "silent"); continue
                 errors.append(f"{wav}: silent")
 
         sidecar = wav.with_suffix(".json")
@@ -99,6 +110,10 @@ def main():
     print(f"\nWarnings: {len(warnings)}")
     for w in warnings[:20]:
         print("  " + w)
+    if pruned:
+        print(f"\nPruned (deleted): {len(pruned)}")
+        for x in pruned[:20]:
+            print("  " + x)
     print(f"\nErrors: {len(errors)}")
     for e in errors[:50]:
         print("  " + e)
