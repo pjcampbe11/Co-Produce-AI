@@ -19,6 +19,7 @@ Subcommands:
   extend   continuation (stretch a loop past its original end)
 
 All generation subcommands accept --lora my.safetensors --lora-strength 0.8.
+Also: --cfg (guidance), --steps (quality), --seed (reproducible), --negative (avoid).
 After LoRA training (scripts/train_lora.py in the SA3 repo), point --lora at
 the produced .safetensors. Outputs still flow into postprocess.py -> 05.
 """
@@ -34,6 +35,39 @@ import json
 import os
 import shutil
 from pathlib import Path
+
+import re as _re
+
+
+def _gen(model, args, **base):
+    """Call model.generate() with optional cfg/steps/seed/negative passthrough.
+
+    Added by the Co-Produce AI patch. Maps the new CLI flags to SA3 generate()
+    kwargs and gracefully drops any the installed SA3 build doesn't accept.
+    """
+    import torch
+    kw = dict(base)
+    if getattr(args, "seed", None) is not None:
+        torch.manual_seed(args.seed)          # effective even if generate() ignores 'seed'
+        kw["seed"] = args.seed
+    if getattr(args, "steps", None):
+        kw["steps"] = args.steps
+    if getattr(args, "cfg", None) is not None:
+        kw["cfg_scale"] = args.cfg
+    if getattr(args, "negative", None):
+        kw["negative_prompt"] = args.negative
+    while True:
+        try:
+            return model.generate(**kw)
+        except TypeError as e:
+            m = _re.search(r"unexpected keyword argument '([A-Za-z_]+)'", str(e))
+            if m and m.group(1) in kw:
+                bad = m.group(1)
+                kw.pop(bad)
+                print(f"[sa3_workflow] note: this SA3 build's generate() ignores '{bad}'")
+                continue
+            raise
+
 
 
 def get_model(args):
@@ -65,6 +99,14 @@ def add_common(p):
     p.add_argument("--lora", help=".safetensors LoRA checkpoint")
     p.add_argument("--lora-strength", type=float, default=1.0)
     p.add_argument("--out", required=True)
+    p.add_argument("--cfg", type=float, default=None,
+                   help="CFG / guidance scale; higher = follows prompt harder (try 6-9)")
+    p.add_argument("--steps", type=int, default=None,
+                   help="Diffusion steps; more = more detail/quality (try 100-250)")
+    p.add_argument("--seed", type=int, default=None,
+                   help="Random seed; set to reproduce or reroll a result")
+    p.add_argument("--negative", default=None,
+                   help="Negative prompt: traits to avoid (e.g. 'off-key, vocals, muddy, clipping')")
 
 
 def cmd_prepare(args):
@@ -106,7 +148,7 @@ def cmd_plan(args):
     for cat in plan["categories"]:
         seconds = float(cat.get("seconds", 4.0))
         for i in range(int(cat["count"])):
-            audio = model.generate(prompt=cat["prompt"], duration=seconds)
+            audio = _gen(model, args, prompt=cat["prompt"], duration=seconds)
             save(audio, out_root / cat["name"] / f"{cat['name']}_{i+1:03d}.wav")
             print(f"[{cat['name']}] {i+1}/{cat['count']}")
     print(f"Done -> {out_root}. Next: postprocess.py")
@@ -116,7 +158,7 @@ def cmd_flip(args):
     import torchaudio
     model = get_model(args)
     init = torchaudio.load(args.input)
-    audio = model.generate(init_audio=init, init_noise_level=args.strength,
+    audio = _gen(model, args, init_audio=init, init_noise_level=args.strength,
                            prompt=args.prompt, duration=args.duration)
     save(audio, args.out)
     print(f"Flipped -> {args.out}")
@@ -126,7 +168,7 @@ def cmd_fill(args):
     import torchaudio
     model = get_model(args)
     inp = torchaudio.load(args.input)
-    audio = model.generate(inpaint_audio=inp,
+    audio = _gen(model, args, inpaint_audio=inp,
                            inpaint_mask_start_seconds=args.start,
                            inpaint_mask_end_seconds=args.end,
                            prompt=args.prompt, duration=args.duration)
@@ -139,7 +181,7 @@ def cmd_extend(args):
     model = get_model(args)
     inp = torchaudio.load(args.input)
     src_len = inp[0].shape[-1] / inp[1]
-    audio = model.generate(inpaint_audio=inp,
+    audio = _gen(model, args, inpaint_audio=inp,
                            inpaint_mask_start_seconds=src_len,
                            inpaint_mask_end_seconds=args.duration,
                            prompt=args.prompt, duration=args.duration)
@@ -153,7 +195,7 @@ def cmd_song(args):
         print("Note: SA3 Medium caps near 380 s; clamping.")
         args.duration = 380
     model = get_model(args)
-    audio = model.generate(prompt=args.prompt, duration=args.duration)
+    audio = _gen(model, args, prompt=args.prompt, duration=args.duration)
     save(audio, args.out)
     print(f"Song ({args.duration}s) -> {args.out}")
 
