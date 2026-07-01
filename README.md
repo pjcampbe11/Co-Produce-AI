@@ -1670,20 +1670,7 @@ Spotify playlist meta**. Only metadata is fetched — no audio is downloaded.
 <a name="38-inspired"></a>
 ## 38. Hip-hop beats inspired by (playlist)
 
-The reference playlist this toolkit is tuned against — **[▶ open on Spotify](https://open.spotify.com/playlist/7MNBsBwgsqAsRZkdNE4E5Y)**.
-
-<!-- GitHub strips iframes in markdown; the live, playable embed renders in
-     docs/inspired.html and in the dashboard's "Inspiration" tab. -->
-<iframe data-testid="embed-iframe" style="border-radius:12px"
-  src="https://open.spotify.com/embed/playlist/7MNBsBwgsqAsRZkdNE4E5Y?utm_source=generator"
-  width="100%" height="420" frameBorder="0"
-  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-  loading="lazy"></iframe>
-
-The playable embed is in **[`docs/inspired.html`](docs/inspired.html)** (open it
-locally or host it) and live in the **dashboard → 🎶 Inspiration** tab. The embed
-mirrors the playlist's own order — sort it by *Date added* in Spotify to play
-newest-first; `playlist_meta.py` already defaults its report to newest-added first.
+ **[▶ open on Spotify](https://open.spotify.com/playlist/7MNBsBwgsqAsRZkdNE4E5Y)**.
 
 ---
 
