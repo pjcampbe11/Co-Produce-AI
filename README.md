@@ -763,7 +763,7 @@ CLAP-rank generations against a folder of your best sounds, keep the closest, re
 
 <a name="ct-groove"></a>
 ### Groove DNA — `groove_dna.py`
-Extract a break's micro-timing + accents into a template (numbers, not audio — no rights issue); apply to your samples via `beat_builder --groove`. "Quantize to **********."
+Extract a break's micro-timing + accents into a template (numbers, not audio — no rights issue); apply to your samples via `beat_builder --groove`. "Quantize to Dilla."
 1. Extract a swung break's pocket: `python scripts/groove_dna.py --input classic_break.wav --name dilla_a --out grooves`
 2. Extract an amen's feel with the better tracker: `python scripts/groove_dna.py --input amen.wav --name amen_01 --engine beat_this --out grooves`
 3. Capture your *own* signature pocket from a beat you made: `python scripts/groove_dna.py --input my_best_beat.wav --name my_pocket --out grooves`
@@ -1841,21 +1841,21 @@ hardware pads. With `--producer` it chops in a known producer's signature style.
 **▶ Demo —**
 
 ```console
-$ python scripts/sample_chop.py --input soul_loop.wav --producer ********** --bpm 90 --out chops
-[producer] **********: dilla + dilla + chipmunk + reverse + stutter
+$ python scripts/sample_chop.py --input soul_loop.wav --producer j_dilla --bpm 90 --out chops
+[producer] j_dilla: dilla + dilla + chipmunk + reverse + stutter
 [chop] 14 slices from soul_loop.wav
-[var1] dilla: master + 14 slices + pattern.mid -> chops/var1_**********_dilla
+[var1] dilla: master + 14 slices + pattern.mid -> chops/var1_j_dilla_dilla
 ... 5 variations, each with mpc/ + ableton/ folders
 ```
 
 ### Producer styles (`--producer`)
 
 Ten sample-chopping greats, each mapped to a 5-variation style set + feel
-(swing, density, pitch bias, dust, quantize): `**********` (micro-chop, off-quantize
-swing), `**********` (chipmunk soul), `**********` (tight chopped stabs),
-`**********` (clean grid soul), `**********` (gritty pitched-down), `**********` (loose,
-dusty), `**********` (smooth soul/jazz), `**********` (big pitched-up soul),
-`**********` (hazy loops/halftime), `**********` (lo-fi swung). List them:
+(swing, density, pitch bias, dust, quantize): `j_dilla` (micro-chop, off-quantize
+swing), `kanye_west` (chipmunk soul), `dj_premier` (tight chopped stabs),
+`9th_wonder` (clean grid soul), `rza` (gritty pitched-down), `madlib` (loose,
+dusty), `pete_rock` (smooth soul/jazz), `just_blaze` (big pitched-up soul),
+`the_alchemist` (hazy loops/halftime), `knxwledge` (lo-fi swung). List them:
 `python scripts/sample_chop.py --list-producers`. **Five worked examples per producer** (with and without the AI flags) are in [`cheatsheets/sample-chop-examples.md`](cheatsheets/sample-chop-examples.md).
 
 ### Get it onto your gear
@@ -1870,21 +1870,21 @@ maps pad 1 → note 36.
 Five quick examples (no AI — pure DSP, fast, offline):
 
 ```powershell
-python scripts/sample_chop.py --producer **********    --input dusty_soul_loop.wav --bpm 90 --out chops
-python scripts/sample_chop.py --producer **********  --input otis_vocal.mp3 --bpm 92 --target both --out chops
-python scripts/sample_chop.py --producer **********  --input jazz_stab.wav --grid 16 --pads 16 --bpm 93 --out chops
-python scripts/sample_chop.py --producer **********  --input soul_45.wav --bpm 86 --out chops
-python scripts/sample_chop.py --producer **********      --input obscure_jazz.wav --bars 4 --bpm 87 --out chops
+python scripts/sample_chop.py --producer j_dilla    --input dusty_soul_loop.wav --bpm 90 --out chops
+python scripts/sample_chop.py --producer kanye_west  --input otis_vocal.mp3 --bpm 92 --target both --out chops
+python scripts/sample_chop.py --producer dj_premier  --input jazz_stab.wav --grid 16 --pads 16 --bpm 93 --out chops
+python scripts/sample_chop.py --producer 9th_wonder  --input soul_45.wav --bpm 86 --out chops
+python scripts/sample_chop.py --producer madlib      --input obscure_jazz.wav --bars 4 --bpm 87 --out chops
 ```
 
 Five with the AI flags (`--stems` = separate + chop the melodic layer, `--reimagine` = audio2audio flip):
 
 ```powershell
-python scripts/sample_chop.py --producer **********           --input full_song.mp3 --stems --bpm 88 --out chops
-python scripts/sample_chop.py --producer ********** --input hazy_psych.wav --reimagine --adg --target ableton --bpm 82 --out chops
-python scripts/sample_chop.py --producer **********     --input horn_loop.wav --stems --reimagine --target mpc --bpm 91 --out chops
-python scripts/sample_chop.py --producer **********    --input triumph_soul.wav --reimagine --bars 4 --bpm 96 --out chops
-python scripts/sample_chop.py --producer **********     --input lofi_chop.wav --stems --bpm 89 --out chops
+python scripts/sample_chop.py --producer rza           --input full_song.mp3 --stems --bpm 88 --out chops
+python scripts/sample_chop.py --producer the_alchemist --input hazy_psych.wav --reimagine --adg --target ableton --bpm 82 --out chops
+python scripts/sample_chop.py --producer pete_rock     --input horn_loop.wav --stems --reimagine --target mpc --bpm 91 --out chops
+python scripts/sample_chop.py --producer just_blaze    --input triumph_soul.wav --reimagine --bars 4 --bpm 96 --out chops
+python scripts/sample_chop.py --producer knxwledge     --input lofi_chop.wav --stems --bpm 89 --out chops
 ```
 
 Full set — five per producer, with and without AI — in [`cheatsheets/sample-chop-examples.md`](cheatsheets/sample-chop-examples.md).
