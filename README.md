@@ -1900,3 +1900,31 @@ works). Only use sources you have the rights to chop (see §6).
 ## 42. License & notice
 
 Fine-tunes/runs Stability AI models (Stable Audio Open 1.0 / Stable Audio 3) under the **Stability AI Community License** (free commercial use under US$1M annual revenue; enterprise above — https://stability.ai/license). Full songs with vocals use **HeartMuLa** (Apache-2.0). Model weights are **not** included. **Only train on audio you own or that is explicitly cleared for ML training.** See §6.
+
+## 🎛️ Demo Sample Packs & RunPod Build
+
+The four demo packs on [coproduceai.com/demo-soundpacks](https://www.coproduceai.com/demo-soundpacks)
+are built by [`runpod_pack_kit/`](runpod_pack_kit) — one rented GPU, one command. Everything renders
+in SA3 **song mode at 3:08**: train (optional) → generate full songs → carve one-shots → split stems
+→ label by key/BPM → zip → ship.
+
+**The four packs** — songs + one-shots, WAV + stems, key & BPM labeled:
+
+| Pack | BPM | Tags |
+|---|---|---|
+| Boom-Bap Dust · Vol. 1 (24) | 84–94 | `boom bap · dusty · soulful` |
+| Trap Nights · Vol. 1 (20) | 130–150 | `trap · 808 heavy · dark` |
+| Drill Sessions (18) | 140–146 | `drill · hypnotic · sub bass` |
+| Lo-Fi After Hours (22) | 70–85 | `lofi · warm · nostalgic` |
+
+**One-liner (on the pod):**
+
+```bash
+LORA=/workspace/sweeps/run_r16a16_lr2e4/<best>.safetensors \
+  bash /workspace/runpod_pack_kit/build_all.sh all
+```
+
+Builds the 4 packs **and** every Part 4 prompt (starters, 20 arrangements, 100 capability presets,
+20 PRO presets) as full 3:08 songs — `SONG_DUR=188 STEPS=250 CFG=8`, resumable, zipped per pack.
+Training and the 4 caption profiles, plus ship-to-Windows commands, are in
+[`runpod_pack_kit/README.md`](runpod_pack_kit/README.md).
