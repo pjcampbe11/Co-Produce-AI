@@ -245,7 +245,7 @@ Files are **copied** (originals safe) unless `--move`. `--dry-run` previews to `
 $ python scripts/remove_vocals.py --input mp3 --output raw_beats --mp3 --keep-vocals --require-gpu --mirror
 Acceleration: GPU  [torch CUDA: NVIDIA GeForce RTX 4090 | onnxruntime: CUDA]
 2982 file(s) found, 2982 to process.
-[1/2982] Kendrick Lamar - Backseat Freestyle.mp3   (15.2s)
+[1/2982] ************   (15.2s)
 [2/2982] ...
 === 2982 instrumentals written to raw_beats/ ===
 ```
@@ -291,8 +291,8 @@ python scripts/deep_listen.py --input "F:/RAP_ARCHIVES/raw_beats" --out "F:/RAP_
 ```console
 $ python scripts/auto_tag.py --stems-dir raw_beats --source beat --engine qwen3-omni --limit 3
 Engine: qwen3-omni   Source: beat
-[1/3] 002 - Baby Keem: dark, dusty, trap, 808 bass, aggressive, vinyl texture
-[2/3] 003 - Young Dolph: soulful, mellow, boom bap, warm keys
+[1/3] 002 - ************: dark, dusty, trap, 808 bass, aggressive, vinyl texture
+[2/3] 003 - ************: soulful, mellow, boom bap, warm keys
 === 3 tagged, 0 skipped, 0 failed ===
 ```
 
@@ -313,8 +313,8 @@ Engines: `qwen3-omni` (most detailed) → `qwen2-audio` (lighter) → `clap` (li
 **▶ Demo — filenames → producer/era metadata sidecars**
 ```console
 $ python scripts/genius_lookup.py --beats raw_beats --limit 3
-[1/3] Young Dolph - Money Callin  ->  Young Dolph - Money Callin
-[2/3] Lil Wayne - Swag Surf  ->  Lil Wayne - Swag Surf  (LOW CONF)
+[1/3] ************
+[2/3] ************
 === 2 matched, 0 no-match, 0 skipped, 1 flagged low-confidence ===
 ```
 
@@ -344,7 +344,7 @@ Cleans track numbers/`_instrumental`/"(OFFICIAL VIDEO)" noise from filenames, ta
 **▶ Demo — three sidecars → one canonical training caption**
 ```console
 $ python scripts/build_captions.py --beats raw_beats
-002 - Baby Keem_instrumental.mp3: trap, hi-hat, 808 bass, dark, modern polished
+002 - ************: trap, hi-hat, 808 bass, dark, modern polished
    production, 140 BPM, key of F minor, loop, prod Speaker Knockerz, 2010s
 === 1500 captions written, 0 skipped, 12 had no report ===
 ```
@@ -912,7 +912,7 @@ You can't un-compress a lossy file — converting MP3→WAV adds nothing. Get tr
 **\u25B6 Demo \u2014 batch MP3 \u2192 24-bit WAV**
 ```console
 $ python scripts/mp3_to_wav.py --input "F:/RAP_ARCHIVES/mp3" --output "F:/RAP_ARCHIVES/wav" --bit-depth 24 --mirror --resume
-[1/2982] 002 - Baby Keem - Baby Keem.mp3 -> 002 - Baby Keem - Baby Keem.wav
+[1/2982] ************
 [2/2982] ...
 === 2982 converted, 0 skipped, 0 failed -> F:/RAP_ARCHIVES/wav/ ===
 ```
