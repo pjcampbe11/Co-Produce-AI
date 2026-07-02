@@ -1,0 +1,21 @@
+# Part 4 §13 — PRO presets — name|prompt|duration|lora_strength|cfg|steps|seed|negative
+pro_trap1|hip hop, 140 BPM, key of F# minor, loop, trap, dark, 808 heavy, sub bass, gritty, energetic|30|0.7|8|200|11|off-key, out of tune, vocals, singing, muddy mix, clipping, harsh noise
+pro_trap2|hip hop, 136 BPM, key of G minor, loop, trap, 2020s, clean, modern, 808 heavy, sub bass, hypnotic|30|0.7|8|220|22|off-key, out of tune, vocals, singing, muddy, clipping, hiss, lo-fi, distortion
+pro_boombap1|hip hop, 90 BPM, key of A minor, loop, boom bap, dusty vinyl, warm, soulful, gritty, melodic|30|0.7|7|180|33|off-key, out of tune, vocals, singing, clipping, harsh noise
+pro_boombap2|hip hop, 88 BPM, key of E minor, loop, boom bap, jazzy, rhodes, upright bass, soulful, warm, melodic|30|0.7|7|200|44|off-key, out of tune, vocals, singing, muddy mix, clipping
+pro_drill1|hip hop, 144 BPM, key of D minor, loop, drill, dark, hypnotic, sliding 808, sub bass, distorted|30|0.7|8|200|55|off-key, out of tune, vocals, singing, muddy mix, clipping
+pro_drill2|hip hop, 145 BPM, key of B minor, loop, drill, dark, eerie, 808 heavy, sub bass, gritty, energetic|30|0.7|8|210|66|off-key, out of tune, vocals, singing, muddy, clipping, harsh noise
+pro_mellow1|hip hop, 78 BPM, key of C minor, loop, mellow, warm, laid back, dusty vinyl, melodic, hypnotic|24|0.7|6|150|77|off-key, out of tune, vocals, singing, clipping, harsh noise
+pro_lofi1|hip hop, 72 BPM, key of F major, loop, lofi, tape saturated, dusty vinyl, warm, nostalgic, mellow|24|0.7|6|150|88|off-key, out of tune, vocals, singing, clipping
+pro_cine1|hip hop, 128 BPM, key of D minor, full track, trap, cinematic, epic, dark, string section, 808 heavy, sub bass|90|0.6|9|220|99|off-key, out of tune, vocals, singing, muddy mix, clipping, harsh noise
+pro_soul1|hip hop, 86 BPM, key of A minor, loop, boom bap, soulful, gospel organ, warm, uplifting, dusty vinyl, melodic|30|0.7|7|190|101|off-key, out of tune, vocals, singing, clipping, harsh noise
+pro_west1|hip hop, 96 BPM, key of G minor, loop, west coast, g-funk, funky, synth lead, warm, bass heavy, melodic|30|0.7|7|190|111|off-key, out of tune, vocals, singing, muddy, clipping
+pro_phonk1|hip hop, 135 BPM, key of E minor, loop, trap, phonk, memphis, dark, distorted, 808 heavy, sub bass, gritty|30|0.7|7|180|121|off-key, out of tune, vocals, singing, clipping, harsh noise
+pro_hard1|hip hop, 150 BPM, key of D minor, loop, trap, hard hitting, aggressive, dark, 808 heavy, sub bass, energetic|30|0.7|8|200|131|off-key, out of tune, vocals, singing, muddy mix, clipping
+pro_dreamy1|hip hop, 80 BPM, key of C major, loop, mellow, dreamy, ethereal, spacey, reverb drenched, warm, lush, melodic|30|0.65|6|160|141|off-key, out of tune, vocals, singing, clipping, harsh noise
+pro_eerie1|hip hop, 142 BPM, key of C minor, loop, trap, eerie, ominous, dark, tense, 808 heavy, sub bass, distorted|30|0.7|8|200|151|off-key, out of tune, vocals, singing, muddy, clipping
+pro_clean1|hip hop, 138 BPM, key of G minor, loop, trap, 2020s, clean, hi-fi, polished, 808 heavy, sub bass, melodic|30|0.7|8|230|161|off-key, out of tune, vocals, singing, muddy, clipping, hiss, lo-fi, distortion
+pro_jazz1|hip hop, 84 BPM, key of F major, loop, boom bap, jazzy, saxophone, upright bass, soulful, warm, laid back, melodic|30|0.7|7|200|171|off-key, out of tune, vocals, singing, clipping, harsh noise
+pro_minimal1|hip hop, 92 BPM, key of A minor, loop, minimal, sparse, dark, hypnotic, sub bass, 808 heavy, mellow|30|0.7|7|180|181|off-key, out of tune, vocals, singing, clipping, busy, cluttered
+pro_uplift1|hip hop, 90 BPM, key of C major, loop, boom bap, uplifting, bright, soulful, brass stabs, warm, melodic|30|0.7|7|190|191|off-key, out of tune, vocals, singing, muddy, clipping
+pro_grand1|hip hop, 126 BPM, key of C minor, full track, trap, grand, cinematic, epic, dark, choir, 808 heavy, sub bass|90|0.6|9|240|201|off-key, out of tune, vocals, singing, muddy mix, clipping, harsh noise

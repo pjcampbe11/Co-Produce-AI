@@ -1,0 +1,21 @@
+# Part 4 §10 — name|prompt|duration|lora-strength (duration overridden to SONG_DUR by build script)
+arr_boombap|hip hop, 90 BPM, key of A minor, full track, boom bap, intro, beat switch, breakdown, outro, dusty vinyl, warm, melodic, evolving arrangement|90|0.6
+arr_trap|hip hop, 140 BPM, key of F# minor, full track, trap, sparse intro, build up, heavy drop, breakdown, outro, dark, 808 heavy, sub bass, energetic|90|0.6
+arr_drill|hip hop, 144 BPM, key of D minor, full track, drill, eerie intro, beat switch, drop, outro, dark, hypnotic, 808 heavy, sub bass, distorted|90|0.6
+arr_mellow|hip hop, 78 BPM, key of C minor, full track, mellow, soft intro, build up, breakdown, outro, warm, laid back, dusty vinyl, melodic, evolving arrangement|90|0.6
+arr_trapmelodic|hip hop, 136 BPM, key of G minor, full track, trap, melodic intro, build up, drop, beat switch, outro, dark, 808 heavy, sub bass, hypnotic|90|0.6
+arr_boombapsoul|hip hop, 88 BPM, key of E minor, full track, boom bap, soulful intro, main groove, breakdown, outro, dusty vinyl, warm, gritty, melodic|90|0.6
+arr_drillhard|hip hop, 142 BPM, key of B minor, full track, drill, dark intro, build up, hard drop, breakdown, outro, 808 heavy, sub bass, energetic, distorted|90|0.6
+arr_trapcine|hip hop, 130 BPM, key of C minor, full track, trap, cinematic intro, string build up, heavy drop, breakdown, outro, dark, epic, 808 heavy, sub bass|90|0.6
+arr_mellowdark|hip hop, 82 BPM, key of D minor, full track, mellow, ambient intro, build up, drop, outro, dark, hypnotic, dusty vinyl, melodic, evolving arrangement|90|0.6
+arr_funk|hip hop, 96 BPM, key of G minor, full track, intro, main groove, beat switch, breakdown, outro, warm, funky, melodic, bass heavy, dynamic|90|0.6
+arr_phonk|hip hop, 135 BPM, key of E minor, full track, trap, phonk, memphis, dark intro, build up, drop, breakdown, outro, distorted, 808 heavy, sub bass, gritty|90|0.6
+arr_jazzboombap|hip hop, 87 BPM, key of F major, full track, boom bap, jazzy intro, main groove, breakdown, outro, soulful, warm, dusty vinyl, melodic, laid back|90|0.6
+arr_soulchop|hip hop, 92 BPM, key of C minor, full track, boom bap, soul sample intro, chops, beat switch, breakdown, outro, soulful, warm, gritty, dusty vinyl|90|0.6
+arr_westcoast|hip hop, 98 BPM, key of G minor, full track, west coast, g-funk, intro, main groove, beat switch, outro, warm, funky, bass heavy, melodic|90|0.6
+arr_ukdrill|hip hop, 145 BPM, key of A minor, full track, uk drill, dark intro, build up, sliding 808 drop, breakdown, outro, dark, hypnotic, sub bass, distorted|90|0.6
+arr_cinematic|hip hop, 128 BPM, key of D minor, full track, trap, ambient intro, cinematic build up, heavy drop, breakdown, outro, spacey, epic, 808 heavy, sub bass|90|0.6
+arr_trapsoul|hip hop, 75 BPM, key of B minor, full track, rnb, smooth intro, build up, drop, breakdown, outro, soulful, warm, mellow, melodic, sub bass|90|0.6
+arr_gospel|hip hop, 84 BPM, key of A minor, full track, boom bap, gospel intro, organ chords, main groove, breakdown, outro, soulful, warm, uplifting, melodic|90|0.6
+arr_horror|hip hop, 140 BPM, key of C minor, full track, trap, eerie intro, tense build up, hard drop, breakdown, outro, dark, eerie, distorted, 808 heavy, sub bass|90|0.6
+arr_lofijazz|hip hop, 72 BPM, key of E major, full track, lofi, mellow intro, jazzy chords, build up, breakdown, outro, warm, nostalgic, dusty vinyl, laid back, melodic|90|0.6

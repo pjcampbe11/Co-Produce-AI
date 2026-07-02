@@ -1,0 +1,21 @@
+# Trap Nights · Vol. 1 — 20 loops · 130–150 BPM · format: BPM|KEY|prompt
+140|F# minor|hip hop, 140 BPM, key of F# minor, loop, trap, dark, 808 heavy, sub bass, gritty, energetic, distorted
+144|C minor|hip hop, 144 BPM, key of C minor, loop, trap, dark, hypnotic, 808 heavy, sub bass, bass heavy, melodic
+136|G minor|hip hop, 136 BPM, key of G minor, loop, trap, 2020s, energetic, 808 heavy, sub bass, gritty, distorted
+132|A minor|hip hop, 132 BPM, key of A minor, loop, trap, dark, melodic, 808 heavy, sub bass, warm, hypnotic
+140|F# minor|hip hop, 140 BPM, key of F# minor, loop, trap, grand piano melody, 808 heavy, sub bass, dark, melodic, energetic
+138|G minor|hip hop, 138 BPM, key of G minor, loop, trap, flute melody, 808 heavy, sub bass, dark, melodic, hypnotic
+130|D minor|hip hop, 130 BPM, key of D minor, loop, trap, choir vocals, dark, 808 heavy, sub bass, epic, cinematic
+136|F# minor|hip hop, 136 BPM, key of F# minor, loop, trap, marimba melody, 808 heavy, sub bass, dark, melodic, energetic
+140|G minor|hip hop, 140 BPM, key of G minor, loop, trap, synth plucks, 808 heavy, sub bass, dark, hypnotic, melodic
+132|C minor|hip hop, 132 BPM, key of C minor, loop, trap, 808 bass slides, sub bass, dark, hard hitting, energetic, melodic
+138|D minor|hip hop, 138 BPM, key of D minor, loop, trap, triplet hi-hats, 808 heavy, sub bass, dark, energetic, hypnotic
+140|F# minor|hip hop, 140 BPM, key of F# minor, loop, trap, half time feel, 808 heavy, sub bass, dark, hard hitting, melodic
+150|D minor|hip hop, 150 BPM, key of D minor, loop, trap, fast hi-hat rolls, 808 heavy, sub bass, dark, energetic, 2020s
+130|C minor|hip hop, 130 BPM, key of C minor, loop, trap, hard hitting drums, 808 heavy, sub bass, dark, energetic, distorted
+136|G minor|hip hop, 136 BPM, key of G minor, loop, trap, ominous, dark, tense, 808 heavy, sub bass, hypnotic, distorted
+138|F minor|hip hop, 138 BPM, key of F minor, loop, trap, haunting, eerie, dark, 808 heavy, sub bass, hypnotic, reverb drenched
+138|G minor|hip hop, 138 BPM, key of G minor, loop, trap, crisp, clean, modern, 808 heavy, sub bass, hypnotic
+130|B minor|hip hop, 130 BPM, key of B minor, loop, trap, bitcrushed, distorted, gritty, dark, 808 heavy, sub bass
+135|E minor|hip hop, 135 BPM, key of E minor, loop, trap, phonk, memphis, dark, distorted, 808 heavy, sub bass, gritty
+150|G minor|hip hop, 150 BPM, key of G minor, loop, 2020s, energetic, bass heavy, 808 heavy, sub bass, dark, distorted

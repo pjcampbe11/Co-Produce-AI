@@ -1,0 +1,25 @@
+# Boom-Bap Dust · Vol. 1 — 24 loops · format: BPM|KEY|prompt
+90|A minor|hip hop, 90 BPM, key of A minor, loop, boom bap, dusty vinyl, warm, mellow, laid back, melodic, gritty
+88|D minor|hip hop, 88 BPM, key of D minor, loop, boom bap, 2000s, dusty vinyl, warm, gritty, melodic, laid back
+93|E minor|hip hop, 93 BPM, key of E minor, loop, boom bap, dark, dusty vinyl, mellow, gritty, melodic
+86|C major|hip hop, 86 BPM, key of C major, loop, boom bap, warm, laid back, dusty vinyl, mellow, melodic
+92|A minor|hip hop, 92 BPM, key of A minor, loop, boom bap, brass stabs, upright bass, dusty vinyl, soulful, warm, melodic
+89|C minor|hip hop, 89 BPM, key of C minor, loop, boom bap, rhodes piano lead, upright bass, dusty vinyl, warm, jazzy, melodic
+90|A minor|hip hop, 90 BPM, key of A minor, loop, boom bap, swung drums, dusty vinyl, warm, laid back, gritty, melodic
+92|A minor|hip hop, 92 BPM, key of A minor, loop, boom bap, boom bap swing, dusty vinyl, gritty, warm, drum heavy, melodic
+90|C minor|hip hop, 90 BPM, key of C minor, loop, boom bap, head nod groove, swung, dusty vinyl, gritty, warm, melodic
+88|E minor|hip hop, 88 BPM, key of E minor, loop, boom bap, laid back pocket, swung, dusty vinyl, warm, soulful, melodic
+92|C minor|hip hop, 92 BPM, key of C minor, loop, boom bap, chopped soul sample, soulful, warm, gritty, dusty vinyl, melodic
+87|F major|hip hop, 87 BPM, key of F major, loop, boom bap, jazzy, soulful, warm, dusty vinyl, melodic, laid back
+86|D minor|hip hop, 86 BPM, key of D minor, loop, boom bap, vinyl crackle, dusty vinyl, warm, soulful, mellow, melodic
+90|A minor|hip hop, 90 BPM, key of A minor, loop, boom bap, 1990s, dusty vinyl, tape saturated, warm, gritty, mellow, melodic
+93|B minor|hip hop, 93 BPM, key of B minor, loop, boom bap, raw, gritty, distorted, dark, drum heavy, dusty vinyl
+88|A minor|hip hop, 88 BPM, key of A minor, loop, boom bap, vibraphone, jazzy, soulful, warm, dusty vinyl, mellow
+86|D minor|hip hop, 86 BPM, key of D minor, loop, boom bap, saxophone, jazzy, soulful, warm, dusty vinyl, laid back
+84|A minor|hip hop, 84 BPM, key of A minor, loop, boom bap, gospel organ, warm, soulful, uplifting, melodic, dusty vinyl
+90|E minor|hip hop, 90 BPM, key of E minor, loop, boom bap, electric guitar, warm, gritty, dusty vinyl, melodic, soulful
+92|D minor|hip hop, 92 BPM, key of D minor, loop, boom bap, dusty electric piano, warm, soulful, mellow, melodic, dusty vinyl
+84|F major|hip hop, 84 BPM, key of F major, loop, boom bap, acoustic guitar, warm, soulful, laid back, dusty vinyl, melodic
+90|C major|hip hop, 90 BPM, key of C major, loop, boom bap, uplifting, warm, soulful, bright, dusty vinyl, melodic
+88|D minor|hip hop, 88 BPM, key of D minor, loop, boom bap, dusty vinyl, gritty, warm, distorted, melodic, drum heavy
+94|G minor|hip hop, 94 BPM, key of G minor, loop, boom bap, warm, funky, soulful, dusty vinyl, bass heavy, melodic

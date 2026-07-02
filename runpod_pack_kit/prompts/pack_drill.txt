@@ -1,0 +1,19 @@
+# Drill Sessions — 18 loops · 140–146 BPM · format: BPM|KEY|prompt
+144|D minor|hip hop, 144 BPM, key of D minor, loop, drill, dark, hypnotic, 808 heavy, sub bass, gritty, distorted
+142|F minor|hip hop, 142 BPM, key of F minor, loop, drill, dark, 808 heavy, sub bass, bass heavy, energetic, distorted
+145|B minor|hip hop, 145 BPM, key of B minor, loop, drill, dark, hypnotic, melodic, 808 heavy, sub bass, gritty
+140|G minor|hip hop, 140 BPM, key of G minor, loop, drill, 2020s, dark, 808 heavy, sub bass, distorted, energetic
+142|F minor|hip hop, 142 BPM, key of F minor, loop, drill, dark bells, 808 heavy, sub bass, hypnotic, distorted
+144|B minor|hip hop, 144 BPM, key of B minor, loop, drill, string section, dark, eerie, 808 heavy, sub bass, distorted
+144|B minor|hip hop, 144 BPM, key of B minor, loop, drill, sparse drums, sliding 808, dark, hypnotic, sub bass, distorted
+146|B minor|hip hop, 146 BPM, key of B minor, loop, drill, rolling hi-hats, sliding 808, dark, energetic, sub bass, distorted
+142|F minor|hip hop, 142 BPM, key of F minor, loop, drill, busy rolling hats, 808 heavy, sub bass, dark, energetic, distorted
+145|B minor|hip hop, 145 BPM, key of B minor, loop, drill, plucked guitar, dark, 808 heavy, sub bass, hypnotic, distorted
+144|B minor|hip hop, 144 BPM, key of B minor, loop, drill, eerie, dark, ominous, 808 heavy, sub bass, distorted, tense
+140|B minor|hip hop, 140 BPM, key of B minor, loop, drill, cold, dark, eerie, 808 heavy, sub bass, distorted, minimal
+145|D minor|hip hop, 145 BPM, key of D minor, loop, drill, grim, dark, ominous, gritty, 808 heavy, sub bass, distorted
+145|D minor|hip hop, 145 BPM, key of D minor, loop, drill, hi-fi, clean, modern, 808 heavy, sub bass, dark, distorted
+145|A minor|hip hop, 145 BPM, key of A minor, loop, uk drill, dark, hypnotic, sliding 808, sub bass, distorted
+144|D minor|hip hop, 144 BPM, key of D minor, loop, drill, dark piano melody, sparse hi-hats, ominous strings, sliding 808, sub bass, distorted
+142|C minor|hip hop, 142 BPM, key of C minor, loop, drill, tense, dark, eerie, 808 heavy, sub bass, distorted
+143|E minor|hip hop, 143 BPM, key of E minor, loop, drill, dark, hypnotic, sliding 808, sub bass, gritty, melodic

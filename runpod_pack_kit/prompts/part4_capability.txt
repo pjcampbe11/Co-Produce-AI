@@ -1,0 +1,101 @@
+# Part 4 §11 — 100 capability presets — name|prompt|duration|strength
+ev_boombap|hip hop, 90 BPM, key of A minor, full track, boom bap, intro, main groove, beat switch, breakdown, outro, dusty vinyl, warm, melodic, evolving arrangement|90|0.6
+ev_trap|hip hop, 140 BPM, key of F# minor, full track, trap, sparse intro, build up, heavy drop, breakdown, outro, dark, 808 heavy, sub bass, energetic|90|0.6
+ev_drill|hip hop, 144 BPM, key of D minor, full track, drill, eerie intro, build up, drop, beat switch, outro, dark, hypnotic, 808 heavy, distorted|90|0.6
+ev_mellow|hip hop, 78 BPM, key of C minor, full track, mellow, soft intro, build up, breakdown, outro, warm, laid back, dusty vinyl, melodic|90|0.6
+ev_climax|hip hop, 132 BPM, key of G minor, full track, trap, slow intro, rising tension, climax, breakdown, outro, dark, 808 heavy, sub bass, epic|90|0.6
+ev_switch|hip hop, 95 BPM, key of E minor, full track, boom bap, intro, beat switch halfway, double time outro, dusty vinyl, gritty, melodic, warm|90|0.6
+ev_strip|hip hop, 84 BPM, key of D minor, full track, mellow, full intro, stripped back breakdown, build back, outro, warm, hypnotic, dusty vinyl, melodic|90|0.6
+ev_build|hip hop, 138 BPM, key of B minor, full track, trap, ambient intro, slow build up, hard drop, outro, dark, 808 heavy, sub bass, energetic|90|0.6
+ev_drill2|hip hop, 142 BPM, key of F minor, full track, drill, dark intro, build up, sliding drop, breakdown, outro, hypnotic, sub bass, distorted, gritty|90|0.6
+ev_west|hip hop, 96 BPM, key of G minor, full track, west coast, intro, main groove, beat switch, breakdown, outro, warm, funky, bass heavy, melodic|90|0.6
+ev_lofi|hip hop, 72 BPM, key of F major, full track, lofi, mellow intro, evolving arrangement, breakdown, outro, warm, nostalgic, dusty vinyl, laid back|90|0.6
+ev_two|hip hop, 88 BPM, key of A minor, full track, boom bap, intro, two part arrangement, beat switch, outro, soulful, warm, gritty, melodic|90|0.6
+ev_dynamic|hip hop, 130 BPM, key of C minor, full track, trap, dynamic intro, build up, drop, half time breakdown, outro, dark, 808 heavy, sub bass|90|0.6
+ev_tense|hip hop, 146 BPM, key of B minor, full track, drill, tense intro, rising build, hard drop, breakdown, outro, dark, eerie, sub bass, distorted|90|0.6
+ev_soul|hip hop, 86 BPM, key of E minor, full track, boom bap, soul sample intro, chop switch, breakdown, outro, soulful, dusty vinyl, warm, melodic|90|0.6
+ev_grand|hip hop, 128 BPM, key of D minor, full track, trap, cinematic intro, string build up, grand drop, breakdown, outro, epic, dark, 808 heavy, sub bass|90|0.6
+ev_mellow2|hip hop, 80 BPM, key of C major, full track, mellow, soft intro, gentle build, warm breakdown, outro, laid back, dusty vinyl, melodic, warm|90|0.6
+ev_energy|hip hop, 150 BPM, key of G minor, full track, trap, sparse intro, build up, energetic drop, beat switch, outro, 2020s, 808 heavy, sub bass, dark|90|0.6
+ev_minimal|hip hop, 92 BPM, key of A minor, full track, boom bap, minimal intro, layered build, full groove, breakdown, outro, dusty vinyl, warm, melodic|90|0.6
+ev_journey|hip hop, 100 BPM, key of D minor, full track, intro, evolving arrangement, multiple sections, beat switch, climax, outro, dark, melodic, warm, hypnotic|90|0.6
+prod_lofi90|hip hop, 90 BPM, key of A minor, loop, boom bap, 1990s, dusty vinyl, tape saturated, warm, gritty, mellow, melodic|30|0.7
+prod_2000s|hip hop, 95 BPM, key of E minor, loop, 2000s, warm, gritty, dusty vinyl, melodic, bass heavy|30|0.7
+prod_modern|hip hop, 140 BPM, key of F# minor, loop, trap, 2020s, clean, hi-fi, 808 heavy, sub bass, dark, energetic|30|0.7
+prod_cassette|hip hop, 75 BPM, key of C minor, loop, lofi, cassette, tape saturated, vinyl crackle, warm, nostalgic, mellow, laid back|30|0.7
+prod_dusty|hip hop, 88 BPM, key of D minor, loop, boom bap, dusty vinyl, gritty, warm, distorted, melodic, drum heavy|30|0.7
+prod_clean|hip hop, 136 BPM, key of G minor, loop, trap, clean, polished, modern, 808 heavy, sub bass, melodic|30|0.7
+prod_bitcrush|hip hop, 130 BPM, key of B minor, loop, trap, bitcrushed, distorted, gritty, dark, 808 heavy, sub bass|30|0.7
+prod_analog|hip hop, 84 BPM, key of F major, loop, boom bap, warm analog, tape saturated, dusty vinyl, soulful, melodic|30|0.7
+prod_reverb|hip hop, 82 BPM, key of D minor, loop, mellow, reverb drenched, spacey, warm, dreamy, melodic, dusty vinyl|30|0.7
+prod_70s|hip hop, 92 BPM, key of A minor, loop, boom bap, 1970s soul, warm, dusty vinyl, soulful, melodic|30|0.7
+prod_hifi|hip hop, 145 BPM, key of D minor, loop, drill, hi-fi, clean, modern, 808 heavy, sub bass, dark, distorted|30|0.7
+prod_raw|hip hop, 93 BPM, key of B minor, loop, boom bap, raw, gritty, distorted, dark, drum heavy, dusty vinyl|30|0.7
+prod_warmtape|hip hop, 78 BPM, key of E minor, loop, lofi, tape saturated, warm, vinyl crackle, mellow, nostalgic, melodic|30|0.7
+prod_crisp|hip hop, 138 BPM, key of G minor, loop, trap, crisp, clean, modern, 808 heavy, sub bass, hypnotic|30|0.7
+prod_saturate|hip hop, 90 BPM, key of A minor, loop, boom bap, saturated, gritty, warm, distorted, dusty vinyl, melodic|30|0.7
+prod_lush|hip hop, 80 BPM, key of C major, loop, mellow, lush, polished, warm, dreamy, melodic, laid back|30|0.7
+prod_vinyl|hip hop, 86 BPM, key of D minor, loop, boom bap, vinyl crackle, dusty vinyl, warm, soulful, mellow, melodic|30|0.7
+prod_2010|hip hop, 70 BPM, key of F minor, loop, trap, 2010s, dark, 808 heavy, sub bass, melodic, hypnotic|30|0.7
+prod_wide|hip hop, 100 BPM, key of A minor, loop, polished, wide, clean, modern, melodic, bass heavy, warm|30|0.7
+prod_grime|hip hop, 140 BPM, key of C minor, loop, gritty, distorted, raw, dark, 808 heavy, sub bass, energetic|30|0.7
+inst_rhodes|hip hop, 82 BPM, key of C minor, loop, boom bap, rhodes piano lead, upright bass, dusty vinyl, warm, jazzy, melodic|30|0.7
+inst_grand|hip hop, 140 BPM, key of F# minor, loop, trap, grand piano melody, 808 heavy, sub bass, dark, melodic, energetic|30|0.7
+inst_brass|hip hop, 92 BPM, key of A minor, loop, boom bap, brass stabs, upright bass, dusty vinyl, soulful, warm, melodic|30|0.7
+inst_choir|hip hop, 130 BPM, key of D minor, loop, trap, choir vocals, dark, 808 heavy, sub bass, epic, cinematic|30|0.7
+inst_strings|hip hop, 144 BPM, key of B minor, loop, drill, string section, dark, eerie, 808 heavy, sub bass, distorted|30|0.7
+inst_flute|hip hop, 138 BPM, key of G minor, loop, trap, flute melody, 808 heavy, sub bass, dark, melodic, hypnotic|30|0.7
+inst_guitar|hip hop, 90 BPM, key of E minor, loop, boom bap, electric guitar, warm, gritty, dusty vinyl, melodic, soulful|30|0.7
+inst_organ|hip hop, 84 BPM, key of A minor, loop, boom bap, gospel organ, warm, soulful, uplifting, melodic, dusty vinyl|30|0.7
+inst_bells|hip hop, 142 BPM, key of F minor, loop, drill, dark bells, 808 heavy, sub bass, hypnotic, distorted|30|0.7
+inst_synthlead|hip hop, 96 BPM, key of G minor, loop, west coast, synth lead whine, funky, warm, bass heavy, melodic|30|0.7
+inst_sax|hip hop, 86 BPM, key of D minor, loop, boom bap, saxophone, jazzy, soulful, warm, dusty vinyl, laid back|30|0.7
+inst_harp|hip hop, 80 BPM, key of C major, loop, mellow, harp, dreamy, warm, lush, melodic, laid back|30|0.7
+inst_marimba|hip hop, 136 BPM, key of F# minor, loop, trap, marimba melody, 808 heavy, sub bass, dark, melodic, energetic|30|0.7
+inst_pluck|hip hop, 145 BPM, key of B minor, loop, drill, plucked guitar, dark, 808 heavy, sub bass, hypnotic, distorted|30|0.7
+inst_pad|hip hop, 78 BPM, key of E minor, loop, mellow, warm synth pads, dreamy, spacey, hypnotic, melodic, laid back|30|0.7
+inst_vibes|hip hop, 88 BPM, key of A minor, loop, boom bap, vibraphone, jazzy, soulful, warm, dusty vinyl, mellow|30|0.7
+inst_808bass|hip hop, 132 BPM, key of C minor, loop, trap, 808 bass slides, sub bass, dark, hard hitting, energetic, melodic|30|0.7
+inst_keys|hip hop, 92 BPM, key of D minor, loop, boom bap, dusty electric piano, warm, soulful, mellow, melodic, dusty vinyl|30|0.7
+inst_synthpluck|hip hop, 140 BPM, key of G minor, loop, trap, synth plucks, 808 heavy, sub bass, dark, hypnotic, melodic|30|0.7
+inst_acoustic|hip hop, 84 BPM, key of F major, loop, boom bap, acoustic guitar, warm, soulful, laid back, dusty vinyl, melodic|30|0.7
+grv_halftime|hip hop, 140 BPM, key of F# minor, loop, trap, half time feel, 808 heavy, sub bass, dark, hard hitting, melodic|30|0.7
+grv_swing|hip hop, 90 BPM, key of A minor, loop, boom bap, swung drums, dusty vinyl, warm, laid back, gritty, melodic|30|0.7
+grv_triplets|hip hop, 138 BPM, key of D minor, loop, trap, triplet hi-hats, 808 heavy, sub bass, dark, energetic, hypnotic|30|0.7
+grv_double|hip hop, 75 BPM, key of C minor, loop, trap, double time hats, 808 heavy, sub bass, dark, melodic, hypnotic|30|0.7
+grv_sparse|hip hop, 144 BPM, key of B minor, loop, drill, sparse drums, sliding 808, dark, hypnotic, sub bass, distorted|30|0.7
+grv_busy|hip hop, 142 BPM, key of F minor, loop, drill, busy rolling hats, 808 heavy, sub bass, dark, energetic, distorted|30|0.7
+grv_pocket|hip hop, 88 BPM, key of E minor, loop, boom bap, laid back pocket, swung, dusty vinyl, warm, soulful, melodic|30|0.7
+grv_syncopated|hip hop, 96 BPM, key of G minor, loop, west coast, syncopated groove, funky, warm, bass heavy, melodic|30|0.7
+grv_boombapswing|hip hop, 92 BPM, key of A minor, loop, boom bap, boom bap swing, dusty vinyl, gritty, warm, drum heavy, melodic|30|0.7
+grv_fourfloor|hip hop, 120 BPM, key of C minor, loop, four on the floor, energetic, warm, bass heavy, melodic, hypnotic|30|0.7
+grv_offbeat|hip hop, 84 BPM, key of D minor, loop, mellow, off beat groove, swung, warm, dusty vinyl, hypnotic, melodic|30|0.7
+grv_rolling|hip hop, 146 BPM, key of B minor, loop, drill, rolling hi-hats, sliding 808, dark, energetic, sub bass, distorted|30|0.7
+grv_shuffle|hip hop, 86 BPM, key of F major, loop, boom bap, shuffle groove, dusty vinyl, soulful, warm, laid back, melodic|30|0.7
+grv_hardhit|hip hop, 130 BPM, key of C minor, loop, trap, hard hitting drums, 808 heavy, sub bass, dark, energetic, distorted|30|0.7
+grv_laid|hip hop, 78 BPM, key of E minor, loop, lofi, laid back swing, dusty vinyl, warm, nostalgic, mellow, melodic|30|0.7
+grv_bounce|hip hop, 98 BPM, key of G minor, loop, west coast, bouncy groove, funky, warm, bass heavy, melodic|30|0.7
+grv_minimaldrums|hip hop, 82 BPM, key of A minor, loop, mellow, minimal drums, sparse, warm, hypnotic, dusty vinyl, melodic|30|0.7
+grv_fasthats|hip hop, 150 BPM, key of D minor, loop, trap, fast hi-hat rolls, 808 heavy, sub bass, dark, energetic, 2020s|30|0.7
+grv_headnod|hip hop, 90 BPM, key of C minor, loop, boom bap, head nod groove, swung, dusty vinyl, gritty, warm, melodic|30|0.7
+grv_htswitch|hip hop, 140 BPM, key of F minor, loop, trap, half time switch, 808 heavy, sub bass, dark, hard hitting, hypnotic|30|0.7
+mood_dark|hip hop, 140 BPM, key of F# minor, loop, trap, dark, ominous, eerie, 808 heavy, sub bass, distorted, tense|45|0.65
+mood_cinematic|hip hop, 128 BPM, key of D minor, full track, trap, cinematic, epic, dark, string section, 808 heavy, sub bass|45|0.65
+mood_dreamy|hip hop, 78 BPM, key of C major, loop, mellow, dreamy, ethereal, spacey, warm, lush, melodic, reverb drenched|45|0.65
+mood_nostalgic|hip hop, 82 BPM, key of E minor, loop, lofi, nostalgic, warm, dusty vinyl, melancholic, mellow, melodic|45|0.65
+mood_triumphant|hip hop, 92 BPM, key of A major, full track, boom bap, triumphant, uplifting, brass stabs, soulful, warm, melodic|45|0.65
+mood_eerie|hip hop, 144 BPM, key of B minor, loop, drill, eerie, dark, ominous, 808 heavy, sub bass, distorted, tense|45|0.65
+mood_melancholic|hip hop, 80 BPM, key of D minor, loop, mellow, melancholic, dark, warm, dusty vinyl, melodic, hypnotic|45|0.65
+mood_spacey|hip hop, 88 BPM, key of F minor, loop, mellow, spacey, ambient, dreamy, reverb drenched, hypnotic, melodic|45|0.65
+mood_tense|hip hop, 142 BPM, key of C minor, full track, drill, tense, dark, building, 808 heavy, sub bass, distorted, eerie|45|0.65
+mood_ethereal|hip hop, 76 BPM, key of A minor, loop, mellow, ethereal, dreamy, lush, warm, spacey, melodic, laid back|45|0.65
+mood_ominous|hip hop, 136 BPM, key of G minor, loop, trap, ominous, dark, tense, 808 heavy, sub bass, hypnotic, distorted|45|0.65
+mood_warmsoul|hip hop, 86 BPM, key of E major, loop, boom bap, soulful, warm, uplifting, dusty vinyl, melodic, nostalgic|45|0.65
+mood_epic|hip hop, 130 BPM, key of D minor, full track, trap, epic, cinematic, dark, string section, 808 heavy, sub bass|45|0.65
+mood_cold|hip hop, 140 BPM, key of B minor, loop, drill, cold, dark, eerie, 808 heavy, sub bass, distorted, minimal|45|0.65
+mood_hopeful|hip hop, 90 BPM, key of C major, loop, boom bap, uplifting, warm, soulful, bright, dusty vinyl, melodic|45|0.65
+mood_haunting|hip hop, 138 BPM, key of F minor, loop, trap, haunting, eerie, dark, 808 heavy, sub bass, hypnotic, reverb drenched|45|0.65
+mood_lush|hip hop, 80 BPM, key of A major, loop, mellow, lush, warm, dreamy, romantic, melodic, laid back|45|0.65
+mood_grim|hip hop, 145 BPM, key of D minor, loop, drill, grim, dark, ominous, gritty, 808 heavy, sub bass, distorted|45|0.65
+mood_bittersweet|hip hop, 84 BPM, key of E minor, loop, lofi, bittersweet, melancholic, nostalgic, warm, dusty vinyl, melodic|45|0.65
+mood_grand|hip hop, 126 BPM, key of C minor, full track, trap, grand, cinematic, epic, dark, choir, 808 heavy, sub bass|45|0.65

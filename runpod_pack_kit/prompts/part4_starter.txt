@@ -1,0 +1,18 @@
+# Part 4 §9 — starter loops (format: prompt) — run as loop, 30s, strength 0.7
+hip hop, 140 BPM, key of F# minor, loop, trap, dark, 808 heavy, sub bass, gritty, energetic, distorted
+hip hop, 144 BPM, key of C minor, loop, trap, dark, hypnotic, 808 heavy, sub bass, bass heavy, melodic
+hip hop, 136 BPM, key of G minor, loop, trap, 2020s, energetic, 808 heavy, sub bass, gritty, distorted
+hip hop, 132 BPM, key of A minor, loop, trap, dark, melodic, 808 heavy, sub bass, warm, hypnotic
+hip hop, 90 BPM, key of A minor, loop, boom bap, dusty vinyl, warm, mellow, laid back, melodic, gritty
+hip hop, 88 BPM, key of D minor, loop, boom bap, 2000s, dusty vinyl, warm, gritty, melodic, laid back
+hip hop, 93 BPM, key of E minor, loop, boom bap, dark, dusty vinyl, mellow, gritty, melodic
+hip hop, 86 BPM, key of C major, loop, boom bap, warm, laid back, dusty vinyl, mellow, melodic
+hip hop, 144 BPM, key of D minor, loop, drill, dark, hypnotic, 808 heavy, sub bass, gritty, distorted
+hip hop, 142 BPM, key of F minor, loop, drill, dark, 808 heavy, sub bass, bass heavy, energetic, distorted
+hip hop, 145 BPM, key of B minor, loop, drill, dark, hypnotic, melodic, 808 heavy, sub bass, gritty
+hip hop, 140 BPM, key of G minor, loop, drill, 2020s, dark, 808 heavy, sub bass, distorted, energetic
+hip hop, 82 BPM, key of C minor, loop, mellow, laid back, warm, hypnotic, melodic, dusty vinyl
+hip hop, 75 BPM, key of A minor, loop, mellow, laid back, warm, dusty vinyl, melodic
+hip hop, 80 BPM, key of F major, loop, mellow, warm, laid back, hypnotic, melodic, gritty
+hip hop, 72 BPM, key of D minor, loop, mellow, dark, laid back, dusty vinyl, hypnotic, melodic
+hip hop, 150 BPM, key of G minor, loop, 2020s, energetic, bass heavy, 808 heavy, sub bass, dark, distorted

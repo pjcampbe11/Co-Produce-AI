@@ -1,0 +1,23 @@
+# Lo-Fi After Hours — 22 loops · 70–85 BPM · format: BPM|KEY|prompt
+72|F major|hip hop, 72 BPM, key of F major, loop, lofi, mellow intro feel, warm, nostalgic, dusty vinyl, laid back, melodic
+75|C minor|hip hop, 75 BPM, key of C minor, loop, lofi, cassette, tape saturated, vinyl crackle, warm, nostalgic, mellow, laid back
+78|E minor|hip hop, 78 BPM, key of E minor, loop, lofi, tape saturated, warm, vinyl crackle, mellow, nostalgic, melodic
+78|E minor|hip hop, 78 BPM, key of E minor, loop, lofi, laid back swing, dusty vinyl, warm, nostalgic, mellow, melodic
+82|E minor|hip hop, 82 BPM, key of E minor, loop, lofi, nostalgic, warm, dusty vinyl, melancholic, mellow, melodic
+84|E minor|hip hop, 84 BPM, key of E minor, loop, lofi, bittersweet, melancholic, nostalgic, warm, dusty vinyl, melodic
+72|C major|hip hop, 72 BPM, key of C major, loop, lofi, mellow Rhodes chords, soft swung drums, tape saturated, gentle sub bass, laid back
+70|E major|hip hop, 70 BPM, key of E major, loop, lofi, jazzy chords, warm, nostalgic, dusty vinyl, laid back, melodic
+82|C minor|hip hop, 82 BPM, key of C minor, loop, mellow, laid back, warm, hypnotic, melodic, dusty vinyl
+75|A minor|hip hop, 75 BPM, key of A minor, loop, mellow, laid back, warm, dusty vinyl, melodic
+80|F major|hip hop, 80 BPM, key of F major, loop, mellow, warm, laid back, hypnotic, melodic, gritty
+72|D minor|hip hop, 72 BPM, key of D minor, loop, mellow, dark, laid back, dusty vinyl, hypnotic, melodic
+78|C major|hip hop, 78 BPM, key of C major, loop, mellow, dreamy, ethereal, spacey, warm, lush, melodic, reverb drenched
+78|E minor|hip hop, 78 BPM, key of E minor, loop, mellow, warm synth pads, dreamy, spacey, hypnotic, melodic, laid back
+80|C major|hip hop, 80 BPM, key of C major, loop, mellow, harp, dreamy, warm, lush, melodic, laid back
+82|D minor|hip hop, 82 BPM, key of D minor, loop, mellow, reverb drenched, spacey, warm, dreamy, melodic, dusty vinyl
+84|D minor|hip hop, 84 BPM, key of D minor, loop, mellow, off beat groove, swung, warm, dusty vinyl, hypnotic, melodic
+82|A minor|hip hop, 82 BPM, key of A minor, loop, mellow, minimal drums, sparse, warm, hypnotic, dusty vinyl, melodic
+80|C minor|hip hop, 80 BPM, key of C minor, loop, mellow, melancholic, dark, warm, dusty vinyl, melodic, hypnotic
+76|A minor|hip hop, 76 BPM, key of A minor, loop, mellow, ethereal, dreamy, lush, warm, spacey, melodic, laid back
+84|F major|hip hop, 84 BPM, key of F major, loop, lofi, warm analog, tape saturated, dusty vinyl, soulful, melodic
+80|A major|hip hop, 80 BPM, key of A major, loop, mellow, lush, warm, dreamy, romantic, melodic, laid back
